@@ -6,3 +6,4 @@
  */
 
 #include "MAX9704_Amplifier.h"
+
