@@ -64,6 +64,20 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define CODEC_IRQN_OUT_Pin GPIO_PIN_1
+#define CODEC_IRQN_OUT_GPIO_Port GPIOB
+#define AMP_MUTE_Pin GPIO_PIN_1
+#define AMP_MUTE_GPIO_Port GPIOD
+#define AMP_FS2_Pin GPIO_PIN_3
+#define AMP_FS2_GPIO_Port GPIOB
+#define AMP_FS1_Pin GPIO_PIN_4
+#define AMP_FS1_GPIO_Port GPIOB
+#define AMP_GAIN2_Pin GPIO_PIN_5
+#define AMP_GAIN2_GPIO_Port GPIOB
+#define AMP_GAIN1_Pin GPIO_PIN_6
+#define AMP_GAIN1_GPIO_Port GPIOB
+#define AMP_SHUTDOWN_Pin GPIO_PIN_7
+#define AMP_SHUTDOWN_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
