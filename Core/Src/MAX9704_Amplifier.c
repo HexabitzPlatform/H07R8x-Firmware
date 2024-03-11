@@ -5,4 +5,4 @@
  *      Author: Abdulrhman_Battikh
  */
 
-
+#include "MAX9704_Amplifier.h"
