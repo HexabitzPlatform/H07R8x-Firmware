@@ -1,12 +1,12 @@
 /*
- * MAX9704_Amplifier.c
- * Description: MAX9704_Amplifier source file
+ * MAX9704_Amplifier.h
+ * Description: MAX9704_Amplifier header file
  *  Created on: Mar 11, 2024
  *      Author: Abdulrahman Battikh @ Hexabitz
  ******************************************************************************
  * @attention
  *
- * Copyright (c) 2023 Hexabitz.
+ * Copyright (c) 2024 Hexabitz.
  * All rights reserved.
  *
  ******************************************************************************
