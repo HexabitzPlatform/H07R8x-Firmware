@@ -16,6 +16,7 @@
 #define INC_MAX9867_CODEC_H_
 
 #include "main.h"
+#include <stdio.h>
 
 extern I2C_HandleTypeDef hi2c2;
 typedef I2C_HandleTypeDef 			I2C_HANDLE;
@@ -60,6 +61,12 @@ typedef enum
 	DAC_DISABLE,
 	DAC_ENABLE
 } DAC_En_Dis;
+
+typedef enum
+{
+	DAC_MUTE_DISABLE,
+	DAC_MUTE_ENABLE
+} DAC_Mute_En_Dis;
 
 typedef enum
 {
@@ -315,12 +322,248 @@ typedef enum
 	LINE_INPUT_MUTE_EN,
 	LINE_INPUT_MUTE_DIS
 } L_R_Line_Input_Mute_En_Dis;
+
+typedef enum
+{
+	LINE_INPUT_EN,
+	LINE_INPUT_DIS
+} L_R_Line_Input_En_Dis;
+
 typedef enum
 {
 	LEFT_LINE_INPUT,
-	RIGHT_LINE_INPUT,
+	RIGHT_LINE_INPUT
 } L_R_Line_Input;
 
+typedef enum
+{
+	SHOUTDOWN_ENABLE,
+	SHOUTDOWN_DISABLE
+} Shoutdown;
+
+typedef enum
+{
+	  GAIN_PLUS_24dB,
+	  GAIN_PLUS_22dB,
+	  GAIN_PLUS_20dB,
+	  GAIN_PLUS_18dB,
+	  GAIN_PLUS_16dB,
+	  GAIN_PLUS_14dB,
+	  GAIN_PLUS_12dB,
+	  GAIN_PLUS_10dB,
+	  GAIN_PLUS_8dB,
+	  GAIN_PLUS_6dB,
+	  GAIN_PLUS_4dB,
+	  GAIN_PLUS_2dB,
+	  GAIN_PLUS_0dB,
+	  GAIN_MINUS_2dB,
+	  GAIN_MINUS_4dB,
+	  GAIN_MINUS_6dB,
+} L_R_Line_Input_Gain;
+
+typedef enum
+{
+	PCLK_8,
+	PCLK_6
+} Digital_Mic_Clk;
+
+typedef enum
+{
+	MAX9867_MASTER_MODE,
+	MAX9867_SLAVE_MODE
+} MAX9867_Master_Slave_Mode;
+
+typedef enum
+{
+	lEFT_CHNL_DATA_IN_OUT,
+	RIGHT_CHNL_DATA_IN_OUT
+} MAX9867_L_R_Clk_Invert;
+
+typedef enum
+{
+	SDIN_LATCHED_RISING_EDGE_BCLK,
+	SDIN_LATCHED_FALLING_EDGE_BCLK
+} MAX9867_Bit_Clk_Invert;
+
+typedef enum
+{
+	SDOUT_TRANS_AFTER_SDIN_LATCHED,
+	SDOUT_TRANS_WITH_SDIN_LATCHED
+} MAX9867_SDOUT_Delay;
+
+typedef enum
+{
+	SDIN_SDOUT_LATCHED_FIRST_BCLK_EDGE,
+	SDIN_SDOUT_LATCHED_SECOND_BCLK_EDGE
+} MAX9867_Delay_Mode;
+
+typedef enum
+{
+	SDOUT_HIGH_IMPEDANCE_AFTER_DATA_TRANS,
+	SDOUT_HIGH_OR_LOW_AFTER_DATA_TRANS
+} MAX9867_SDOUT_Mode_High_Impedance_Mode;
+
+typedef enum
+{
+	LRCLK_INDICATE_L_R_AUDIO,
+	LRCLK_FRAMING_PULSE
+} MAX9867_TDM_Mode;
+
+typedef enum
+{
+	TRACKS_VOLL_VOLR_BITS,
+	FIXED_VOLL_VOLR_BITS
+} MAX9867_Fix_Line_Input_Volume;
+
+typedef enum
+{
+	OFF,
+	LRCLK_Multiply_64,
+	LRCLK_Multiply_48,
+	RESERVED,
+	PCLK_DIVIDE_2,
+	PCLK_DIVIDE_4,
+	PCLK_DIVIDE_8,
+	PCLK_DIVIDE_16,
+} MAX9867_BCLK_Select;
+
+typedef enum
+{
+	SDIN_PROCESS_SEPARATELY,
+	SDIN_MIXED_SINGLE_CHA_ROUT_L_R_DAC
+} MAX9867_Mono_Playback_Mode;
+
+typedef enum
+{
+	MODE1,
+	MODE2,
+	MODE3,
+	MODE4
+} Digital_Mic_Clk;
+
+typedef enum
+{
+	DISABLE_CLK,
+	MCLK_BETWEEN_10_20_MHZ,
+	MCLK_BETWEEN_20_40_MHZ,
+	MCLK_BETWEEN_40_60_MHZ
+} MCLK_Prescaler;
+
+typedef enum
+{
+	PLL_DISABLE,
+	PLL_ENABLE
+} PLL_Mode_En_Dis;
+
+typedef enum
+{
+	NORMAL_OR_PLL_MODE,
+	PCLK_LRCK_1500_RATIO_MODE = 0x08,
+	PCLK_LRCK_750_RATIO_MODE,
+	PCLK_LRCK_1625_RATIO_MODE,
+	PCLK_LRCK_812p5_RATIO_MODE,
+	PCLK_LRCK_2000_RATIO_MODE,
+	PCLK_LRCK_1000_RATIO_MODE,
+	PCLK_LRCK_2400_RATIO_MODE,
+	PCLK_LRCK_1200_RATIO_MODE
+} Exact_Integer_Modes;
+
+typedef enum
+{
+	UPDATE_AUX_WITH_VOLTAGE,
+	HOLD_AUX_FOR_READING
+} Auxiliary_Input_Capture;
+
+typedef enum
+{
+	NORMAL_OPERATION,
+	CONNECT_INPUT_BUFFER_TO_INTERNAL_VOLTAGE
+} Auxiliary_Input_Gain_Calibration;
+
+typedef enum
+{
+	NORMAL_OPERATION,
+	ADC_AUTO_CALIBRATE_ANY_OFFSET
+} Auxiliary_Input_Offset_Calibration;
+
+typedef enum
+{
+	JACKSNS_PIN_FOR_JACK_DETECTION,
+	JACKSNS_PIN_FOR_DC_MEASUREMENT
+} Auxiliary_Input_En_Dis;
+
+typedef enum
+{
+	UPDATE_AUX_WITH_VOLTAGE,
+	HOLD_AUX_FOR_READING
+} Auxiliary_Input_Capture;
+
+typedef struct {
+        // Bit fields within the register
+	uint8_t digAudReg1;
+    uint8_t reserved : 1;
+    uint8_t reserved : 1;
+    uint8_t TDM 	 : 1;
+    uint8_t HIZOFF   : 1;
+    uint8_t DLY      : 1;
+    uint8_t BCI      : 1;
+    uint8_t WCI      : 1;
+    uint8_t MAS      : 1;
+    // Add more bit fields as needed
+} Digital_Audio_Interface_Reg_1;
+
+typedef struct {
+        // Bit fields within the register
+	uint8_t digAudReg2;
+    uint8_t BSEL     : 3;
+    uint8_t DMONO    : 1;
+    uint8_t LVOLFIX  : 1;
+    uint8_t reserved : 1;
+    uint8_t reserved : 1;
+    uint8_t reserved : 1;
+    // Add more bit fields as needed
+} Digital_Audio_Interface_Reg_2;
+
+typedef struct {
+        // Bit fields within the register
+	uint8_t sysClk;
+    uint8_t FREQ     : 3;
+    uint8_t PSCLK    : 2;
+    uint8_t reserved : 1;
+    uint8_t reserved : 1;
+    // Add more bit fields as needed
+} System_Clock_Reg;
+
+typedef struct {
+        // Bit fields within the register
+	uint8_t stereoAudClkH;
+    uint8_t NI       : 7;
+    uint8_t PLL      : 1;
+    // Add more bit fields as needed
+} Stereo_Audio_Clock_Control_High_Reg;
+
+typedef struct {
+        // Bit fields within the register
+	uint8_t stereoAudClkL;
+    uint8_t NI0      : 1;
+    uint8_t NI       : 7;
+    // Add more bit fields as needed
+} Stereo_Audio_Clock_Control_Low_Reg;
+
+typedef struct {
+        // Bit fields within the register
+	uint8_t interruptEn;
+
+    uint8_t reserved : 1;
+    uint8_t IJDET    : 1;
+    uint8_t SDODLY   : 1;
+    uint8_t reserved : 1;
+    uint8_t reserved : 1;
+    uint8_t IULK     : 1;
+    uint8_t ISLD     : 1;
+    uint8_t ICLD     : 1;
+    // Add more bit fields as needed
+} Interrupt_Reg;
 
 typedef struct {
         // Bit fields within the register
@@ -438,9 +681,9 @@ typedef struct {
 	uint8_t lLineIn;
     uint8_t LIGL	 : 4;
     uint8_t reserved : 1;
-    uint8_t reserved1 : 1;
+    uint8_t reserved1: 1;
     uint8_t LILM     : 1;
-    uint8_t reserved2 : 1;
+    uint8_t reserved2: 1;
     // Add more bit fields as needed
 } Left_Line_input_Level_Reg;
 
@@ -449,9 +692,22 @@ typedef struct {
 	uint8_t rLineIn;
     uint8_t LIGR	 : 4;
     uint8_t reserved : 1;
-    uint8_t reserved1 : 1;
+    uint8_t reserved1: 1;
     uint8_t LIRM     : 1;
-    uint8_t reserved2 : 1;
+    uint8_t reserved2: 1;
     // Add more bit fields as needed
 } Right_Line_input_Level_Reg;
+
+typedef struct {
+        // Bit fields within the register
+	uint8_t digMicClk;
+    uint8_t reserved  : 1;
+    uint8_t reserved1 : 1;
+    uint8_t reserved2 : 1;
+    uint8_t reserved3 : 1;
+    uint8_t DIGMICR   : 1;
+    uint8_t DIGMICL   : 1;
+    uint8_t MICCLK    : 2;
+    // Add more bit fields as needed
+} Digital_Microphone_Input_Reg;
 #endif /* INC_MAX9867_CODEC_H_ */
