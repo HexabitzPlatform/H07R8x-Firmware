@@ -399,27 +399,6 @@ Status_TypeDef MAX9867_LineIputEnableDisable(L_R_Line_Input_En_Dis lineInput, L_
 	return STATUS_OK;
 }
 
-Status_TypeDef MAX9867_LineIputDisable(L_R_Line_Input lineInput)
-{
-	if(lineInput == LEFT_LINE_INPUT)
-	{
-		powerMangReg.LNLEN = LINE_INPUT_DIS;
-		tDataCodec[0] = MAX9867_REG_SYS_SHUTDOWN;
-		tDataCodec[1] = powerMangReg.pwrManagReg;
-		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-				return STATUS_ERR;
-	}
-	else if(lineInput == RIGHT_LINE_INPUT)
-	{
-		powerMangReg.LNREN = LINE_INPUT_DIS;
-		tDataCodec[0] = MAX9867_REG_SYS_SHUTDOWN;
-		tDataCodec[1] = powerMangReg.pwrManagReg;
-		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-				return STATUS_ERR;
-	}
-	return STATUS_OK;
-}
-
 Status_TypeDef MAX9867_LineInputGain(L_R_Line_Input lineInput, L_R_Line_Input_Gain lineInputGain)
 {
 	if(lineInput == LEFT_LINE_INPUT)

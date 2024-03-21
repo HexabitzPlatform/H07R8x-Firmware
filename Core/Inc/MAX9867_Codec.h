@@ -749,4 +749,38 @@ typedef struct {
     // Add more bit fields as needed
 } Power_Management_Reg;
 
+Status_TypeDef WriteI2C(I2C_HANDLE *xPort, uint16_t sAddress, uint8_t *pData, uint16_t Size);
+Status_TypeDef ReadI2C(I2C_HANDLE *xPort, uint16_t sAddress, uint8_t *rBuffer, uint16_t Size);
+Status_TypeDef MAX9867_Init(void);
+
+Status_TypeDef MAX9867_InterruptEnable(bool clipDetect,bool slewDetect,bool pllUnlock,bool headsetChange);
+Status_TypeDef MAX9867_Shoutdown(Shoutdown shtdown);
+Status_TypeDef MAX9867_HeadphoneAmpMode(Headphone_Amp_Mode ampMode);
+Status_TypeDef MAX9867_DAC_EnableDisable(DAC_En_Dis dac);
+Status_TypeDef MAX9867_DAC_Gain(DAC_Gain firstAmp, DAC_Level_Ctrl progAmp);
+Status_TypeDef MAX9867_DAC_Mute(DAC_Mute_En_Dis dacMute);
+Status_TypeDef MAX9867_ADC_EnableDisable(ADC_En_Dis adc);
+Status_TypeDef MAX9867_ADC_Gain(ADC_L_R_Gain adc, L_R_ADC_Level_Ctrl adcGain);
+Status_TypeDef MAX9867_LineIputEnableDisable(L_R_Line_Input_En_Dis lineInput, L_R_Line_Input lrLineInput);
+Status_TypeDef MAX9867_LineInputGain(L_R_Line_Input lineInput, L_R_Line_Input_Gain lineInputGain);
+Status_TypeDef MAX9867_LineInputMute(Line_Input_Mute_En_Dis mute, L_R_Line_Input lineInput);
+Status_TypeDef MAX9867_AudioLevel(L_R_Playback_Volume rPlaybackVol, L_R_Playback_Volume lPlaybackVol);
+Status_TypeDef MAX9867_AudioMute(Audio_Mute audioMute);
+Status_TypeDef MAX9867_MicAmpGain(L_R_Mic mic, L_R_Mic_Preamp_Gain preAmpGain, L_R_Mic_Programble_Gain_Amp progGain);
+Status_TypeDef MAX9867_MicDigitalClock(Digital_Mic_Clk_Pre clock);
+Status_TypeDef MAX9867_MicDigitalLeftRightMode(Digital_Mic_Clk_Mode mode);
+Status_TypeDef MAX9867_AuxiliaryInputCapture(Auxiliary_Input_Capture auxCapture);
+Status_TypeDef MAX9867_AuxiliaryInputGainCalibration(Auxiliary_Input_Gain_Calibration auxGain);
+Status_TypeDef MAX9867_AuxiliaryInputOffsetCalibration(Auxiliary_Input_Offset_Calibration auxOffset);
+Status_TypeDef MAX9867_AuxiliaryInputEnable(Auxiliary_Input_En_Dis auxEna);
+Status_TypeDef MAX9867_AuxiliaryInputDisable(Auxiliary_Input_En_Dis auxDis);
+Status_TypeDef MAX9867_MicSidetoneSourceAndGain(Digital_Sidetone_Source_Mixer sourceMixer, Sidetone_Gain_Diff_Headphone sidGainDiff,
+    Sidetone_Gain_Capacitorless_Single_Ended_Headphone sidGainCapSinEnd, Amp_Type ampType);
+Status_TypeDef MAX9867_DigitalAudioInterfaceInit(MAX9867_Master_Slave_Mode mode,
+	MAX9867_L_R_Clk_Invert lrclk, MAX9867_Bit_Clk_Invert bclkMode, MAX9867_SDOUT_Delay sdoutDelay,
+	MAX9867_Delay_Mode delayMode, MAX9867_SDOUT_Mode_High_Impedance_Mode sdoutMode,
+	MAX9867_TDM_Mode tdmMode, MAX9867_BCLK_Select bclkSelect, MAX9867_Mono_Playback_Mode monoMode,
+	MAX9867_Fix_Line_Input_Volume fixLineVol);
+Status_TypeDef MAX9867_ClockControlInit(MCLK_Prescaler mclkPresclr, Exact_Integer_Modes exactIntMode,
+		PLL_Mode_En_Dis pllMode, uint32_t NI, bool NI0);
 #endif /* INC_MAX9867_CODEC_H_ */
