@@ -24,6 +24,8 @@ typedef I2C_HandleTypeDef 			I2C_HANDLE;
 #define MAX9867_I2C_HANDLE            		&hi2c2
 #define MAX9867_SLAVE_ADDRESS_W            	0x30
 #define MAX9867_SLAVE_ADDRESS_R				0x31
+
+#define _DELAY_MS(TimeOut)       HAL_Delay(TimeOut)
 /* MAX9867 registers addresses */
 #define MAX9867_REG_STATUS					0x00
 #define MAX9867_REG_JACK_SENSE				0x01
@@ -306,6 +308,12 @@ typedef enum
 
 typedef enum
 {
+	JACKSNS_ENABLE,
+	JACKSNS_DISABLE
+} Jack_Sense_En_Dis;
+
+typedef enum
+{
 	STEREO_DIFF_CLICKLESS,
 	MONO_L_DIFF_CLICKLESS,
 	STEREO_CAPLESS_CLICKLESS,
@@ -323,6 +331,13 @@ typedef enum
 	MIC_PREAMP_GAIN_PLUS_20dB,
 	MIC_PREAMP_GAIN_PLUS_30dB
 } L_R_Mic_Preamp_Gain;
+
+typedef enum
+{
+	LEFT_VOLUME_CHA,
+	RIGHT_VOLUME_CHA,
+	LEFT_RIGHT_VOLUME_CHA
+} L_R_Playback_Volume_Channel;
 
 typedef enum
 {
@@ -420,7 +435,7 @@ typedef enum
 	PLAYBACK_VOLUME_GAIN_PLUS_3dB,
 	PLAYBACK_VOLUME_GAIN_PLUS_2dB,
 	PLAYBACK_VOLUME_GAIN_PLUS_1dB,
-	PLAYBACK_VOLUME_GAIN_PLUS_0dB,
+	PLAYBACK_VOLUME_GAIN_0dB,
 	PLAYBACK_VOLUME_GAIN_MINUS_1dB,
 	PLAYBACK_VOLUME_GAIN_MINUS_2dB,
 	PLAYBACK_VOLUME_GAIN_MINUS_3dB,
@@ -515,6 +530,23 @@ typedef enum
 } Sidetone_Gain_Capacitorless_Single_Ended_Headphone;
 
 
+/* 0x02 */
+typedef struct {
+        // Bit fields within the register
+	uint8_t auxRegH;
+
+    uint8_t AUX: 1;
+    // Add more bit fields as needed
+} Aux_H;
+
+/* 0x03 */
+typedef struct {
+        // Bit fields within the register
+	uint8_t auxRegL;
+
+    uint8_t AUX: 1;
+    // Add more bit fields as needed
+} Aux_L;
 
 /* 0x04 */
 typedef struct {
@@ -724,7 +756,7 @@ typedef struct {
 /* 0x16 */
 typedef struct {
         // Bit fields within the register
-	uint8_t confModeReg;
+	uint8_t configModeReg;
     uint8_t HPMODE	 : 3;
     uint8_t JDETEN   : 1;
     uint8_t reserved : 1;
@@ -761,7 +793,7 @@ Status_TypeDef MAX9867_DAC_Gain(DAC_Gain firstAmp, DAC_Level_Ctrl progAmp);
 Status_TypeDef MAX9867_DAC_Mute(DAC_Mute_En_Dis dacMute);
 Status_TypeDef MAX9867_ADC_EnableDisable(ADC_En_Dis adc);
 Status_TypeDef MAX9867_ADC_Gain(ADC_L_R_Gain adc, L_R_ADC_Level_Ctrl adcGain);
-Status_TypeDef MAX9867_LineIputEnableDisable(L_R_Line_Input_En_Dis lineInput, L_R_Line_Input lrLineInput);
+Status_TypeDef MAX9867_LineInputEnableDisable(L_R_Line_Input_En_Dis lineInput, L_R_Line_Input lrLineInput);
 Status_TypeDef MAX9867_LineInputGain(L_R_Line_Input lineInput, L_R_Line_Input_Gain lineInputGain);
 Status_TypeDef MAX9867_LineInputMute(Line_Input_Mute_En_Dis mute, L_R_Line_Input lineInput);
 Status_TypeDef MAX9867_AudioLevel(L_R_Playback_Volume rPlaybackVol, L_R_Playback_Volume lPlaybackVol);
