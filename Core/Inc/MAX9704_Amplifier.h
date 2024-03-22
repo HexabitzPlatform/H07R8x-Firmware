@@ -50,7 +50,7 @@ typedef enum{
  * @param1 :Switching Modes
  * @retval :Nothing
  */
-Status_TypeDef AmpSwitchingMode(Switching_Modes mode);
+Status_TypeDef MAX9704_AmpSwitchingMode(Switching_Modes mode);
 
 /* Amplifier Gain */
 /*
@@ -58,7 +58,7 @@ Status_TypeDef AmpSwitchingMode(Switching_Modes mode);
  * @param1 :Gain Modes
  * @retval :Nothing
  */
-Status_TypeDef AmpGain(Gain_Modes mode);
+Status_TypeDef MAX9704_AmpGain(Gain_Modes mode);
 
 /* Amplifier Shutdown */
 /*
@@ -66,7 +66,7 @@ Status_TypeDef AmpGain(Gain_Modes mode);
  * @param1 :Shutdown Modes
  * @retval :Nothing
  */
-Status_TypeDef AmpShutdown(Shutdown_Modes mode);
+Status_TypeDef MAX9704_AmpShutdown(Shutdown_Modes mode);
 
 /* Amplifier Mute */
 /*
@@ -74,6 +74,6 @@ Status_TypeDef AmpShutdown(Shutdown_Modes mode);
  * @param1 :Mute Modes
  * @retval :Nothing
  */
-Status_TypeDef AmpMute(Mute_Modes mode);
+Status_TypeDef MAX9704_AmpMute(Mute_Modes mode);
 
 #endif /* INC_MAX9704_AMPLIFIER_H_ */

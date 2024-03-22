@@ -35,7 +35,7 @@ Status_TypeDef SetGPIOsPin(GPIO_HANDLE *GPIOx, uint16_t Pin)
 /*
  * set a GPIO pin form a port low
  */
-Status_TypeDef ResetGPIOsPin(GPIO_HANDLE *GPIOx, uint16_t Pin)
+Status_TypeDef MAX9704_ResetGPIOsPin(GPIO_HANDLE *GPIOx, uint16_t Pin)
 {
 	Status_TypeDef Status;
 
@@ -50,7 +50,7 @@ Status_TypeDef ResetGPIOsPin(GPIO_HANDLE *GPIOx, uint16_t Pin)
 	return Status;
 }
 
-Status_TypeDef AmpSwitchingMode(Switching_Modes mode)
+Status_TypeDef MAX9704_AmpSwitchingMode(Switching_Modes mode)
 {
 	switch(mode)
 	{
@@ -88,7 +88,7 @@ Status_TypeDef AmpSwitchingMode(Switching_Modes mode)
 	return STATUS_OK;
 }
 
-Status_TypeDef AmpGain(Gain_Modes mode)
+Status_TypeDef MAX9704_AmpGain(Gain_Modes mode)
 {
 	switch(mode)
 	{
@@ -125,7 +125,7 @@ Status_TypeDef AmpGain(Gain_Modes mode)
 	}
 	return STATUS_OK;
 }
-Status_TypeDef AmpShutdown(Shutdown_Modes mode)
+Status_TypeDef MAX9704_AmpShutdown(Shutdown_Modes mode)
 {
 	switch(mode)
 	{
@@ -145,7 +145,7 @@ Status_TypeDef AmpShutdown(Shutdown_Modes mode)
 	return STATUS_OK;
 }
 
-Status_TypeDef AmpMute(Mute_Modes mode)
+Status_TypeDef MAX9704_AmpMute(Mute_Modes mode)
 {
 	switch(mode)
 	{
