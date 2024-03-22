@@ -19,6 +19,9 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "MAX9867_Codec.h"
+#include "MUS_Tribal_Kick_st_os_01.h"
+#include "SFX_Tribal_Exhale_st_os_01.h"
+#include "SFX_Tribal_Inhale_st_os_01.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
