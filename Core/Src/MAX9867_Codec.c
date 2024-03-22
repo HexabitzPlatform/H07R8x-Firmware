@@ -205,7 +205,7 @@ Status_TypeDef MAX9867_HeadphoneAmpMode(Headphone_Amp_Mode ampMode)
 {
 	configModeReg.HPMODE = ampMode;
 	tDataCodec[0] = MAX9867_REG_MODE;
-	tDataCodec[1] = configModeReg.confModeReg;
+	tDataCodec[1] = configModeReg.configModeReg;
 	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
 			return STATUS_ERR;
 	return STATUS_OK;
@@ -724,20 +724,19 @@ Status_TypeDef MAX9867_AuxiliaryInputEnableDisable(Auxiliary_Input_En_Dis auxEna
 
 Status_TypeDef MAX9867_AuxiliaryRegRead(uint16_t *aux)
 {
-	auxRegL.AUX = auxEna;
 	tDataCodec[0] = MAX9867_REG_AUX_L;
 	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 1) )
 			return STATUS_ERR;
-	if( STATUS_OK != ReadI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_R, auxRegL.AUX, 1) )
+	if( STATUS_OK != ReadI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_R, &auxRegL.auxRegL, 1) )
 			return STATUS_ERR;
 
 	tDataCodec[0] = MAX9867_REG_AUX_H;
 	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 1) )
 			return STATUS_ERR;
-	if( STATUS_OK != ReadI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_R, auxRegH.AUX, 1) )
+	if( STATUS_OK != ReadI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_R, &auxRegH.auxRegH, 1) )
 			return STATUS_ERR;
 
-	aux = ((auxRegH.AUX << 8) + auxRegL.AUX);
+	*aux = ((auxRegH.auxRegH << 8) + auxRegL.auxRegL);
 	return STATUS_OK;
 }
 
@@ -767,21 +766,21 @@ Status_TypeDef LineInputApp(L_R_Line_Input lrLineInput,L_R_Line_Input_Gain gain,
 	return STATUS_OK;
 }
 
-Status_TypeDef DigitalAudioApp(DAC_Level_Ctrl progAmp, L_R_Playback_Volume_Channel channel, DAC_Level_Ctrl progAmp)
+Status_TypeDef DigitalAudioApp(L_R_Playback_Volume_Channel channel, DAC_Level_Ctrl progAmp)
 {
-	/* in audio application we must set only programmable amplifier, and set preamplifier to 0 because it
-	 * espicial with microphone voice gain */
-	if( STATUS_OK != MAX9867_DAC_Gain(DAC_GAIN_0dB, progAmp))
-			return STATUS_ERR;
-	/* Audio level control */
-	if( STATUS_OK != MAX9867_AudioLevel(channel, rPlaybackVol, lPlaybackVol))
-			return STATUS_ERR;
-	/* Enable DC-blocking just in Audio mode */
-	/* Note : we can enable DC-blocking by set AVFLT and DVFLT with any value */
-	if( STATUS_OK != MAX9867_DigitalFilterInit(FIR_AUDIO_FILTER,DISABLED,TYPE1))
-			return STATUS_ERR;
-	if( STATUS_OK != MAX9867_DAC_EnableDisable(DAC_ENABLE))
-			return STATUS_ERR;
+//	/* in audio application we must set only programmable amplifier, and set preamplifier to 0 because it
+//	 * espicial with microphone voice gain */
+//	if( STATUS_OK != MAX9867_DAC_Gain(DAC_GAIN_0dB, progAmp))
+//			return STATUS_ERR;
+//	/* Audio level control */
+//	if( STATUS_OK != MAX9867_AudioLevel(channel, rPlaybackVol, lPlaybackVol))
+//			return STATUS_ERR;
+//	/* Enable DC-blocking just in Audio mode */
+//	/* Note : we can enable DC-blocking by set AVFLT and DVFLT with any value */
+//	if( STATUS_OK != MAX9867_DigitalFilterInit(FIR_AUDIO_FILTER,DISABLED,TYPE1))
+//			return STATUS_ERR;
+//	if( STATUS_OK != MAX9867_DAC_EnableDisable(DAC_ENABLE))
+//			return STATUS_ERR;
 	return STATUS_OK;
 }
 
@@ -804,7 +803,7 @@ Status_TypeDef AnalogMicHeadphoneApp(L_R_Mic mic, L_R_Mic_Preamp_Gain preAmpGain
 			return STATUS_ERR;
 	if( STATUS_OK != MAX9867_MicSidetoneSourceAndGain(sourceMixer, sidGainDiff, sidGainCapSinEnd, ampType))
 			return STATUS_ERR;
-	if( STATUS_OK != MAX9867_AudioLevel(channel, rPlaybackVol, lPlaybackVol));
+	if( STATUS_OK != MAX9867_AudioLevel(channel, rPlaybackVol, lPlaybackVol))
 			return STATUS_ERR;
 	if( STATUS_OK != MAX9867_DAC_EnableDisable(DAC_ENABLE))
 			return STATUS_ERR;
@@ -842,7 +841,7 @@ Status_TypeDef DcMeasurment(uint32_t *dcMeasurment)
 	_DELAY_MS(40);
 	MAX9867_AuxiliaryInputCapture(GAIN_NORMAL_OPERATION);
 	MAX9867_AuxiliaryRegRead(&aux);
-
+	*dcMeasurment = 0.738 * (aux/k);
 	return STATUS_OK;
 	/* Calibrate the gain */
 

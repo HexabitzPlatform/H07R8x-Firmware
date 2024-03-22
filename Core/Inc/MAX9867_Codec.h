@@ -535,7 +535,7 @@ typedef struct {
         // Bit fields within the register
 	uint8_t auxRegH;
 
-    uint8_t AUX: 1;
+    uint8_t AUX: 8;
     // Add more bit fields as needed
 } Aux_H;
 
@@ -544,7 +544,7 @@ typedef struct {
         // Bit fields within the register
 	uint8_t auxRegL;
 
-    uint8_t AUX: 1;
+    uint8_t AUX: 8;
     // Add more bit fields as needed
 } Aux_L;
 
@@ -796,7 +796,7 @@ Status_TypeDef MAX9867_ADC_Gain(ADC_L_R_Gain adc, L_R_ADC_Level_Ctrl adcGain);
 Status_TypeDef MAX9867_LineInputEnableDisable(L_R_Line_Input_En_Dis lineInput, L_R_Line_Input lrLineInput);
 Status_TypeDef MAX9867_LineInputGain(L_R_Line_Input lineInput, L_R_Line_Input_Gain lineInputGain);
 Status_TypeDef MAX9867_LineInputMute(Line_Input_Mute_En_Dis mute, L_R_Line_Input lineInput);
-Status_TypeDef MAX9867_AudioLevel(L_R_Playback_Volume rPlaybackVol, L_R_Playback_Volume lPlaybackVol);
+Status_TypeDef MAX9867_AudioLevel(L_R_Playback_Volume_Channel channel, L_R_Playback_Volume rPlaybackVol, L_R_Playback_Volume lPlaybackVol);
 Status_TypeDef MAX9867_AudioMute(Audio_Mute audioMute);
 Status_TypeDef MAX9867_MicAmpGain(L_R_Mic mic, L_R_Mic_Preamp_Gain preAmpGain, L_R_Mic_Programble_Gain_Amp progGain);
 Status_TypeDef MAX9867_MicDigitalClock(Digital_Mic_Clk_Pre clock);
