@@ -17,6 +17,9 @@
 
 #include "main.h"
 
+/* GPIOs type define */
+typedef GPIO_TypeDef GPIO_HANDLE;
+
 typedef enum{
 	SWITCHING_MODE_670KHZ = 0,
 	SWITCHING_MODE_940KHZ,
@@ -47,7 +50,7 @@ typedef enum{
  * @param1 :Switching Modes
  * @retval :Nothing
  */
-void AmpSwitchingMode(Switching_Modes mode);
+Status_TypeDef AmpSwitchingMode(Switching_Modes mode);
 
 /* Amplifier Gain */
 /*
@@ -55,7 +58,7 @@ void AmpSwitchingMode(Switching_Modes mode);
  * @param1 :Gain Modes
  * @retval :Nothing
  */
-void AmpGain(Gain_Modes mode);
+Status_TypeDef AmpGain(Gain_Modes mode);
 
 /* Amplifier Shutdown */
 /*
@@ -63,7 +66,7 @@ void AmpGain(Gain_Modes mode);
  * @param1 :Shutdown Modes
  * @retval :Nothing
  */
-void AmpShutdown(Shutdown_Modes mode);
+Status_TypeDef AmpShutdown(Shutdown_Modes mode);
 
 /* Amplifier Mute */
 /*
@@ -71,6 +74,6 @@ void AmpShutdown(Shutdown_Modes mode);
  * @param1 :Mute Modes
  * @retval :Nothing
  */
-void AmpMute(Mute_Modes mode);
+Status_TypeDef AmpMute(Mute_Modes mode);
 
 #endif /* INC_MAX9704_AMPLIFIER_H_ */

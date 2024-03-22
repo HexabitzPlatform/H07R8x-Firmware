@@ -13,87 +13,154 @@
  */
 #include "MAX9704_Amplifier.h"
 
-void AmpSwitchingMode(Switching_Modes mode)
+/* GPIOs functions */
+/*
+ * @brief :set a GPIO pin form a port high
+ */
+Status_TypeDef SetGPIOsPin(GPIO_HANDLE *GPIOx, uint16_t Pin)
+{
+	Status_TypeDef Status;
+
+	if (NULL!=GPIOx)
+	{
+		HAL_GPIO_WritePin(GPIOx, Pin, GPIO_PIN_SET);
+		Status=STATUS_OK;
+	}
+	else
+		Status=STATUS_ERR;
+
+	return Status;
+}
+
+/*
+ * set a GPIO pin form a port low
+ */
+Status_TypeDef ResetGPIOsPin(GPIO_HANDLE *GPIOx, uint16_t Pin)
+{
+	Status_TypeDef Status;
+
+	if (NULL!=GPIOx)
+	{
+		HAL_GPIO_WritePin(GPIOx, Pin, GPIO_PIN_RESET);
+		Status=STATUS_OK;
+	}
+	else
+		Status=STATUS_ERR;
+
+	return Status;
+}
+
+Status_TypeDef AmpSwitchingMode(Switching_Modes mode)
 {
 	switch(mode)
 	{
 		case SWITCHING_MODE_670KHZ:
-			HAL_GPIO_WritePin(AMP_FS1_GPIO_Port, AMP_FS1_Pin, GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(AMP_FS2_GPIO_Port, AMP_FS2_Pin, GPIO_PIN_RESET);
+			if( STATUS_OK != ResetGPIOsPin(AMP_FS1_GPIO_Port, AMP_FS1_Pin))
+				return STATUS_ERR;
+			if( STATUS_OK != ResetGPIOsPin(AMP_FS2_GPIO_Port, AMP_FS2_Pin))
+				return STATUS_ERR;
 			break;
 		case SWITCHING_MODE_940KHZ:
-			HAL_GPIO_WritePin(AMP_FS1_GPIO_Port, AMP_FS1_Pin, GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(AMP_FS2_GPIO_Port, AMP_FS2_Pin, GPIO_PIN_SET);
+			if( STATUS_OK != ResetGPIOsPin(AMP_FS1_GPIO_Port, AMP_FS1_Pin))
+				return STATUS_ERR;
+			if( STATUS_OK != SetGPIOsPin(AMP_FS2_GPIO_Port, AMP_FS2_Pin))
+				return STATUS_ERR;
 			break;
 		case SWITCHING_MODE_470KHZ:
-			HAL_GPIO_WritePin(AMP_FS1_GPIO_Port, AMP_FS1_Pin, GPIO_PIN_SET);
-			HAL_GPIO_WritePin(AMP_FS2_GPIO_Port, AMP_FS2_Pin, GPIO_PIN_RESET);
+			if( STATUS_OK != SetGPIOsPin(AMP_FS1_GPIO_Port, AMP_FS1_Pin))
+				return STATUS_ERR;
+			if( STATUS_OK != ResetGPIOsPin(AMP_FS2_GPIO_Port, AMP_FS2_Pin))
+				return STATUS_ERR;
 			break;
 		case SWITCHING_MODE_AROUND_670KHZ:
-			HAL_GPIO_WritePin(AMP_FS1_GPIO_Port, AMP_FS1_Pin, GPIO_PIN_SET);
-			HAL_GPIO_WritePin(AMP_FS2_GPIO_Port, AMP_FS2_Pin, GPIO_PIN_SET);
+			if( STATUS_OK != SetGPIOsPin(AMP_FS1_GPIO_Port, AMP_FS1_Pin))
+				return STATUS_ERR;
+			if( STATUS_OK != SetGPIOsPin(AMP_FS2_GPIO_Port, AMP_FS2_Pin))
+				return STATUS_ERR;
 			break;
 		/* default mode is SWITCHING_MODE_670KHZ */
 		default:
-			HAL_GPIO_WritePin(AMP_FS1_GPIO_Port, AMP_FS1_Pin, GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(AMP_FS2_GPIO_Port, AMP_FS2_Pin, GPIO_PIN_RESET);
+			if( STATUS_OK != ResetGPIOsPin(AMP_FS1_GPIO_Port, AMP_FS1_Pin))
+				return STATUS_ERR;
+			if( STATUS_OK != ResetGPIOsPin(AMP_FS2_GPIO_Port, AMP_FS2_Pin))
+				return STATUS_ERR;
 	}
+	return STATUS_OK;
 }
 
-void AmpGain(Gain_Modes mode)
+Status_TypeDef AmpGain(Gain_Modes mode)
 {
 	switch(mode)
 	{
 		case GAIN_MODE_29dB:
-			HAL_GPIO_WritePin(AMP_GAIN1_GPIO_Port, AMP_GAIN1_Pin, GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(AMP_GAIN2_GPIO_Port, AMP_GAIN2_Pin, GPIO_PIN_RESET);
+			if( STATUS_OK != ResetGPIOsPin(AMP_GAIN1_GPIO_Port, AMP_GAIN1_Pin))
+				return STATUS_ERR;
+			if( STATUS_OK != ResetGPIOsPin(AMP_GAIN2_GPIO_Port, AMP_GAIN2_Pin))
+				return STATUS_ERR;
 			break;
 		case GAIN_MODE_19dB:
-			HAL_GPIO_WritePin(AMP_GAIN1_GPIO_Port, AMP_GAIN1_Pin, GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(AMP_GAIN2_GPIO_Port, AMP_GAIN2_Pin, GPIO_PIN_SET);
+			if( STATUS_OK != ResetGPIOsPin(AMP_GAIN1_GPIO_Port, AMP_GAIN1_Pin))
+				return STATUS_ERR;
+			if( STATUS_OK != SetGPIOsPin(AMP_GAIN2_GPIO_Port, AMP_GAIN2_Pin))
+				return STATUS_ERR;
 			break;
 		case GAIN_MODE_16dB:
-			HAL_GPIO_WritePin(AMP_GAIN1_GPIO_Port, AMP_GAIN1_Pin, GPIO_PIN_SET);
-			HAL_GPIO_WritePin(AMP_GAIN2_GPIO_Port, AMP_GAIN2_Pin, GPIO_PIN_RESET);
+			if( STATUS_OK != SetGPIOsPin(AMP_GAIN1_GPIO_Port, AMP_GAIN1_Pin))
+				return STATUS_ERR;
+			if( STATUS_OK != ResetGPIOsPin(AMP_GAIN2_GPIO_Port, AMP_GAIN2_Pin))
+				return STATUS_ERR;
 			break;
 		case GAIN_MODE_13dB:
-			HAL_GPIO_WritePin(AMP_GAIN1_GPIO_Port, AMP_GAIN1_Pin, GPIO_PIN_SET);
-			HAL_GPIO_WritePin(AMP_GAIN2_GPIO_Port, AMP_GAIN2_Pin, GPIO_PIN_SET);
+			if( STATUS_OK != SetGPIOsPin(AMP_GAIN1_GPIO_Port, AMP_GAIN1_Pin))
+				return STATUS_ERR;
+			if( STATUS_OK != SetGPIOsPin(AMP_GAIN2_GPIO_Port, AMP_GAIN2_Pin))
+				return STATUS_ERR;
 			break;
 		/* default mode is GAIN_MODE_29dB */
 		default:
-			HAL_GPIO_WritePin(AMP_GAIN1_GPIO_Port, AMP_GAIN1_Pin, GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(AMP_GAIN2_GPIO_Port, AMP_GAIN2_Pin, GPIO_PIN_RESET);
+			if( STATUS_OK != ResetGPIOsPin(AMP_GAIN1_GPIO_Port, AMP_GAIN1_Pin))
+				return STATUS_ERR;
+			if( STATUS_OK != ResetGPIOsPin(AMP_GAIN2_GPIO_Port, AMP_GAIN2_Pin))
+				return STATUS_ERR;
 	}
+	return STATUS_OK;
 }
-void AmpShutdown(Shutdown_Modes mode)
+Status_TypeDef AmpShutdown(Shutdown_Modes mode)
 {
 	switch(mode)
 	{
 		case SHUTDOWN_ENABLE:
-			HAL_GPIO_WritePin(AMP_SHUTDOWN_GPIO_Port, AMP_SHUTDOWN_Pin, GPIO_PIN_RESET);
+			if( STATUS_OK != ResetGPIOsPin(AMP_SHUTDOWN_GPIO_Port, AMP_SHUTDOWN_Pin))
+				return STATUS_ERR;
 			break;
 		case SHUTDOWN_DISABLE:
-			HAL_GPIO_WritePin(AMP_SHUTDOWN_GPIO_Port, AMP_SHUTDOWN_Pin, GPIO_PIN_SET);
+			if( STATUS_OK != SetGPIOsPin(AMP_SHUTDOWN_GPIO_Port, AMP_SHUTDOWN_Pin))
+				return STATUS_ERR;
 			break;
 		/* default mode is SHUTDOWN_DISABLE */
 		default:
-			HAL_GPIO_WritePin(AMP_SHUTDOWN_GPIO_Port, AMP_SHUTDOWN_Pin, GPIO_PIN_SET);
+			if( STATUS_OK != SetGPIOsPin(AMP_SHUTDOWN_GPIO_Port, AMP_SHUTDOWN_Pin))
+				return STATUS_ERR;
 	}
+	return STATUS_OK;
 }
 
-void AmpMute(Mute_Modes mode)
+Status_TypeDef AmpMute(Mute_Modes mode)
 {
 	switch(mode)
 	{
 		case MUTE_ENABLE:
-			HAL_GPIO_WritePin(AMP_MUTE_GPIO_Port, AMP_MUTE_Pin, GPIO_PIN_RESET);
+			if( STATUS_OK != ResetGPIOsPin(AMP_MUTE_GPIO_Port, AMP_MUTE_Pin))
+				return STATUS_ERR;
 			break;
 		case MUTE_DISABLE:
-			HAL_GPIO_WritePin(AMP_MUTE_GPIO_Port, AMP_MUTE_Pin, GPIO_PIN_SET);
+			if( STATUS_OK != SetGPIOsPin(AMP_MUTE_GPIO_Port, AMP_MUTE_Pin))
+				return STATUS_ERR;
 			break;
 		/* default mode is MUTE_DISABLE */
 		default:
-			HAL_GPIO_WritePin(AMP_MUTE_GPIO_Port, AMP_MUTE_Pin, GPIO_PIN_SET);
+			if( STATUS_OK != SetGPIOsPin(AMP_MUTE_GPIO_Port, AMP_MUTE_Pin))
+				return STATUS_ERR;
 	}
+	return STATUS_OK;
 }
