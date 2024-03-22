@@ -19,10 +19,12 @@
 #include <stdbool.h>
 
 extern I2C_HandleTypeDef hi2c2;
-typedef I2C_HandleTypeDef 			I2C_HANDLE;
-typedef I2S_HandleTypeDef 			I2S_HANDLE;
-#define TIM_OUT_1MS         50
+typedef I2C_HandleTypeDef 					I2C_HANDLE;
+typedef I2S_HandleTypeDef 					I2S_HANDLE;
+#define TIM_OUT_1MS         				50
+#define TIM_OUT_10000MS         			10000
 #define MAX9867_I2C_HANDLE            		&hi2c2
+#define MAX9867_I2S_HANDLE            		&hi2s1
 #define MAX9867_SLAVE_ADDRESS_W            	0x30
 #define MAX9867_SLAVE_ADDRESS_R				0x31
 
@@ -812,8 +814,9 @@ typedef struct {
 
 Status_TypeDef WriteI2C(I2C_HANDLE *xPort, uint16_t sAddress, uint8_t *pData, uint16_t Size);
 Status_TypeDef ReadI2C(I2C_HANDLE *xPort, uint16_t sAddress, uint8_t *rBuffer, uint16_t Size);
+Status_TypeDef WriteI2S(I2S_HANDLE *xPort, uint16_t *pData, uint16_t Size);
+Status_TypeDef ReadI2S(I2S_HANDLE *xPort, uint16_t *rBuffer, uint16_t Size);
 Status_TypeDef MAX9867_Init(void);
-
 Status_TypeDef MAX9867_InterruptEnable(bool clipDetect,bool slewDetect,bool pllUnlock,bool headsetChange);
 Status_TypeDef MAX9867_Shoutdown(Shoutdown shtdown);
 Status_TypeDef MAX9867_HeadphoneAmpMode(Headphone_Amp_Mode ampMode);
@@ -844,4 +847,6 @@ Status_TypeDef MAX9867_DigitalAudioInterfaceInit(MAX9867_Master_Slave_Mode mode,
 	MAX9867_Fix_Line_Input_Volume fixLineVol);
 Status_TypeDef MAX9867_ClockControlInit(MCLK_Prescaler mclkPresclr, Exact_Integer_Modes exactIntMode,
 		PLL_Mode_En_Dis pllMode, uint32_t NI, bool NI0);
+Status_TypeDef DigitalAudioInit(L_R_Playback_Volume_Channel channel, DAC_Level_Ctrl progAmp,
+		L_R_Playback_Volume rPlaybackVol, L_R_Playback_Volume lPlaybackVol);
 #endif /* INC_MAX9867_CODEC_H_ */

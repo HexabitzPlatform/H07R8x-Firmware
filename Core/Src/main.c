@@ -119,7 +119,12 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
+	  WriteI2S(MAX9867_I2S_HANDLE, (uint16_t *)kick_data, 13000-1);
+	  _DELAY_MS(5000);
+	  WriteI2S(MAX9867_I2S_HANDLE, (uint16_t *)inhale_data, 13000-1);
+	  _DELAY_MS(5000);
+	  WriteI2S(MAX9867_I2S_HANDLE, (uint16_t *)exhale_data, 13000-1);
+	  _DELAY_MS(5000);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */

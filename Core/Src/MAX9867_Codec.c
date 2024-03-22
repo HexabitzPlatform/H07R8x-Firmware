@@ -89,13 +89,13 @@ Status_TypeDef ReadI2C(I2C_HANDLE *xPort, uint16_t sAddress, uint8_t *rBuffer, u
 	return Status;
 }
 
-Status_TypeDef WriteI2S(I2C_HANDLE *xPort, uint8_t *pData, uint16_t Size)
+Status_TypeDef WriteI2S(I2S_HANDLE *xPort, uint16_t *pData, uint16_t Size)
 {
   Status_TypeDef Status=STATUS_ERR;
 
   if (NULL!=xPort && NULL!=pData)
     {
-      if (HAL_OK == HAL_I2S_Transmit(xPort, pData, Size, TIM_OUT_1MS))
+      if (HAL_OK == HAL_I2S_Transmit(xPort, pData, Size, TIM_OUT_10000MS))
     	  Status=STATUS_OK;
 
     }
@@ -105,13 +105,13 @@ Status_TypeDef WriteI2S(I2C_HANDLE *xPort, uint8_t *pData, uint16_t Size)
   return Status;
 }
 
-Status_TypeDef ReadI2S(I2C_HANDLE *xPort, uint8_t *rBuffer, uint16_t Size)
+Status_TypeDef ReadI2S(I2S_HANDLE *xPort, uint16_t *rBuffer, uint16_t Size)
 {
 	Status_TypeDef Status;
 
 	if (NULL!=xPort && NULL!=rBuffer)
 	{
-	    if (HAL_OK == HAL_I2S_Receive(xPort, rBuffer, Size, TIM_OUT_1MS))
+	    if (HAL_OK == HAL_I2S_Receive(xPort, rBuffer, Size, TIM_OUT_10000MS))
 	    	Status=STATUS_OK;
 	}
 	else
