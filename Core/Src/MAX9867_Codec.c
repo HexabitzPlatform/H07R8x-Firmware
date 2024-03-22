@@ -81,10 +81,41 @@ Status_TypeDef ReadI2C(I2C_HANDLE *xPort, uint16_t sAddress, uint8_t *rBuffer, u
 	if (NULL!=xPort && NULL!=rBuffer)
 	{
 	    if (HAL_OK == HAL_I2C_Master_Receive(xPort,  (uint16_t) sAddress, rBuffer, Size, TIM_OUT_1MS))
-		Status=STATUS_OK;
+	    	Status=STATUS_OK;
 	}
 	else
-		Status=STATUS_ERR;
+			Status=STATUS_ERR;
+
+	return Status;
+}
+
+Status_TypeDef WriteI2S(I2C_HANDLE *xPort, uint8_t *pData, uint16_t Size)
+{
+  Status_TypeDef Status=STATUS_ERR;
+
+  if (NULL!=xPort && NULL!=pData)
+    {
+      if (HAL_OK == HAL_I2S_Transmit(xPort, pData, Size, TIM_OUT_1MS))
+    	  Status=STATUS_OK;
+
+    }
+  else
+	  	  Status=STATUS_ERR;
+
+  return Status;
+}
+
+Status_TypeDef ReadI2S(I2C_HANDLE *xPort, uint8_t *rBuffer, uint16_t Size)
+{
+	Status_TypeDef Status;
+
+	if (NULL!=xPort && NULL!=rBuffer)
+	{
+	    if (HAL_OK == HAL_I2S_Receive(xPort, rBuffer, Size, TIM_OUT_1MS))
+	    	Status=STATUS_OK;
+	}
+	else
+			Status=STATUS_ERR;
 
 	return Status;
 }
@@ -736,7 +767,7 @@ Status_TypeDef MAX9867_AuxiliaryRegRead(uint16_t *aux)
 	if( STATUS_OK != ReadI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_R, &auxRegH.auxRegH, 1) )
 			return STATUS_ERR;
 
-	*aux = ((auxRegH.auxRegH << 8) + auxRegL.auxRegL);
+	*aux = ((auxRegH.auxRegH << 8) | auxRegL.auxRegL);
 	return STATUS_OK;
 }
 
@@ -750,7 +781,7 @@ Status_TypeDef MAX9867_JackSensEnableDisable(Jack_Sense_En_Dis jackSens)
 	return STATUS_OK;
 }
 
-Status_TypeDef LineInputApp(L_R_Line_Input lrLineInput,L_R_Line_Input_Gain gain, L_R_Playback_Volume_Channel channel, L_R_Playback_Volume rPlaybackVol,
+Status_TypeDef LineInputInit(L_R_Line_Input lrLineInput,L_R_Line_Input_Gain gain, L_R_Playback_Volume_Channel channel, L_R_Playback_Volume rPlaybackVol,
 		L_R_Playback_Volume lPlaybackVol, Headphone_Amp_Mode ampMode)
 {
 	/* Enable left or right or both of them line-input */
@@ -766,25 +797,26 @@ Status_TypeDef LineInputApp(L_R_Line_Input lrLineInput,L_R_Line_Input_Gain gain,
 	return STATUS_OK;
 }
 
-Status_TypeDef DigitalAudioApp(L_R_Playback_Volume_Channel channel, DAC_Level_Ctrl progAmp)
+Status_TypeDef DigitalAudioInit(L_R_Playback_Volume_Channel channel, DAC_Level_Ctrl progAmp,
+		L_R_Playback_Volume rPlaybackVol, L_R_Playback_Volume lPlaybackVol)
 {
-//	/* in audio application we must set only programmable amplifier, and set preamplifier to 0 because it
-//	 * espicial with microphone voice gain */
-//	if( STATUS_OK != MAX9867_DAC_Gain(DAC_GAIN_0dB, progAmp))
-//			return STATUS_ERR;
-//	/* Audio level control */
-//	if( STATUS_OK != MAX9867_AudioLevel(channel, rPlaybackVol, lPlaybackVol))
-//			return STATUS_ERR;
-//	/* Enable DC-blocking just in Audio mode */
-//	/* Note : we can enable DC-blocking by set AVFLT and DVFLT with any value */
-//	if( STATUS_OK != MAX9867_DigitalFilterInit(FIR_AUDIO_FILTER,DISABLED,TYPE1))
-//			return STATUS_ERR;
-//	if( STATUS_OK != MAX9867_DAC_EnableDisable(DAC_ENABLE))
-//			return STATUS_ERR;
+	/* in audio application we must set only programmable amplifier, and set preamplifier to 0 because it
+	 * espicial with microphone voice gain */
+	if( STATUS_OK != MAX9867_DAC_Gain(DAC_GAIN_0dB, progAmp))
+			return STATUS_ERR;
+	/* Audio level control */
+	if( STATUS_OK != MAX9867_AudioLevel(channel, rPlaybackVol, lPlaybackVol))
+			return STATUS_ERR;
+	/* Enable DC-blocking just in Audio mode */
+	/* Note : we can enable DC-blocking by set AVFLT and DVFLT with any value */
+	if( STATUS_OK != MAX9867_DigitalFilterInit(FIR_AUDIO_FILTER,DISABLED,TYPE1))
+			return STATUS_ERR;
+	if( STATUS_OK != MAX9867_DAC_EnableDisable(DAC_ENABLE))
+			return STATUS_ERR;
 	return STATUS_OK;
 }
 
-Status_TypeDef AnalogMicHeadphoneApp(L_R_Mic mic, L_R_Mic_Preamp_Gain preAmpGain, L_R_Mic_Programble_Gain_Amp progGain,
+Status_TypeDef AnalogMicHeadphoneInit(L_R_Mic mic, L_R_Mic_Preamp_Gain preAmpGain, L_R_Mic_Programble_Gain_Amp progGain,
 		L_R_ADC_Audio_Input lrAdcInputm, L_R_ADC_Audio_Input_Mixer mixer,
 		ADC_DAC_Digital_Audio_Filter_Sٍpecifications ADC_Specifications,
 		ADC_DAC_Digital_Audio_Filter_Sٍpecifications DAC_Specifications,
@@ -809,12 +841,6 @@ Status_TypeDef AnalogMicHeadphoneApp(L_R_Mic mic, L_R_Mic_Preamp_Gain preAmpGain
 			return STATUS_ERR;
 	if( STATUS_OK != MAX9867_ADC_EnableDisable(ADC_ENABLE))
 			return STATUS_ERR;
-	return STATUS_OK;
-}
-
-Status_TypeDef DigitalMicApp()
-{
-
 	return STATUS_OK;
 }
 

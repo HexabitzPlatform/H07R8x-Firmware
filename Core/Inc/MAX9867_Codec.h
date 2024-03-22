@@ -20,6 +20,7 @@
 
 extern I2C_HandleTypeDef hi2c2;
 typedef I2C_HandleTypeDef 			I2C_HANDLE;
+typedef I2S_HandleTypeDef 			I2S_HANDLE;
 #define TIM_OUT_1MS         50
 #define MAX9867_I2C_HANDLE            		&hi2c2
 #define MAX9867_SLAVE_ADDRESS_W            	0x30
@@ -189,8 +190,8 @@ typedef enum
 
 typedef enum
 {
-	lEFT_CHNL_DATA_IN_OUT,
-	RIGHT_CHNL_DATA_IN_OUT
+	LEFT_CHN_DATA_IN_OUT,
+	RIGHT_CHN_DATA_IN_OUT
 } MAX9867_L_R_Clk_Invert;
 
 typedef enum
@@ -530,7 +531,7 @@ typedef enum
 } Sidetone_Gain_Capacitorless_Single_Ended_Headphone;
 
 
-/* 0x02 */
+/* 0x00 */
 typedef struct {
         // Bit fields within the register
 	uint8_t auxRegH;
@@ -538,6 +539,34 @@ typedef struct {
     uint8_t AUX: 8;
     // Add more bit fields as needed
 } Aux_H;
+/* 0x01 */
+typedef struct {
+        // Bit fields within the register
+	uint8_t auxRegH;
+	uint8_t reserved1: 1;
+    uint8_t JDET     : 1;
+    uint8_t reserved2: 1;
+    uint8_t reserved3: 1;
+    uint8_t reserved4: 1;
+    uint8_t ULK      : 1;
+    uint8_t SLD      : 1;
+    uint8_t CLD      : 1;
+    // Add more bit fields as needed
+} Status_Reg;
+/* 0x02 */
+typedef struct {
+        // Bit fields within the register
+	uint8_t auxRegH;
+	uint8_t reserved1: 1;
+    uint8_t reserved2: 1;
+    uint8_t reserved3: 1;
+    uint8_t reserved4: 1;
+    uint8_t reserved5: 1;
+    uint8_t JKMIC    : 1;
+    uint8_t JKSNS    : 1;
+    uint8_t LSNS     : 1;
+    // Add more bit fields as needed
+} Jack_Sense_Reg;
 
 /* 0x03 */
 typedef struct {
