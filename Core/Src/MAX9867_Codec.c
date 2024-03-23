@@ -39,7 +39,6 @@ Mode_Configuration_Reg configModeReg;
 Power_Management_Reg powerMangReg;
 
 static uint8_t tDataCodec[2];
-static uint8_t rDataCodec[2];
 
 /* I2C functions */
 /*
@@ -95,7 +94,7 @@ Status_TypeDef WriteI2S(I2S_HANDLE *xPort, uint16_t *pData, uint16_t Size)
 
   if (NULL!=xPort && NULL!=pData)
     {
-      if (HAL_OK == HAL_I2S_Transmit(xPort, pData, Size, TIM_OUT_10000MS))
+      if (HAL_OK == HAL_I2S_Transmit(xPort, pData, Size, TIM_OUT_1MS))
     	  Status=STATUS_OK;
 
     }
@@ -111,29 +110,13 @@ Status_TypeDef ReadI2S(I2S_HANDLE *xPort, uint16_t *rBuffer, uint16_t Size)
 
 	if (NULL!=xPort && NULL!=rBuffer)
 	{
-	    if (HAL_OK == HAL_I2S_Receive(xPort, rBuffer, Size, TIM_OUT_10000MS))
+	    if (HAL_OK == HAL_I2S_Receive(xPort, rBuffer, Size, TIM_OUT_1MS))
 	    	Status=STATUS_OK;
 	}
 	else
 			Status=STATUS_ERR;
 
 	return Status;
-}
-
-Status_TypeDef MAX9867_Init(void)
-{
-	/* Enter codec in shutdown mode */
-	tDataCodec[0] = MAX9867_REG_STATUS;
-	tDataCodec[1] = 0x00;
-	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-			return STATUS_ERR;
-	/* initialize digital audio interface */
-	tDataCodec[0] = MAX9867_REG_STATUS;
-	tDataCodec[1] = 0x10;
-	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-			return STATUS_ERR;
-
-	return STATUS_OK;
 }
 
 Status_TypeDef MAX9867_DigitalAudioInterfaceInit(MAX9867_Master_Slave_Mode mode,
@@ -771,6 +754,29 @@ Status_TypeDef MAX9867_AuxiliaryRegRead(uint16_t *aux)
 	return STATUS_OK;
 }
 
+Status_TypeDef MAX9867_Init(void)
+{
+	if( STATUS_OK != MAX9867_Shoutdown(SHOUTDOWN_ENABLE))
+		return STATUS_ERR;
+	if( STATUS_OK != MAX9867_ClockControlInit(MCLK_BETWEEN_10_20_MHZ, NORMAL_OR_PLL_MODE,
+	  		PLL_DISABLE, 0, 0))
+		return STATUS_ERR;
+	if( STATUS_OK != MAX9867_DigitalAudioInterfaceInit(MAX9867_SLAVE_MODE,
+			  LEFT_CHN_DATA_IN_OUT, SDIN_LATCHED_RISING_EDGE_BCLK, SDOUT_TRANS_AFTER_SDIN_LATCHED,
+			  SDIN_SDOUT_LATCHED_SECOND_BCLK_EDGE, SDOUT_HIGH_IMPEDANCE_AFTER_DATA_TRANS,
+			  LRCLK_INDICATE_L_R_AUDIO, OFF, SDIN_PROCESS_SEPARATELY,
+			  TRACKS_VOLL_VOLR_BITS))
+		return STATUS_ERR;
+	if( STATUS_OK != DigitalAudioInit(LEFT_RIGHT_VOLUME_CHA, DAC_LVL_GAIN_MINUS_15dB,
+			  PLAYBACK_VOLUME_GAIN_MINUS_38dB, PLAYBACK_VOLUME_GAIN_MINUS_38dB))
+		return STATUS_ERR;
+	if( STATUS_OK != MAX9867_HeadphoneAmpMode(STEREO_DIFF_CLICKLESS))
+		return STATUS_ERR;
+	if( STATUS_OK != MAX9867_Shoutdown(SHOUTDOWN_DISABLE))
+		return STATUS_ERR;
+
+	 return STATUS_OK;
+}
 Status_TypeDef MAX9867_JackSensEnableDisable(Jack_Sense_En_Dis jackSens)
 {
 	configModeReg.JDETEN = jackSens;

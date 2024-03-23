@@ -95,23 +95,7 @@ int main(void)
   MX_I2C2_Init();
   MX_I2S1_Init();
   /* USER CODE BEGIN 2 */
-  MAX9867_Shoutdown(SHOUTDOWN_ENABLE);
-
-  MAX9867_ClockControlInit(MCLK_BETWEEN_10_20_MHZ, NORMAL_OR_PLL_MODE,
-  		PLL_DISABLE, 0, 0);
-
-  MAX9867_DigitalAudioInterfaceInit(MAX9867_SLAVE_MODE,
-		  LEFT_CHN_DATA_IN_OUT, SDIN_LATCHED_RISING_EDGE_BCLK, SDOUT_TRANS_AFTER_SDIN_LATCHED,
-		  SDIN_SDOUT_LATCHED_SECOND_BCLK_EDGE, SDOUT_HIGH_IMPEDANCE_AFTER_DATA_TRANS,
-		  LRCLK_INDICATE_L_R_AUDIO, OFF, SDIN_PROCESS_SEPARATELY,
-		  TRACKS_VOLL_VOLR_BITS);
-
-  DigitalAudioInit(LEFT_RIGHT_VOLUME_CHA, DAC_LVL_GAIN_MINUS_15dB,
-		  PLAYBACK_VOLUME_GAIN_MINUS_38dB, PLAYBACK_VOLUME_GAIN_MINUS_38dB);
-
-  MAX9867_HeadphoneAmpMode(STEREO_DIFF_CLICKLESS);
-
-  MAX9867_Shoutdown(SHOUTDOWN_DISABLE);
+  MAX9867_Init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -119,11 +103,17 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-	  WriteI2S(MAX9867_I2S_HANDLE, (uint16_t *)kick_data, 13000-1);
+	    for(int i=0; i<13000; i++) {
+	    	WriteI2S(MAX9867_I2S_HANDLE, (uint16_t *)&kick_data[i], 1);
+	    }
 	  _DELAY_MS(5000);
-	  WriteI2S(MAX9867_I2S_HANDLE, (uint16_t *)inhale_data, 13000-1);
+	    for(int i=0; i<13000; i++) {
+	    	WriteI2S(MAX9867_I2S_HANDLE, (uint16_t *)&inhale_data[i], 1);
+	    }
 	  _DELAY_MS(5000);
-	  WriteI2S(MAX9867_I2S_HANDLE, (uint16_t *)exhale_data, 13000-1);
+	    for(int i=0; i<13000; i++) {
+	    	WriteI2S(MAX9867_I2S_HANDLE, (uint16_t *)&exhale_data[i], 1);
+	    }
 	  _DELAY_MS(5000);
     /* USER CODE BEGIN 3 */
   }
