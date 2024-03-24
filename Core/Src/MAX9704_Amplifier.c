@@ -35,7 +35,7 @@ Status_TypeDef SetGPIOsPin(GPIO_HANDLE *GPIOx, uint16_t Pin)
 /*
  * set a GPIO pin form a port low
  */
-Status_TypeDef MAX9704_ResetGPIOsPin(GPIO_HANDLE *GPIOx, uint16_t Pin)
+Status_TypeDef ResetGPIOsPin(GPIO_HANDLE *GPIOx, uint16_t Pin)
 {
 	Status_TypeDef Status;
 

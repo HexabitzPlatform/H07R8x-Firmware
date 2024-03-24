@@ -77,3 +77,5 @@ Status_TypeDef MAX9704_AmpShutdown(Shutdown_Modes mode);
 Status_TypeDef MAX9704_AmpMute(Mute_Modes mode);
 
 #endif /* INC_MAX9704_AMPLIFIER_H_ */
+
+/************************ (C) COPYRIGHT Hexabitz *****END OF FILE****/

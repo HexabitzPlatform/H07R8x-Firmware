@@ -863,3 +863,5 @@ Status_TypeDef AnalogMicHeadphoneInit(L_R_Mic mic, L_R_Mic_Preamp_Gain preAmpGai
 		L_R_Playback_Volume_Channel channel, L_R_Playback_Volume rPlaybackVol, L_R_Playback_Volume lPlaybackVol);
 Status_TypeDef DcMeasurment(uint32_t *dcMeasurment);
 #endif /* INC_MAX9867_CODEC_H_ */
+
+/************************ (C) COPYRIGHT Hexabitz *****END OF FILE****/
