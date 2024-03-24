@@ -807,7 +807,7 @@ Status_TypeDef DigitalAudioInit(L_R_Playback_Volume_Channel channel, DAC_Level_C
 		L_R_Playback_Volume rPlaybackVol, L_R_Playback_Volume lPlaybackVol)
 {
 	/* in audio application we must set only programmable amplifier, and set preamplifier to 0 because it
-	 * espicial with microphone voice gain */
+	 * especial with microphone voice gain */
 	if( STATUS_OK != MAX9867_DAC_Gain(DAC_GAIN_0dB, progAmp))
 			return STATUS_ERR;
 	/* Audio level control */
@@ -817,6 +817,7 @@ Status_TypeDef DigitalAudioInit(L_R_Playback_Volume_Channel channel, DAC_Level_C
 	/* Note : we can enable DC-blocking by set AVFLT and DVFLT with any value */
 	if( STATUS_OK != MAX9867_DigitalFilterInit(FIR_AUDIO_FILTER,DISABLED,TYPE1))
 			return STATUS_ERR;
+	/* Enable DAC */
 	if( STATUS_OK != MAX9867_DAC_EnableDisable(DAC_ENABLE))
 			return STATUS_ERR;
 	return STATUS_OK;
@@ -831,20 +832,30 @@ Status_TypeDef AnalogMicHeadphoneInit(L_R_Mic mic, L_R_Mic_Preamp_Gain preAmpGai
 		Sidetone_Gain_Capacitorless_Single_Ended_Headphone sidGainCapSinEnd, Amp_Type ampType,
 		L_R_Playback_Volume_Channel channel, L_R_Playback_Volume rPlaybackVol, L_R_Playback_Volume lPlaybackVol)
 {
+	/* set microphone amplifier gain */
 	if( STATUS_OK != MAX9867_MicAmpGain(mic, preAmpGain, progGain))
 			return STATUS_ERR;
+	/* choose input ADC */
 	if( STATUS_OK != MAX9867_ADC_AduioInputMixer(lrAdcInputm, mixer))
 			return STATUS_ERR;
+	/* set digital filter */
 	if( STATUS_OK != MAX9867_DigitalFilterInit(IIR_VOICE_FILTER,ADC_Specifications,DAC_Specifications))
 			return STATUS_ERR;
+	/* set ADC gain */
 	if( STATUS_OK != MAX9867_ADC_Gain(adc, adcGain))
 			return STATUS_ERR;
+	/* choose mic source from left or right ADC or both of them
+	 * then set microphone gain.
+	 */
 	if( STATUS_OK != MAX9867_MicSidetoneSourceAndGain(sourceMixer, sidGainDiff, sidGainCapSinEnd, ampType))
 			return STATUS_ERR;
+	/* set audio level */
 	if( STATUS_OK != MAX9867_AudioLevel(channel, rPlaybackVol, lPlaybackVol))
 			return STATUS_ERR;
+	/* Enable DAC */
 	if( STATUS_OK != MAX9867_DAC_EnableDisable(DAC_ENABLE))
 			return STATUS_ERR;
+	/* Enable ADC */
 	if( STATUS_OK != MAX9867_ADC_EnableDisable(ADC_ENABLE))
 			return STATUS_ERR;
 	return STATUS_OK;
@@ -853,6 +864,11 @@ Status_TypeDef AnalogMicHeadphoneInit(L_R_Mic mic, L_R_Mic_Preamp_Gain preAmpGai
 Status_TypeDef DcMeasurment(uint32_t *dcMeasurment)
 {
 	uint16_t aux,k;
+	MAX9867_DigitalAudioInterfaceInit(MAX9867_SLAVE_MODE,
+			LEFT_CHN_DATA_IN_OUT, SDIN_LATCHED_RISING_EDGE_BCLK, SDOUT_TRANS_AFTER_SDIN_LATCHED,
+			SDIN_SDOUT_LATCHED_FIRST_BCLK_EDGE, SDOUT_HIGH_IMPEDANCE_AFTER_DATA_TRANS,
+			LRCLK_INDICATE_L_R_AUDIO, OFF, SDIN_PROCESS_SEPARATELY,
+			TRACKS_VOLL_VOLR_BITS);
 	MAX9867_JackSensEnableDisable(JACKSNS_ENABLE);
 	if( STATUS_OK != MAX9867_ADC_EnableDisable(ADC_ENABLE))
 			return STATUS_ERR;

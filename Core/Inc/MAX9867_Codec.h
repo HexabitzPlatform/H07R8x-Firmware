@@ -848,4 +848,18 @@ Status_TypeDef MAX9867_ClockControlInit(MCLK_Prescaler mclkPresclr, Exact_Intege
 		PLL_Mode_En_Dis pllMode, uint32_t NI, bool NI0);
 Status_TypeDef DigitalAudioInit(L_R_Playback_Volume_Channel channel, DAC_Level_Ctrl progAmp,
 		L_R_Playback_Volume rPlaybackVol, L_R_Playback_Volume lPlaybackVol);
+Status_TypeDef MAX9867_JackSensEnableDisable(Jack_Sense_En_Dis jackSens);
+Status_TypeDef LineInputInit(L_R_Line_Input lrLineInput,L_R_Line_Input_Gain gain, L_R_Playback_Volume_Channel channel, L_R_Playback_Volume rPlaybackVol,
+		L_R_Playback_Volume lPlaybackVol, Headphone_Amp_Mode ampMode);
+Status_TypeDef DigitalAudioInit(L_R_Playback_Volume_Channel channel, DAC_Level_Ctrl progAmp,
+		L_R_Playback_Volume rPlaybackVol, L_R_Playback_Volume lPlaybackVol);
+Status_TypeDef AnalogMicHeadphoneInit(L_R_Mic mic, L_R_Mic_Preamp_Gain preAmpGain, L_R_Mic_Programble_Gain_Amp progGain,
+		L_R_ADC_Audio_Input lrAdcInputm, L_R_ADC_Audio_Input_Mixer mixer,
+		ADC_DAC_Digital_Audio_Filter_Sٍpecifications ADC_Specifications,
+		ADC_DAC_Digital_Audio_Filter_Sٍpecifications DAC_Specifications,
+		ADC_L_R_Gain adc, L_R_ADC_Level_Ctrl adcGain,
+		Digital_Sidetone_Source_Mixer sourceMixer, Sidetone_Gain_Diff_Headphone sidGainDiff,
+		Sidetone_Gain_Capacitorless_Single_Ended_Headphone sidGainCapSinEnd, Amp_Type ampType,
+		L_R_Playback_Volume_Channel channel, L_R_Playback_Volume rPlaybackVol, L_R_Playback_Volume lPlaybackVol);
+Status_TypeDef DcMeasurment(uint32_t *dcMeasurment);
 #endif /* INC_MAX9867_CODEC_H_ */
