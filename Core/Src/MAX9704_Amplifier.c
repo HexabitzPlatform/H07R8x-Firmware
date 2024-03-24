@@ -13,42 +13,6 @@
  */
 #include "MAX9704_Amplifier.h"
 
-/* GPIOs functions */
-/*
- * @brief :set a GPIO pin form a port high
- */
-Status_TypeDef SetGPIOsPin(GPIO_HANDLE *GPIOx, uint16_t Pin)
-{
-	Status_TypeDef Status;
-
-	if (NULL!=GPIOx)
-	{
-		HAL_GPIO_WritePin(GPIOx, Pin, GPIO_PIN_SET);
-		Status=STATUS_OK;
-	}
-	else
-		Status=STATUS_ERR;
-
-	return Status;
-}
-
-/*
- * set a GPIO pin form a port low
- */
-Status_TypeDef ResetGPIOsPin(GPIO_HANDLE *GPIOx, uint16_t Pin)
-{
-	Status_TypeDef Status;
-
-	if (NULL!=GPIOx)
-	{
-		HAL_GPIO_WritePin(GPIOx, Pin, GPIO_PIN_RESET);
-		Status=STATUS_OK;
-	}
-	else
-		Status=STATUS_ERR;
-
-	return Status;
-}
 
 Status_TypeDef MAX9704_AmpSwitchingMode(Switching_Modes mode)
 {

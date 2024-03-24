@@ -16,9 +16,8 @@
 #define INC_MAX9704_AMPLIFIER_H_
 
 #include "main.h"
+#include "Porting.h"
 
-/* GPIOs type define */
-typedef GPIO_TypeDef GPIO_HANDLE;
 
 typedef enum{
 	SWITCHING_MODE_670KHZ = 0,

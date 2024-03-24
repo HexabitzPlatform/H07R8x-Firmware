@@ -16,14 +16,10 @@
 #define INC_MAX9867_CODEC_H_
 
 #include "main.h"
+#include "Porting.h"
 #include <stdbool.h>
 
-extern I2C_HandleTypeDef hi2c2;
-typedef I2C_HandleTypeDef 					I2C_HANDLE;
-typedef I2S_HandleTypeDef 					I2S_HANDLE;
-#define TIM_OUT_1MS         				50
-#define MAX9867_I2C_HANDLE            		&hi2c2
-#define MAX9867_I2S_HANDLE            		&hi2s1
+
 #define MAX9867_SLAVE_ADDRESS_W            	0x30
 #define MAX9867_SLAVE_ADDRESS_R				0x31
 
