@@ -107,10 +107,17 @@ typedef enum
 
 typedef enum
 {
+	MIC_AMPLIFY,
+	MIC_RECORDING,
+	MIC_AMPLIFY_RECORDING
+} Mic_Mode;
+
+typedef enum
+{
 	ADC_LEFT,
 	ADC_RIGHT,
 	ADC_LEFT_RIGHT
-} ADC_L_R_Gain;
+} ADC_L_R;
 
 typedef enum
 {
@@ -160,6 +167,13 @@ typedef enum
 	RIGHT_LINE_INPUT,
 	LEFT_RIGHT_LINE_INPUT
 } L_R_Line_Input;
+
+typedef enum
+{
+	LINE_INPUT_AMPLIFY,
+	LINE_INPUT_RECORDING,
+	LINE_INPUT_AMPLIFY_RECORDING
+} Line_Input_Mode;
 
 typedef enum
 {
@@ -269,6 +283,12 @@ typedef enum
 
 typedef enum
 {
+	PLL_RAPID_LOCK_ENABLE,
+	PLL_RAPID_LOCK_DISABLE
+} PLL_Rapid_Lock_En_Dis;
+
+typedef enum
+{
 	NORMAL_OR_PLL_MODE,
 	PCLK_LRCK_1500_RATIO_MODE = 0x08,
 	PCLK_LRCK_750_RATIO_MODE,
@@ -302,7 +322,7 @@ typedef enum
 {
 	JACKSNS_PIN_FOR_JACK_DETECTION,
 	JACKSNS_PIN_FOR_DC_MEASUREMENT
-} Auxiliary_Input_En_Dis;
+} Auxiliary_Input_Type;
 
 typedef enum
 {
@@ -320,7 +340,7 @@ typedef enum
 	MONO_L_SINGLE_ENDED_CLICKLESS,
 	STEREO_SINGLE_ENDED_FAST_TURN_ON,
 	MONO_L_SINGLE_ENDED_FAST_TURN_ON
-} Headphone_Amp_Mode;
+} Headphone_Amp_Type;
 
 typedef enum
 {
@@ -336,6 +356,12 @@ typedef enum
 	RIGHT_VOLUME_CHA,
 	LEFT_RIGHT_VOLUME_CHA
 } L_R_Playback_Volume_Channel;
+
+typedef enum
+{
+	AUDIO,
+	VOICE
+} Digital_Audio_Mode;
 
 typedef enum
 {
@@ -811,52 +837,348 @@ Status_TypeDef WriteI2C(I2C_HANDLE *xPort, uint16_t sAddress, uint8_t *pData, ui
 Status_TypeDef ReadI2C(I2C_HANDLE *xPort, uint16_t sAddress, uint8_t *rBuffer, uint16_t Size);
 Status_TypeDef WriteI2S(I2S_HANDLE *xPort, uint16_t *pData, uint16_t Size);
 Status_TypeDef ReadI2S(I2S_HANDLE *xPort, uint16_t *rBuffer, uint16_t Size);
-Status_TypeDef MAX9867_Init(void);
+
+/* Clock Control Init */
+/*
+ * @brief  :ClockControlInit.
+ * @param1 :Master clock Prescaler on MCLK pin.
+ * @param2 :Exact integer modes.
+ * @Note   :In both master and slave mode, common MCLK frequencies (12MHz, 13MHz, 16MHz,
+ *          and 19.2MHz) can be programmed to operate in exact integer mode
+ *          for both 8kHz and 16kHz sample rates. In these modes, the MCLK and LRCLK rates
+ *          are selected by using the FREQ bits instead of the NI and PLL control bits.
+ * @param3 :PLL mode enable.
+ * @Note   :When operating in slave mode, a PLL can be
+ *			enabled to lock onto externally generated LRCLK
+ *			signals that are not integer related to PCLK.
+ * @param4 :ratio PCLK/LRCLK to set LRCLK.
+ * @Note   :when enable PLL mode program NI to the nearest desired ratio.
+ * @param5 :PLL rapid lock mode enable.
+ * @Note   :when enable PLL mode set the NI[0] = 1
+ *          to enable the PLL’s rapid lock mode. If NI[0] = 0, then NI is ignored and
+ *          PLL lock time is slower.
+ * @retval :Status
+ */
+Status_TypeDef MAX9867_ClockControlInit(MCLK_Prescaler mclkPresclr, Exact_Integer_Modes exactIntMode,
+		PLL_Mode_En_Dis pllMode, uint32_t NI, PLL_Rapid_Lock_En_Dis pllRapidLock);
+
+/* Interrupt Enable */
+/*
+ * @brief  :Interrupt Enable.
+ * @param1 :Clip Detect Flag (Indicates that a signal has reached or exceeded full scale in the ADC or DAC).
+ * @param2 :Slew Level Detect Flag.
+ * @param3 :Digital PLL Unlock Flag.
+ * @param4 :Headset Configuration Change Flag.
+ * @retval :Status
+ */
 Status_TypeDef MAX9867_InterruptEnable(bool clipDetect,bool slewDetect,bool pllUnlock,bool headsetChange);
-Status_TypeDef MAX9867_Shoutdown(Shoutdown shtdown);
-Status_TypeDef MAX9867_HeadphoneAmpMode(Headphone_Amp_Mode ampMode);
+
+/* Shoutdown Enable-Disable */
+/*
+ * @brief  :Shoutdown Enable-Disable.
+ * @param1 :Shoutdown Enable-Disable.
+ * @retval :Status
+ */
+Status_TypeDef MAX9867_Shoutdown(Shoutdown shutdown);
+
+/* Headphone Amplifier type */
+/*
+ * @brief  :Headphone has three types(differential,capacitorless,single-indedd)
+ * 		    and these types either to be mono or stereo.
+ * @param1 :Headphone Amplifier type.
+ * @retval :Status
+ */
+Status_TypeDef MAX9867_HeadphoneAmpType(Headphone_Amp_Type ampType);
+
+/* DAC Enable-Disable */
+/*
+ * @brief  :DAC Enable-Disable to convert digital audio data to analog signal.
+ * @param1 :DAC Enable-Disable.
+ * @retval :Status
+ */
 Status_TypeDef MAX9867_DAC_EnableDisable(DAC_En_Dis dac);
+
+/* Set DAC Gain */
+/*
+ * @brief  :Set DAC Gain.
+ * @Note   : MAX9867 has two amplifiers(DACG,DACA) to set the DAC gain
+ * 			 we set DACG amplifier just in status voice stream,in status audio stream we set it (DAC_GAIN_0dB)
+ * 			 DACA amplifier we set it in status voice or audio stream.
+ * @param1 :DACG amplifier gain(just voice stream).
+ * @param2 :DACA amplifier gain(voice and audio stream).
+ * @retval :Status
+ */
 Status_TypeDef MAX9867_DAC_Gain(DAC_Gain firstAmp, DAC_Level_Ctrl progAmp);
+
+/* DAC Mute */
+/*
+ * @brief  :DAC Mute.
+ * @param1 :DAC Mute Enable-Disable.
+ * @retval :Status
+ */
 Status_TypeDef MAX9867_DAC_Mute(DAC_Mute_En_Dis dacMute);
+
+/* ADC Enable-Disable */
+/*
+ * @brief  :ADC Enable-Disable to convert analog audio or voice signals to digital data stream.
+ * @param1 :ADC Enable-Disable
+ * @retval :Status
+ */
 Status_TypeDef MAX9867_ADC_EnableDisable(ADC_En_Dis adc);
-Status_TypeDef MAX9867_ADC_Gain(ADC_L_R_Gain adc, L_R_ADC_Level_Ctrl adcGain);
+
+/* Set ADC Gain */
+/*
+ * @brief  :Set ADC Gain.
+ * @param1 :choose left/right ADC channels or both of them.
+ * @param2 :Set ADC Gain.
+ * @retval :Status
+ */
+Status_TypeDef MAX9867_ADC_Gain(ADC_L_R adc, L_R_ADC_Level_Ctrl adcGain);
+
+/* LineInput  Enable-Disable */
+/*
+ * @brief  :LineInput  Enable-Disable(input for analog audio stream).
+ * @Note   :MAX9867 has two line inputs(L/R).
+ * @param1 :LineInput  Enable-Disable.
+ * @param2 :choose line input(L/R/both of them).
+ * @retval :Status
+ */
 Status_TypeDef MAX9867_LineInputEnableDisable(L_R_Line_Input_En_Dis lineInput, L_R_Line_Input lrLineInput);
+
+/* Line-Input Gain */
+/*
+ * @brief  :Line-Input Gain.
+ * @param1 :choose line input(L/R/both of them).
+*  @param2  :Line-Input Gain.
+ * @retval :Status
+ */
 Status_TypeDef MAX9867_LineInputGain(L_R_Line_Input lineInput, L_R_Line_Input_Gain lineInputGain);
-Status_TypeDef MAX9867_LineInputMute(Line_Input_Mute_En_Dis mute, L_R_Line_Input lineInput);
+
+/* Line-Input Mute Enable-Disable */
+/*
+ * @brief  :Line-Input Mute Enable-Disable.
+ * @param1 :mute line-input(L/R/both of them).
+ * @param2 :mute line-input Enable-Disable.
+ * @retval :Status
+ */
+Status_TypeDef MAX9867_LineInputMute(L_R_Line_Input lineInput, Line_Input_Mute_En_Dis mute);
+
+/* Set Audio Volume Level */
+/*
+ * @brief  :Set Audio Volume Level.
+ * @param1 :choose (L/R/both of them) channels
+ * @param2 :left channel audio volume level.
+ * @param3 :right channel audio volume level.
+ * @retval :Status
+ */
 Status_TypeDef MAX9867_AudioLevel(L_R_Playback_Volume_Channel channel, L_R_Playback_Volume rPlaybackVol, L_R_Playback_Volume lPlaybackVol);
+
+/* Audio Mute Enable-Disable */
+/*
+ * @brief  :Audio Mute Enable-Disable.
+ * @param1 :Audio Mute Enable-Disable.
+ * @retval :Status
+ */
 Status_TypeDef MAX9867_AudioMute(Audio_Mute audioMute);
+
+/* Microphone Amplifier Gain */
+/*
+ * @brief  :Set Microphone Amplifier Gain.
+ * @Note   :MAX867 has two amplifiers to set the microphone gain where:
+ * 			PALEN(pre-amplifier),PGAML(programmable amplifier).
+ * @param1 :choose microphone(L/R/both of them).
+ * @param2 :pre-amplifier gain (PALEN).
+ * @param3 :programmable gain (PGAML).
+ * @retval :Status
+ */
 Status_TypeDef MAX9867_MicAmpGain(L_R_Mic mic, L_R_Mic_Preamp_Gain preAmpGain, L_R_Mic_Programble_Gain_Amp progGain);
+
+/* Set Digital Microphone Clock */
+/*
+ * @brief  :Set Digital Microphone Clock.
+ * @param1 :Set Digital Microphone Clock.
+ * @retval :Status
+ */
 Status_TypeDef MAX9867_MicDigitalClock(Digital_Mic_Clk_Pre clock);
-Status_TypeDef MAX9867_MicDigitalLeftRightMode(Digital_Mic_Clk_Mode mode);
+
+/* Digital Microphone Enable-Disable */
+/*
+ * @brief  :Digital Microphone Enable-Disable.
+ * @Note   : this table describe how enable digital microphone
+ 	 	 	 ________________________________________________________________________
+ 			|DIGMICL | DIGMICR | Left ADC Input  		  | Right ADC Input          |
+ 			|________|_________|__________________________|__________________________|
+			|   0    |    0    | ADC input mixer 		  | ADC input mixer			 |
+			|________|_________|__________________________|__________________________|
+            |        |         | Line input (left analog  | Right digital microphone |
+            |   0    |    1    | microphone unavailable)  |							 |
+            |________|_________|__________________________|__________________________|
+            |   1    |    0    | Left digital microphone  | ADC input mixer			 |
+            |________|_________|__________________________|__________________________|
+            |   1    |    1    | Left digital microphone  | Right digital microphone |
+            |________|_________|__________________________|__________________________|
+
+ * @Note   :The left analog microphone input is never available when DIGMICL or DIGMICR = 1.
+ * @param1 :Digital Microphone Enable-Disable.
+ * @retval :Status
+ */
+Status_TypeDef MAX9867_MicDigitalLeftRightEnableDisable(Digital_Mic_Clk_Mode mode);
+
+/* Auxiliary Input Capture */
+/*
+ * @brief  :Update AUX register on MAX9867 JACKSNS/AUX pin with the DC voltage
+ * 			or holding AUX register for reading.
+ * @param1 :Update or holding AUX register
+ * @retval :Status
+ */
 Status_TypeDef MAX9867_AuxiliaryInputCapture(Auxiliary_Input_Capture auxCapture);
+
+/* Auxiliary Input Gain Calibration */
+/*
+ * @brief  :Auxiliary Input Gain Calibration.
+ * @Note   :When set this bit The input buffer (AUX register) is disconnected from JACKSNS/AUX and connected to an internal voltage reference.
+			While in this mode, read the AUX register and store the value. Use the stored value as a gain
+			calibration factor, K, on subsequent readings.
+ * @param1 :Auxiliary Input Gain Calibration.
+ * @retval :Status
+ */
 Status_TypeDef MAX9867_AuxiliaryInputGainCalibration(Auxiliary_Input_Gain_Calibration auxGain);
+
+/* Auxiliary Input Offset Calibration */
+/*
+ * @brief  :Auxiliary Input Offset Calibration.
+ * @Note   :When set this bit JACKSNS/AUX pin is disconnected from the input
+ * 		    and the ADC automatically calibrates out any internal offsets.
+ * @param1 :Auxiliary Input Offset Calibration.
+ * @retval :Status
+ */
 Status_TypeDef MAX9867_AuxiliaryInputOffsetCalibration(Auxiliary_Input_Offset_Calibration auxOffset);
-Status_TypeDef MAX9867_AuxiliaryInputEnable(Auxiliary_Input_En_Dis auxEna);
-Status_TypeDef MAX9867_AuxiliaryInputDisable(Auxiliary_Input_En_Dis auxDis);
+
+/* Auxiliary Input Type */
+/*
+ * @brief  :Auxiliary Input Type.
+ * @Note   :When set this bit:
+ * 			0 = Use JACKSNS/AUX for jack detection.
+ * 			1 = Use JACKSNS/AUX for DC measurements.
+ * @param1 :Auxiliary Input Type.
+ * @retval :Status
+ */
+Status_TypeDef MAX9867_AuxiliaryInputType(Auxiliary_Input_Type auxType);
+
+/* Set Microphone Sidetone Source And Gain */
+/*
+ * @brief  :Set Microphone Sidetone Source And Gain.
+ * @Note   :Sidetone is the sound of your own voice that you hear in a telephone receiver or headset
+ * 			while speaking on the phone. It allows you to hear yourself speaking, which can help
+ * 			regulate your voice volume and pitch during a conversation.
+ * @param1 :Sidtone source is from (L/R/Both of them) ADC.
+ * @param2 :Sidtone Gain.
+ * @Note   :Sidtone Gain depend on type of headphone amplifier where:
+ * 			- differential amplifier has gain.
+ * 			- capacitorless and single-endded amplifier has gain.
+ * @param3 :Amplifier type.
+ * @retval :Status
+ */
 Status_TypeDef MAX9867_MicSidetoneSourceAndGain(Digital_Sidetone_Source_Mixer sourceMixer, Sidetone_Gain_Diff_Headphone sidGainDiff,
     Sidetone_Gain_Capacitorless_Single_Ended_Headphone sidGainCapSinEnd, Amp_Type ampType);
+
+/* Digital Audio Interface Unit Initialize */
+/*
+ * @brief   :Digital Audio Interface Unit Initialize.
+ * @param1  :master slave mode.
+ * @param2  :choose L/R channel.
+ * @Note    :0 = Left-channel data is input and output while LRCLK is low.
+ * 			 1 = Right-channel data is input and output while LRCLK is low.
+ * @Note    :WCI is ignored when TDM = 1.
+ * @param3  :latching data on SDIN when rising or falling edge from BCLK and latching SDOUT
+ * 			 after delay depend on param3.
+ * @param4  :delay latching data on SDOUT after latching data on SDIN.
+ * @param5  :latching data on SDOUT/SDIN when first BCLK edge or second BCLK edge.
+ * @param6  :SDOUT High-Impedance Mode.
+ * @param7  :TDM mode select.
+ * @Note    :TDM mode stands for Time-Division Multiplexing mode.
+ * 			 Time-Division Multiplexing is a method of transmitting multiple signals over a single communication channel
+ * 			 by interleaving the data in time slots.
+ * @param8  :BCLK Select prescaler.
+ * @param9  :Mono Playback Mode.
+ * @Note    :0 = Stereo data input on SDIN is processed separately.
+ * 			 1 = Stereo data input on SDIN is mixed to a single channel and routed to both the left and right DAC.
+ * @param10 :fix the line input playback volume.
+ * @retval  :Status
+ */
 Status_TypeDef MAX9867_DigitalAudioInterfaceInit(MAX9867_Master_Slave_Mode mode,
 	MAX9867_L_R_Clk_Invert lrclk, MAX9867_Bit_Clk_Invert bclkMode, MAX9867_SDOUT_Delay sdoutDelay,
 	MAX9867_Delay_Mode delayMode, MAX9867_SDOUT_Mode_High_Impedance_Mode sdoutMode,
 	MAX9867_TDM_Mode tdmMode, MAX9867_BCLK_Select bclkSelect, MAX9867_Mono_Playback_Mode monoMode,
 	MAX9867_Fix_Line_Input_Volume fixLineVol);
-Status_TypeDef MAX9867_ClockControlInit(MCLK_Prescaler mclkPresclr, Exact_Integer_Modes exactIntMode,
-		PLL_Mode_En_Dis pllMode, uint32_t NI, bool NI0);
-Status_TypeDef DigitalAudioInit(L_R_Playback_Volume_Channel channel, DAC_Level_Ctrl progAmp,
-		L_R_Playback_Volume rPlaybackVol, L_R_Playback_Volume lPlaybackVol);
+
+/* JackSens Enable Disable */
+/*
+ * @brief  :JackSens Enable Disable.
+ * @param1 :JackSens Enable Disable.
+ * @Note   :0 = Enables pullups on LOUTP and JACKSNS/AUX to detect jack insertion.
+ * 			1 = Enables the comparator circuitry on JACKSNS/AUX to detect voltage changes.
+ * @retval :Status
+ */
 Status_TypeDef MAX9867_JackSensEnableDisable(Jack_Sense_En_Dis jackSens);
-Status_TypeDef LineInputInit(L_R_Line_Input lrLineInput,L_R_Line_Input_Gain gain, L_R_Playback_Volume_Channel channel, L_R_Playback_Volume rPlaybackVol,
-		L_R_Playback_Volume lPlaybackVol, Headphone_Amp_Mode ampMode);
-Status_TypeDef DigitalAudioInit(L_R_Playback_Volume_Channel channel, DAC_Level_Ctrl progAmp,
-		L_R_Playback_Volume rPlaybackVol, L_R_Playback_Volume lPlaybackVol);
-Status_TypeDef AnalogMicHeadphoneInit(L_R_Mic mic, L_R_Mic_Preamp_Gain preAmpGain, L_R_Mic_Programble_Gain_Amp progGain,
-		L_R_ADC_Audio_Input lrAdcInputm, L_R_ADC_Audio_Input_Mixer mixer,
+
+/* Audio Amplify Recording */
+/*
+ * @brief   :Amplify/recording the audio which comes on line-inputs pin(LINL,LINR).
+ * @Note    :some of parameters used in (Amplify mode) and other in (Recording mode) and other (Amplify and Recording modes).
+ * @param1  :line-input mode(Amplify/recording/both of them).
+ * @param2  :line-input channel(L/R/both of them) (Amplify and Recording).
+ * @param3  :line-input gain (Amplify and recording).
+ * @param4  :choose Audio channel(L/R/both of them) (Amplify mode).
+ * @param5  :right Audio level control (Amplify mode).
+ * @param6  :left Audio level control (Amplify mode).
+ * @param7  :choose ADC channel(L/R/both of them) (Recording).
+ * @param8  :JackSens Enable Disable.
+ * @param9  :JackSens Enable Disable.
+ * @param10 :JackSens Enable Disable.
+ * @param11 :JackSens Enable Disable.
+ * @retval  :Status
+ */
+
+Status_TypeDef AudioAmplifyRecording(Line_Input_Mode lineInputMode, L_R_Line_Input lrLineInput,L_R_Line_Input_Gain gain, L_R_Playback_Volume_Channel channel, L_R_Playback_Volume rPlaybackVol,
+		L_R_Playback_Volume lPlaybackVol, ADC_L_R adc, L_R_ADC_Audio_Input lrAdcInput,
+		L_R_ADC_Level_Ctrl adcGain, ADC_DAC_Digital_Audio_Filter_Sٍpecifications ADC_Specifications,Headphone_Amp_Type ampMode);
+
+/* JackSens Enable Disable */
+/*
+ * @brief  :JackSens Enable Disable.
+ * @param1 :JackSens Enable Disable.
+ * @Note   :0 = Enables pullups on LOUTP and JACKSNS/AUX to detect jack insertion.
+ * 			1 = Enables the comparator circuitry on JACKSNS/AUX to detect voltage changes.
+ * @retval :Status
+ */
+Status_TypeDef VoiceAmplifyRecording(Mic_Mode micMode, L_R_Mic mic, L_R_Mic_Preamp_Gain preAmpGain,
+		L_R_Mic_Programble_Gain_Amp progGain, L_R_ADC_Audio_Input lrAdcInputm,
 		ADC_DAC_Digital_Audio_Filter_Sٍpecifications ADC_Specifications,
 		ADC_DAC_Digital_Audio_Filter_Sٍpecifications DAC_Specifications,
-		ADC_L_R_Gain adc, L_R_ADC_Level_Ctrl adcGain,
+		ADC_L_R adc, L_R_ADC_Level_Ctrl adcGain,
 		Digital_Sidetone_Source_Mixer sourceMixer, Sidetone_Gain_Diff_Headphone sidGainDiff,
 		Sidetone_Gain_Capacitorless_Single_Ended_Headphone sidGainCapSinEnd, Amp_Type ampType,
 		L_R_Playback_Volume_Channel channel, L_R_Playback_Volume rPlaybackVol, L_R_Playback_Volume lPlaybackVol);
+
+/* JackSens Enable Disable */
+/*
+ * @brief  :JackSens Enable Disable.
+ * @param1 :JackSens Enable Disable.
+ * @Note   :0 = Enables pullups on LOUTP and JACKSNS/AUX to detect jack insertion.
+ * 			1 = Enables the comparator circuitry on JACKSNS/AUX to detect voltage changes.
+ * @retval :Status
+ */
+Status_TypeDef ReadingDigitalAudio(Digital_Audio_Mode audioMode, L_R_Playback_Volume_Channel channel, DAC_Gain firstAmp,
+		DAC_Level_Ctrl progAmp, ADC_DAC_Digital_Audio_Filter_Sٍpecifications DAC_Specifications, L_R_Playback_Volume rPlaybackVol,
+		L_R_Playback_Volume lPlaybackVol);
+
+/* Amplifier Gain */
+/*
+ * @brief  :Audio level control.
+ * @param1 :Gain Modes
+ * @retval :Nothing
+ */
 Status_TypeDef DcMeasurment(uint32_t *dcMeasurment);
 #endif /* INC_MAX9867_CODEC_H_ */
 
