@@ -71,7 +71,7 @@ Status_TypeDef MAX9867_DigitalAudioInterfaceInit(MAX9867_Master_Slave_Mode mode,
 	return STATUS_OK;
 }
 
-static Status_TypeDef MAX9867_DigitalFilterInit(Digital_Audio_Filter_Mode mode, ADC_DAC_Digital_Audio_Filter_Sٍpecifications ADC_Specifications,ADC_DAC_Digital_Audio_Filter_Sٍpecifications DAC_Specifications)
+Status_TypeDef MAX9867_DigitalFilterInit(Digital_Audio_Filter_Mode mode, ADC_DAC_Digital_Audio_Filter_Sٍpecifications ADC_Specifications,ADC_DAC_Digital_Audio_Filter_Sٍpecifications DAC_Specifications)
 {
 
 	codecFilterReg.MODE = mode;
@@ -85,7 +85,7 @@ static Status_TypeDef MAX9867_DigitalFilterInit(Digital_Audio_Filter_Mode mode, 
 }
 
 Status_TypeDef MAX9867_ClockControlInit(MCLK_Prescaler mclkPresclr, Exact_Integer_Modes exactIntMode,
-		PLL_Mode_En_Dis pllMode, uint32_t NI, bool NI0)
+		PLL_Mode_En_Dis pllMode, uint32_t NI, PLL_Rapid_Lock_En_Dis pllRapidLock)
 {
 	sysClkReg.PSCLK = mclkPresclr;
 	sysClkReg.FREQ = exactIntMode;
@@ -93,7 +93,7 @@ Status_TypeDef MAX9867_ClockControlInit(MCLK_Prescaler mclkPresclr, Exact_Intege
 	stereoAudClkRegH.PLL = pllMode;
 	stereoAudClkRegH.NI = NI >> 8;
 
-	stereoAudClkRegL.NI0 = NI0;
+	stereoAudClkRegL.NI0 = pllRapidLock;
 	stereoAudClkRegL.NI = NI;
 
 	tDataCodec[0] = MAX9867_REG_SYSTEM_CLK;
@@ -138,7 +138,7 @@ Status_TypeDef MAX9867_Shoutdown(Shoutdown shtdown)
 	return STATUS_OK;
 }
 
-Status_TypeDef MAX9867_HeadphoneAmpMode(Headphone_Amp_Mode ampMode)
+Status_TypeDef MAX9867_HeadphoneAmpType(Headphone_Amp_Type ampMode)
 {
 	configModeReg.HPMODE = ampMode;
 	tDataCodec[0] = MAX9867_REG_MODE;
@@ -191,7 +191,7 @@ Status_TypeDef MAX9867_ADC_EnableDisable(ADC_En_Dis adc)
 	return STATUS_OK;
 }
 
-Status_TypeDef MAX9867_ADC_Gain(ADC_L_R_Gain adc, L_R_ADC_Level_Ctrl adcGain)
+Status_TypeDef MAX9867_ADC_Gain(ADC_L_R adc, L_R_ADC_Level_Ctrl adcGain)
 {
 	if(adc == ADC_LEFT)
 	{
@@ -227,7 +227,7 @@ Status_TypeDef MAX9867_ADC_Gain(ADC_L_R_Gain adc, L_R_ADC_Level_Ctrl adcGain)
 	return STATUS_OK;
 }
 
-static Status_TypeDef MAX9867_ADC_AduioInputMixer(L_R_ADC_Audio_Input lrAdcInput, L_R_ADC_Audio_Input_Mixer mixer)
+Status_TypeDef MAX9867_ADC_AduioInputMixer(L_R_ADC_Audio_Input lrAdcInput, L_R_ADC_Audio_Input_Mixer mixer)
 {
 	if(lrAdcInput == ADC_AUDIO_INPUT_LEFT)
 	{
@@ -372,7 +372,7 @@ Status_TypeDef MAX9867_LineInputGain(L_R_Line_Input lineInput, L_R_Line_Input_Ga
 	return STATUS_OK;
 }
 
-Status_TypeDef MAX9867_LineInputMute(Line_Input_Mute_En_Dis mute, L_R_Line_Input lineInput)
+Status_TypeDef MAX9867_LineInputMute(L_R_Line_Input lineInput, Line_Input_Mute_En_Dis mute)
 {
 	if(lineInput == LEFT_LINE_INPUT)
 	{
@@ -588,7 +588,7 @@ Status_TypeDef MAX9867_MicDigitalClock(Digital_Mic_Clk_Pre clock)
 	return STATUS_OK;
 }
 
-Status_TypeDef MAX9867_MicDigitalLeftRightMode(Digital_Mic_Clk_Mode mode)
+Status_TypeDef MAX9867_MicDigitalLeftRightEnableDisable(Digital_Mic_Clk_Mode mode)
 {
 	switch(mode)
 	{
@@ -649,9 +649,9 @@ Status_TypeDef MAX9867_AuxiliaryInputOffsetCalibration(Auxiliary_Input_Offset_Ca
 	return STATUS_OK;
 }
 
-Status_TypeDef MAX9867_AuxiliaryInputEnableDisable(Auxiliary_Input_En_Dis auxEna)
+Status_TypeDef MAX9867_AuxiliaryInputType(Auxiliary_Input_Type auxType)
 {
-	adcInputReg.AUXEN = auxEna;
+	adcInputReg.AUXEN = auxType;
 	tDataCodec[0] = MAX9867_REG_ADC_IN;
 	tDataCodec[1] = adcInputReg.adcInputReg;
 	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
@@ -677,29 +677,29 @@ Status_TypeDef MAX9867_AuxiliaryRegRead(uint16_t *aux)
 	return STATUS_OK;
 }
 
-Status_TypeDef MAX9867_Init(void)
-{
-	if( STATUS_OK != MAX9867_Shoutdown(SHOUTDOWN_ENABLE))
-		return STATUS_ERR;
-	if( STATUS_OK != MAX9867_ClockControlInit(MCLK_BETWEEN_10_20_MHZ, NORMAL_OR_PLL_MODE,
-	  		PLL_DISABLE, 0, 0))
-		return STATUS_ERR;
-	if( STATUS_OK != MAX9867_DigitalAudioInterfaceInit(MAX9867_SLAVE_MODE,
-			  LEFT_CHN_DATA_IN_OUT, SDIN_LATCHED_RISING_EDGE_BCLK, SDOUT_TRANS_AFTER_SDIN_LATCHED,
-			  SDIN_SDOUT_LATCHED_SECOND_BCLK_EDGE, SDOUT_HIGH_IMPEDANCE_AFTER_DATA_TRANS,
-			  LRCLK_INDICATE_L_R_AUDIO, OFF, SDIN_PROCESS_SEPARATELY,
-			  TRACKS_VOLL_VOLR_BITS))
-		return STATUS_ERR;
-	if( STATUS_OK != DigitalAudioInit(LEFT_RIGHT_VOLUME_CHA, DAC_LVL_GAIN_MINUS_15dB,
-			  PLAYBACK_VOLUME_GAIN_MINUS_38dB, PLAYBACK_VOLUME_GAIN_MINUS_38dB))
-		return STATUS_ERR;
-	if( STATUS_OK != MAX9867_HeadphoneAmpMode(STEREO_DIFF_CLICKLESS))
-		return STATUS_ERR;
-	if( STATUS_OK != MAX9867_Shoutdown(SHOUTDOWN_DISABLE))
-		return STATUS_ERR;
-
-	 return STATUS_OK;
-}
+//Status_TypeDef MAX9867_Init(void)
+//{
+//	if( STATUS_OK != MAX9867_Shoutdown(SHOUTDOWN_ENABLE))
+//		return STATUS_ERR;
+//	if( STATUS_OK != MAX9867_ClockControlInit(MCLK_BETWEEN_10_20_MHZ, NORMAL_OR_PLL_MODE,
+//	  		PLL_DISABLE, 0, 0))
+//		return STATUS_ERR;
+//	if( STATUS_OK != MAX9867_DigitalAudioInterfaceInit(MAX9867_SLAVE_MODE,
+//			  LEFT_CHN_DATA_IN_OUT, SDIN_LATCHED_RISING_EDGE_BCLK, SDOUT_TRANS_AFTER_SDIN_LATCHED,
+//			  SDIN_SDOUT_LATCHED_SECOND_BCLK_EDGE, SDOUT_HIGH_IMPEDANCE_AFTER_DATA_TRANS,
+//			  LRCLK_INDICATE_L_R_AUDIO, OFF, SDIN_PROCESS_SEPARATELY,
+//			  TRACKS_VOLL_VOLR_BITS))
+//		return STATUS_ERR;
+//	if( STATUS_OK != DigitalAudioInit(LEFT_RIGHT_VOLUME_CHA, DAC_LVL_GAIN_MINUS_15dB,
+//			  PLAYBACK_VOLUME_GAIN_MINUS_38dB, PLAYBACK_VOLUME_GAIN_MINUS_38dB))
+//		return STATUS_ERR;
+//	if( STATUS_OK != MAX9867_HeadphoneAmpMode(STEREO_DIFF_CLICKLESS))
+//		return STATUS_ERR;
+//	if( STATUS_OK != MAX9867_Shoutdown(SHOUTDOWN_DISABLE))
+//		return STATUS_ERR;
+//
+//	 return STATUS_OK;
+//}
 Status_TypeDef MAX9867_JackSensEnableDisable(Jack_Sense_En_Dis jackSens)
 {
 	configModeReg.JDETEN = jackSens;
@@ -710,47 +710,65 @@ Status_TypeDef MAX9867_JackSensEnableDisable(Jack_Sense_En_Dis jackSens)
 	return STATUS_OK;
 }
 
-Status_TypeDef LineInputInit(L_R_Line_Input lrLineInput,L_R_Line_Input_Gain gain, L_R_Playback_Volume_Channel channel, L_R_Playback_Volume rPlaybackVol,
-		L_R_Playback_Volume lPlaybackVol, Headphone_Amp_Mode ampMode)
+//Status_TypeDef LineInputInit(L_R_Line_Input lrLineInput,L_R_Line_Input_Gain gain, L_R_Playback_Volume_Channel channel, L_R_Playback_Volume rPlaybackVol,
+//		L_R_Playback_Volume lPlaybackVol, Headphone_Amp_Mode ampMode)
+//{
+//	/* Enable left or right or both of them line-input */
+//	if( STATUS_OK != MAX9867_LineInputEnableDisable(LINE_INPUT_EN, lrLineInput))
+//			return STATUS_ERR;
+//	/* Line-input gain */
+//	if( STATUS_OK != MAX9867_LineInputGain(lrLineInput, gain))
+//			return STATUS_ERR;
+//	/* Audio level control */
+//	if( STATUS_OK != MAX9867_AudioLevel(channel, rPlaybackVol, lPlaybackVol))
+//			return STATUS_ERR;
+//	/* when enable line-input, automatically enables the left and right headphone */
+//	return STATUS_OK;
+//}
+
+Status_TypeDef AudioAmplifyRecording(Line_Input_Mode lineInputMode, L_R_Line_Input lrLineInput,L_R_Line_Input_Gain gain, L_R_Playback_Volume_Channel channel, L_R_Playback_Volume rPlaybackVol,
+		L_R_Playback_Volume lPlaybackVol, ADC_L_R adc, L_R_ADC_Audio_Input lrAdcInput, L_R_ADC_Level_Ctrl adcGain, ADC_DAC_Digital_Audio_Filter_Sٍpecifications ADC_Specifications,Headphone_Amp_Type ampMode)
 {
-	/* Enable left or right or both of them line-input */
-	if( STATUS_OK != MAX9867_LineInputEnableDisable(LINE_INPUT_EN, lrLineInput))
-			return STATUS_ERR;
 	/* Line-input gain */
 	if( STATUS_OK != MAX9867_LineInputGain(lrLineInput, gain))
 			return STATUS_ERR;
-	/* Audio level control */
-	if( STATUS_OK != MAX9867_AudioLevel(channel, rPlaybackVol, lPlaybackVol))
+	if(lineInputMode == LINE_INPUT_AMPLIFY || lineInputMode == LINE_INPUT_AMPLIFY_RECORDING)
+	{
+		/* Audio level control */
+		if( STATUS_OK != MAX9867_AudioLevel(channel, rPlaybackVol, lPlaybackVol))
+				return STATUS_ERR;
+		/* when enable line-input, automatically enables the left and right headphone */
+	}
+	else if(lineInputMode == LINE_INPUT_RECORDING || lineInputMode == LINE_INPUT_AMPLIFY_RECORDING)
+	{
+		/* choose input ADC */
+		if( STATUS_OK != MAX9867_ADC_AduioInputMixer(lrAdcInput, L_R_LINE_IN))
+				return STATUS_ERR;
+		/* set digital filter */
+		if( STATUS_OK != MAX9867_DigitalFilterInit(FIR_AUDIO_FILTER,ADC_Specifications,DISABLED))
+				return STATUS_ERR;
+		/* set ADC gain */
+		if( STATUS_OK != MAX9867_ADC_Gain(adc, adcGain))
+				return STATUS_ERR;
+		/* Enable ADC */
+		if( STATUS_OK != MAX9867_ADC_EnableDisable(ADC_ENABLE))
+				return STATUS_ERR;
+	}
+	/* Enable left or right or both of them line-input */
+	/* Note : if the right line-input is disabled and left line-input is enabled,
+	 * the left line-input signal is routed to
+	 * the left and right ADC input mixer and left and right headphone amplifier
+	 */
+	if( STATUS_OK != MAX9867_LineInputEnableDisable(LINE_INPUT_EN, lrLineInput))
 			return STATUS_ERR;
-	/* when enable line-input, automatically enables the left and right headphone */
 	return STATUS_OK;
 }
 
-Status_TypeDef DigitalAudioInit(L_R_Playback_Volume_Channel channel, DAC_Level_Ctrl progAmp,
-		L_R_Playback_Volume rPlaybackVol, L_R_Playback_Volume lPlaybackVol)
-{
-	/* in audio application we must set only programmable amplifier, and set preamplifier to 0 because it
-	 * especial with microphone voice gain */
-	if( STATUS_OK != MAX9867_DAC_Gain(DAC_GAIN_0dB, progAmp))
-			return STATUS_ERR;
-	/* Audio level control */
-	if( STATUS_OK != MAX9867_AudioLevel(channel, rPlaybackVol, lPlaybackVol))
-			return STATUS_ERR;
-	/* Enable DC-blocking just in Audio mode */
-	/* Note : we can enable DC-blocking by set AVFLT and DVFLT with any value */
-	if( STATUS_OK != MAX9867_DigitalFilterInit(FIR_AUDIO_FILTER,DISABLED,TYPE1))
-			return STATUS_ERR;
-	/* Enable DAC */
-	if( STATUS_OK != MAX9867_DAC_EnableDisable(DAC_ENABLE))
-			return STATUS_ERR;
-	return STATUS_OK;
-}
-
-Status_TypeDef AnalogMicHeadphoneInit(L_R_Mic mic, L_R_Mic_Preamp_Gain preAmpGain, L_R_Mic_Programble_Gain_Amp progGain,
-		L_R_ADC_Audio_Input lrAdcInputm, L_R_ADC_Audio_Input_Mixer mixer,
+Status_TypeDef VoiceAmplifyRecording(Mic_Mode micMode, L_R_Mic mic, L_R_Mic_Preamp_Gain preAmpGain,
+		L_R_Mic_Programble_Gain_Amp progGain, L_R_ADC_Audio_Input lrAdcInputm,
 		ADC_DAC_Digital_Audio_Filter_Sٍpecifications ADC_Specifications,
 		ADC_DAC_Digital_Audio_Filter_Sٍpecifications DAC_Specifications,
-		ADC_L_R_Gain adc, L_R_ADC_Level_Ctrl adcGain,
+		ADC_L_R adc, L_R_ADC_Level_Ctrl adcGain,
 		Digital_Sidetone_Source_Mixer sourceMixer, Sidetone_Gain_Diff_Headphone sidGainDiff,
 		Sidetone_Gain_Capacitorless_Single_Ended_Headphone sidGainCapSinEnd, Amp_Type ampType,
 		L_R_Playback_Volume_Channel channel, L_R_Playback_Volume rPlaybackVol, L_R_Playback_Volume lPlaybackVol)
@@ -759,7 +777,7 @@ Status_TypeDef AnalogMicHeadphoneInit(L_R_Mic mic, L_R_Mic_Preamp_Gain preAmpGai
 	if( STATUS_OK != MAX9867_MicAmpGain(mic, preAmpGain, progGain))
 			return STATUS_ERR;
 	/* choose input ADC */
-	if( STATUS_OK != MAX9867_ADC_AduioInputMixer(lrAdcInputm, mixer))
+	if( STATUS_OK != MAX9867_ADC_AduioInputMixer(lrAdcInputm, L_R_ANALOG_MIC))
 			return STATUS_ERR;
 	/* set digital filter */
 	if( STATUS_OK != MAX9867_DigitalFilterInit(IIR_VOICE_FILTER,ADC_Specifications,DAC_Specifications))
@@ -767,19 +785,57 @@ Status_TypeDef AnalogMicHeadphoneInit(L_R_Mic mic, L_R_Mic_Preamp_Gain preAmpGai
 	/* set ADC gain */
 	if( STATUS_OK != MAX9867_ADC_Gain(adc, adcGain))
 			return STATUS_ERR;
-	/* choose mic source from left or right ADC or both of them
-	 * then set microphone gain.
-	 */
-	if( STATUS_OK != MAX9867_MicSidetoneSourceAndGain(sourceMixer, sidGainDiff, sidGainCapSinEnd, ampType))
+
+	if(micMode == MIC_AMPLIFY || micMode == MIC_AMPLIFY_RECORDING)
+	{
+		/* choose mic source from left or right ADC or both of them
+		 * then set microphone gain.
+		 */
+		if( STATUS_OK != MAX9867_MicSidetoneSourceAndGain(sourceMixer, sidGainDiff, sidGainCapSinEnd, ampType))
+				return STATUS_ERR;
+		/* set audio level */
+		if( STATUS_OK != MAX9867_AudioLevel(channel, rPlaybackVol, lPlaybackVol))
+				return STATUS_ERR;
+		/* Enable DAC */
+		if( STATUS_OK != MAX9867_DAC_EnableDisable(DAC_ENABLE))
+				return STATUS_ERR;
+
+	}
+	/* Enable ADC */
+	if( STATUS_OK != MAX9867_ADC_EnableDisable(ADC_ENABLE))
 			return STATUS_ERR;
-	/* set audio level */
+	return STATUS_OK;
+}
+
+Status_TypeDef ReadingDigitalAudio(Digital_Audio_Mode audioMode, L_R_Playback_Volume_Channel channel, DAC_Gain firstAmp, DAC_Level_Ctrl progAmp,
+		ADC_DAC_Digital_Audio_Filter_Sٍpecifications DAC_Specifications, L_R_Playback_Volume rPlaybackVol, L_R_Playback_Volume lPlaybackVol)
+{
+	if(audioMode == AUDIO)
+	{
+		/* in audio application we must set only programmable amplifier, and set preamplifier to 0 because it
+		 * especial with microphone voice gain */
+		if( STATUS_OK != MAX9867_DAC_Gain(DAC_GAIN_0dB, progAmp))
+				return STATUS_ERR;
+		/* Enable DC-blocking just in Audio mode */
+		/* Note : we can enable DC-blocking by set AVFLT and DVFLT with any value */
+		if( STATUS_OK != MAX9867_DigitalFilterInit(FIR_AUDIO_FILTER,DISABLED,DAC_Specifications))
+				return STATUS_ERR;
+	}
+	else if(audioMode == VOICE)
+	{
+
+		if( STATUS_OK != MAX9867_DAC_Gain(firstAmp, progAmp))
+				return STATUS_ERR;
+		/* Enable DC-blocking just in Audio mode */
+		/* Note : we can enable DC-blocking by set AVFLT and DVFLT with any value */
+		if( STATUS_OK != MAX9867_DigitalFilterInit(IIR_VOICE_FILTER,DISABLED,DAC_Specifications))
+				return STATUS_ERR;
+	}
+	/* Audio level control */
 	if( STATUS_OK != MAX9867_AudioLevel(channel, rPlaybackVol, lPlaybackVol))
 			return STATUS_ERR;
 	/* Enable DAC */
 	if( STATUS_OK != MAX9867_DAC_EnableDisable(DAC_ENABLE))
-			return STATUS_ERR;
-	/* Enable ADC */
-	if( STATUS_OK != MAX9867_ADC_EnableDisable(ADC_ENABLE))
 			return STATUS_ERR;
 	return STATUS_OK;
 }
@@ -796,7 +852,7 @@ Status_TypeDef DcMeasurment(uint32_t *dcMeasurment)
 	if( STATUS_OK != MAX9867_ADC_EnableDisable(ADC_ENABLE))
 			return STATUS_ERR;
 	/* Calibrate the offset */
-	MAX9867_AuxiliaryInputEnableDisable(JACKSNS_PIN_FOR_DC_MEASUREMENT);
+	MAX9867_AuxiliaryInputType(JACKSNS_PIN_FOR_DC_MEASUREMENT);
 	MAX9867_AuxiliaryInputOffsetCalibration(ADC_AUTO_CALIBRATE_ANY_OFFSET);
 	_DELAY_MS(40);
 	MAX9867_AuxiliaryInputOffsetCalibration(OFFSET_NORMAL_OPERATION);
@@ -806,9 +862,9 @@ Status_TypeDef DcMeasurment(uint32_t *dcMeasurment)
 	MAX9867_AuxiliaryRegRead(&k);
 	MAX9867_AuxiliaryInputCapture(GAIN_NORMAL_OPERATION);
 	MAX9867_AuxiliaryInputGainCalibration(GAIN_NORMAL_OPERATION);
-	MAX9867_AuxiliaryInputEnableDisable(JACKSNS_PIN_FOR_JACK_DETECTION);
+	MAX9867_AuxiliaryInputType(JACKSNS_PIN_FOR_JACK_DETECTION);
 	/* Measure the voltage on JACKSNS/AUX */
-	MAX9867_AuxiliaryInputEnableDisable(JACKSNS_PIN_FOR_DC_MEASUREMENT);
+	MAX9867_AuxiliaryInputType(JACKSNS_PIN_FOR_DC_MEASUREMENT);
 	_DELAY_MS(40);
 	MAX9867_AuxiliaryInputCapture(GAIN_NORMAL_OPERATION);
 	MAX9867_AuxiliaryRegRead(&aux);
@@ -816,4 +872,12 @@ Status_TypeDef DcMeasurment(uint32_t *dcMeasurment)
 	return STATUS_OK;
 	/* Calibrate the gain */
 
+}
+
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+  if (GPIO_Pin==CODEC_IRQN_OUT_Pin)
+  {
+
+  }
 }
