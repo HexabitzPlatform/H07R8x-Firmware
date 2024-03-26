@@ -890,4 +890,5 @@ Status_TypeDef SendingDigitalAudio(uint16_t *data,size_t size)
     }
     return STATUS_OK;
 }
+
 /************************ (C) COPYRIGHT Hexabitz *****END OF FILE****/
