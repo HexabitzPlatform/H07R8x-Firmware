@@ -52,9 +52,9 @@ Status_TypeDef MAX9704_AmpSwitchingMode(Switching_Modes mode)
 	return STATUS_OK;
 }
 
-Status_TypeDef MAX9704_AmpGain(Gain_Modes mode)
+Status_TypeDef MAX9704_AmpGain(Amp_Gain gain)
 {
-	switch(mode)
+	switch(gain)
 	{
 		case GAIN_MODE_29dB:
 			if( STATUS_OK != ResetGPIOsPin(AMP_GAIN1_GPIO_Port, AMP_GAIN1_Pin))
@@ -109,9 +109,9 @@ Status_TypeDef MAX9704_AmpShutdown(Shutdown_Modes mode)
 	return STATUS_OK;
 }
 
-Status_TypeDef MAX9704_AmpMute(Mute_Modes mode)
+Status_TypeDef MAX9704_AmpMute(Mute_En_Dis mute)
 {
-	switch(mode)
+	switch(mute)
 	{
 		case MUTE_ENABLE:
 			if( STATUS_OK != ResetGPIOsPin(AMP_MUTE_GPIO_Port, AMP_MUTE_Pin))
@@ -126,5 +126,20 @@ Status_TypeDef MAX9704_AmpMute(Mute_Modes mode)
 			if( STATUS_OK != SetGPIOsPin(AMP_MUTE_GPIO_Port, AMP_MUTE_Pin))
 				return STATUS_ERR;
 	}
+	return STATUS_OK;
+}
+
+/******************************************************************USER APIs**********************************************************/
+
+Status_TypeDef MAX9704_AmpInit(Switching_Modes switchMode, Amp_Gain gain)
+{
+	if( STATUS_OK != MAX9704_AmpShutdown(SHUTDOWN_ENABLE))
+		return STATUS_ERR;
+	if( STATUS_OK != MAX9704_AmpSwitchingMode(switchMode))
+	    return STATUS_ERR;
+	if( STATUS_OK != MAX9704_AmpGain(gain))
+		return STATUS_ERR;
+	if( STATUS_OK != MAX9704_AmpShutdown(SHUTDOWN_DISABLE))
+		return STATUS_ERR;
 	return STATUS_OK;
 }
