@@ -687,6 +687,8 @@ Status_TypeDef MAX9867_JackSensEnableDisable(Jack_Sense_En_Dis jackSens)
 	return STATUS_OK;
 }
 
+/********************************************************************************USER APIs*****************************************************************************************************************************/
+
 Status_TypeDef AudioAmplifyRecordingInit(Line_Input_Mode lineInputMode, L_R_Line_Input lrLineInput,L_R_Line_Input_Gain gain, L_R_Playback_Volume_Channel channel, L_R_Playback_Volume rPlaybackVol,
 		L_R_Playback_Volume lPlaybackVol, ADC_L_R adc, L_R_ADC_Level_Ctrl adcGain, ADC_DAC_Digital_Audio_Filter_Sٍpecifications ADC_Specifications)
 {
@@ -801,9 +803,9 @@ Status_TypeDef ReadingDigitalAudioInit(Digital_Audio_Mode audioMode, L_R_Playbac
 	return STATUS_OK;
 }
 
-Status_TypeDef DcMeasurement(uint32_t *dcMeasurement)
+Status_TypeDef DcMeasurementInit(uint16_t *calibrationFactor)
 {
-	uint16_t aux, calibrationFactor;
+
 	if( STATUS_OK != MAX9867_DigitalAudioInterfaceInit(MAX9867_SLAVE_MODE,
 			LEFT_CHN_DATA_IN_OUT, SDIN_LATCHED_RISING_EDGE_BCLK, SDOUT_TRANS_AFTER_SDIN_LATCHED,
 			SDIN_SDOUT_LATCHED_FIRST_BCLK_EDGE, SDOUT_HIGH_IMPEDANCE_AFTER_DATA_TRANS,
@@ -827,7 +829,7 @@ Status_TypeDef DcMeasurement(uint32_t *dcMeasurement)
 	_DELAY_MS(40);
 	if( STATUS_OK != MAX9867_AuxiliaryInputCapture(CONNECT_INPUT_BUFFER_TO_INTERNAL_VOLTAGE))
 			return STATUS_ERR;
-	if( STATUS_OK != MAX9867_AuxiliaryRegRead(&calibrationFactor))
+	if( STATUS_OK != MAX9867_AuxiliaryRegRead(calibrationFactor))
 			return STATUS_ERR;
 	if( STATUS_OK != MAX9867_AuxiliaryInputCapture(GAIN_NORMAL_OPERATION))
 			return STATUS_ERR;
@@ -835,22 +837,30 @@ Status_TypeDef DcMeasurement(uint32_t *dcMeasurement)
 			return STATUS_ERR;
 		if( STATUS_OK != MAX9867_AuxiliaryInputType(JACKSNS_PIN_FOR_JACK_DETECTION))
 			return STATUS_ERR;
+	return STATUS_OK;
+}
+
+Status_TypeDef ReadingDcMeasurement(uint32_t *dcMeasurement, uint16_t calibrationFactor)
+{
+	uint16_t auxReg;
 	/* Measure the voltage on JACKSNS/AUX */
 	if( STATUS_OK != MAX9867_AuxiliaryInputType(JACKSNS_PIN_FOR_DC_MEASUREMENT))
 			return STATUS_ERR;
 	_DELAY_MS(40);
 	if( STATUS_OK != MAX9867_AuxiliaryInputCapture(CONNECT_INPUT_BUFFER_TO_INTERNAL_VOLTAGE))
 			return STATUS_ERR;
-	if( STATUS_OK != MAX9867_AuxiliaryRegRead(&aux))
+	if( STATUS_OK != MAX9867_AuxiliaryRegRead(&auxReg))
 			return STATUS_ERR;
 	if( STATUS_OK != MAX9867_AuxiliaryInputCapture(GAIN_NORMAL_OPERATION))
 			return STATUS_ERR;
 	/* DC measurement complete */
-	*dcMeasurement = 0.738 * (aux/calibrationFactor);
+	*dcMeasurement = 0.738 * (auxReg/calibrationFactor);
 	return STATUS_OK;
 }
 
-Status_TypeDef MAX9867_Init(DAC_Level_Ctrl dacGain,L_R_Playback_Volume rPlaybackVol,L_R_Playback_Volume lPlaybackVol)
+/*********************************************************************FOR H07R8 MODULE****************************************************************/
+
+Status_TypeDef MAX9867_CodecInit(DAC_Level_Ctrl dacGain,L_R_Playback_Volume rPlaybackVol,L_R_Playback_Volume lPlaybackVol)
 {
 	if( STATUS_OK != MAX9867_Shoutdown(SHOUTDOWN_ENABLE))
 		return STATUS_ERR;
@@ -870,5 +880,14 @@ Status_TypeDef MAX9867_Init(DAC_Level_Ctrl dacGain,L_R_Playback_Volume rPlayback
 	if( STATUS_OK != MAX9867_Shoutdown(SHOUTDOWN_DISABLE))
 		return STATUS_ERR;
 	 return STATUS_OK;
+}
+
+Status_TypeDef SendingDigitalAudio(uint16_t *data,size_t size)
+{
+    for(int i=0; i<size; i++) {
+    	if( STATUS_OK != WriteI2S(MAX9867_I2S_HANDLE, &data[i], 1))
+    		return STATUS_ERR;
+    }
+    return STATUS_OK;
 }
 /************************ (C) COPYRIGHT Hexabitz *****END OF FILE****/

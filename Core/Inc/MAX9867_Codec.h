@@ -1134,6 +1134,7 @@ Status_TypeDef MAX9867_JackSensEnableDisable(Jack_Sense_En_Dis jackSens);
  * 			 Any other setting = DC-blocking filter is enabled.
  * @retval  :Status
  */
+/********************************************************************************USER APIs*****************************************************************************************************************************/
 
 Status_TypeDef AudioAmplifyRecordingInit(Line_Input_Mode lineInputMode, L_R_Line_Input lrLineInput,L_R_Line_Input_Gain gain, L_R_Playback_Volume_Channel channel, L_R_Playback_Volume rPlaybackVol,
 		L_R_Playback_Volume lPlaybackVol, ADC_L_R adc, L_R_ADC_Level_Ctrl adcGain,
@@ -1233,13 +1234,25 @@ Status_TypeDef ReadingDigitalAudioInit(Digital_Audio_Mode audioMode, L_R_Playbac
 		DAC_Level_Ctrl progAmp, ADC_DAC_Digital_Audio_Filter_Sٍpecifications DAC_Specifications, L_R_Playback_Volume rPlaybackVol,
 		L_R_Playback_Volume lPlaybackVol);
 
-/* DC measurement */
+/* DC measurement Initialize */
 /*
- * @brief  :dc Measurement on JACKSNS/AUX pin.
- * @param1 :return a value with dc measurement.
+ * @brief  :DC Measurement Initialize.
+ * @param1 :pointer to calibration factor.
+ * @Note   :use this factor to calculate DC measurement.
  * @retval :Status
  */
-Status_TypeDef DcMeasurement(uint32_t *dcMeasurement);
+Status_TypeDef DcMeasurementInit(uint16_t *calibrationFactor);
+
+/* Reading DC measurement */
+/*
+ * @brief  :reading DC Measurement on JACKSNS/AUX pin.
+ * @param1 :DC Measurement value.
+ * @param2 :calibration factor value.
+ * @retval :Status
+ */
+Status_TypeDef ReadingDcMeasurement(uint32_t *dcMeasurement, uint16_t calibrationFactor);
+
+/*********************************************************************FOR H07R8 MODULE****************************************************************/
 
 /* MAX9867 Init Application */
 /*
@@ -1252,7 +1265,15 @@ Status_TypeDef DcMeasurement(uint32_t *dcMeasurement);
  * @param3 :left Audio amplifier level control.
  * @retval :Status
  */
-Status_TypeDef MAX9867_Init(DAC_Level_Ctrl dacGain,L_R_Playback_Volume rPlaybackVol,L_R_Playback_Volume lPlaybackVol);
+Status_TypeDef MAX9867_CodecInit(DAC_Level_Ctrl dacGain,L_R_Playback_Volume rPlaybackVol,L_R_Playback_Volume lPlaybackVol);
+
+/* Sending Digital Audio */
+/* @brief  :Sending Digital Audio to MAX9867 IC by i2s protocol
+ * @param1 :digital data which we want to send.
+ * @param2 :size of these data.
+ * @retval :Status
+ */
+Status_TypeDef SendingDigitalAudio(uint16_t *data,size_t size);
 #endif /* INC_MAX9867_CODEC_H_ */
 
 /************************ (C) COPYRIGHT Hexabitz *****END OF FILE****/
