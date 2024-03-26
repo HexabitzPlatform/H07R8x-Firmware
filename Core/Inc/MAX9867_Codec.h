@@ -144,13 +144,6 @@ typedef enum
 
 typedef enum
 {
-	ADC_AUDIO_INPUT_LEFT,
-	ADC_AUDIO_INPUT_RIGHT,
-	ADC_AUDIO_INPUT_LEFT_RIGHT
-} L_R_ADC_Audio_Input;
-
-typedef enum
-{
 	LINE_INPUT_MUTE_EN,
 	LINE_INPUT_MUTE_DIS
 } L_R_Line_Input_Mute_En_Dis;
@@ -904,8 +897,8 @@ Status_TypeDef MAX9867_DAC_EnableDisable(DAC_En_Dis dac);
  * @Note   : MAX9867 has two amplifiers(DACG,DACA) to set the DAC gain
  * 			 we set DACG amplifier just in status voice stream,in status audio stream we set it (DAC_GAIN_0dB)
  * 			 DACA amplifier we set it in status voice or audio stream.
- * @param1 :DACG amplifier gain(just voice stream).
- * @param2 :DACA amplifier gain(voice and audio stream).
+ * @param1 :preamplifier gain(just voice stream).
+ * @param2 :programmable amplifier gain(voice and audio stream).
  * @retval :Status
  */
 Status_TypeDef MAX9867_DAC_Gain(DAC_Gain firstAmp, DAC_Level_Ctrl progAmp);
@@ -1124,8 +1117,9 @@ Status_TypeDef MAX9867_JackSensEnableDisable(Jack_Sense_En_Dis jackSens);
 
 /* Audio Amplify Recording */
 /*
- * @brief   :Amplify/recording the audio which comes on line-inputs pin(LINL,LINR).
+ * @brief   :Amplify/recording the audio which comes on line-inputs pins(LINL,LINR).
  * @Note    :some of parameters used in (Amplify mode) and other in (Recording mode) and other (Amplify and Recording modes).
+ * @Note    :in status Amplify mode ignore Recording mode parameters,vice versa.
  * @param1  :line-input mode(Amplify/recording/both of them).
  * @param2  :line-input channel(L/R/both of them) (Amplify and Recording).
  * @param3  :line-input gain (Amplify and recording).
@@ -1133,27 +1127,64 @@ Status_TypeDef MAX9867_JackSensEnableDisable(Jack_Sense_En_Dis jackSens);
  * @param5  :right Audio level control (Amplify mode).
  * @param6  :left Audio level control (Amplify mode).
  * @param7  :choose ADC channel(L/R/both of them) (Recording).
- * @param8  :JackSens Enable Disable.
- * @param9  :JackSens Enable Disable.
- * @param10 :JackSens Enable Disable.
- * @param11 :JackSens Enable Disable.
+ * @param8  :Set ADC gain (Recording).
+ * @param9  :choose Audio ADC filter type (Recording).
+ * @Note1   :MAX9867 uses (FIR filter) for Audio, so use configure in @Note2.
+ * @Note2   :0 = DC-blocking filter is disabled.
+ * 			 Any other setting = DC-blocking filter is enabled.
  * @retval  :Status
  */
 
 Status_TypeDef AudioAmplifyRecording(Line_Input_Mode lineInputMode, L_R_Line_Input lrLineInput,L_R_Line_Input_Gain gain, L_R_Playback_Volume_Channel channel, L_R_Playback_Volume rPlaybackVol,
-		L_R_Playback_Volume lPlaybackVol, ADC_L_R adc, L_R_ADC_Audio_Input lrAdcInput,
-		L_R_ADC_Level_Ctrl adcGain, ADC_DAC_Digital_Audio_Filter_Sٍpecifications ADC_Specifications,Headphone_Amp_Type ampMode);
+		L_R_Playback_Volume lPlaybackVol, ADC_L_R adc, L_R_ADC_Level_Ctrl adcGain,
+		ADC_DAC_Digital_Audio_Filter_Sٍpecifications ADC_Specifications);
 
-/* JackSens Enable Disable */
+/* Voice Amplify Recording */
 /*
- * @brief  :JackSens Enable Disable.
- * @param1 :JackSens Enable Disable.
- * @Note   :0 = Enables pullups on LOUTP and JACKSNS/AUX to detect jack insertion.
- * 			1 = Enables the comparator circuitry on JACKSNS/AUX to detect voltage changes.
- * @retval :Status
+ * @brief   :Amplify/recording the voice which comes on microphones inputs pins(MICLP,MICLN,MICRP,MICRN).
+ * @Note    :some of parameters used in (Amplify mode) and other in (Recording mode) and other (Amplify and Recording modes).
+ * @Note    :in status Amplify mode ignore Recording mode parameters,vice versa.
+ * @param1  :microphones mode(Amplify/recording/both of them).
+ * @param2  :microphones channel(L/R/both of them) (Amplify and Recording modes)
+ * @param3  :Preamplifier gain (Amplify and Recording modes).
+ * @param4  :programmable gain (Amplify and Recording modes).
+ * @param5  :choose Voice ADC filter type (Amplify and Recording modes).
+ * @Note    :choose the Voice ADC filter type from the table below.
+ * @param6  :choose Voice DAC filter type (Amplify mode).
+ * @Note    :choose the Voice DAC filter type from the table below.
+ * @Note    :MAX9867 uses (IIR filter) for voice, so use configure in the table below.
+  	     _________________________________________________________________________________________________________
+  		|	  CODE  |	 FILTER TYPE  |	INTENDED SAMPLE RATE | (kHz) HIGHPASS CORNER FREQUENCY (Hz) | 217Hz NOTCH |
+  		|___________|_________________|______________________|______________________________________|_____________|
+        |     0x0   |                                     Disabled												  |
+        |___________|_____________________________________________________________________________________________|
+        |     0x1  	|    Elliptical   |       	  16         |                  256                 |     Yes     |
+        |___________|_________________|______________________|______________________________________|_____________|
+		|     0x2  	|    Butterworth  |       	  16         |                  500                 |     No      |
+		|___________|_________________|______________________|______________________________________|_____________|
+        |     0x3  	|    Elliptical   |            8         |                  256                 |     Yes     |
+        |___________|_________________|______________________|______________________________________|_____________|
+        |     0x4  	|    Butterworth  |            8         |                  500                 |     No      |
+        |___________|_________________|______________________|______________________________________|_____________|
+        |     0x5  	|    Butterworth  |          8 to 24     |                 fS/240               |     No      |
+        |___________|_________________|______________________|______________________________________|_____________|
+        | 0x6 to 0x7|                 |                   Reserved                                                |
+        |___________|_________________|___________________________________________________________________________|
+ * @param7  :choose ADC channel (L/R/both of them) (Amplify and Recording modes).
+ * @param8  :Set ADC gain (Amplify and Recording).
+ * @param9  :choose voice source (L/R/both of them) ADC channel (Amplify mode).
+ * @param10 :sidetone gain in status differential headphone type (Amplify mode).
+ * @Note    :ignore it in status capacitorless or single-endded headphone type
+ * @param11 :sidetone gain in status capacitorless or single-endded headphone type (Amplify mode).
+ * @Note    :ignore it in status differential headphone type
+ * @param12 :amplifier type (differential/capacitorless/single-endded) (Amplify mode).
+ * @param13 :choose Audio channel(L/R/both of them) (Amplify mode).
+ * @param14 :right Audio level control (Amplify mode).
+ * @param15 :left Audio level control (Amplify mode).
+ * @retval  :Status
  */
-Status_TypeDef VoiceAmplifyRecording(Mic_Mode micMode, L_R_Mic mic, L_R_Mic_Preamp_Gain preAmpGain,
-		L_R_Mic_Programble_Gain_Amp progGain, L_R_ADC_Audio_Input lrAdcInputm,
+Status_TypeDef VoiceAmplifyRecording(Mic_Mode micMode, L_R_Mic mic,
+		L_R_Mic_Preamp_Gain preAmpGain, L_R_Mic_Programble_Gain_Amp progGain,
 		ADC_DAC_Digital_Audio_Filter_Sٍpecifications ADC_Specifications,
 		ADC_DAC_Digital_Audio_Filter_Sٍpecifications DAC_Specifications,
 		ADC_L_R adc, L_R_ADC_Level_Ctrl adcGain,
@@ -1161,25 +1192,54 @@ Status_TypeDef VoiceAmplifyRecording(Mic_Mode micMode, L_R_Mic mic, L_R_Mic_Prea
 		Sidetone_Gain_Capacitorless_Single_Ended_Headphone sidGainCapSinEnd, Amp_Type ampType,
 		L_R_Playback_Volume_Channel channel, L_R_Playback_Volume rPlaybackVol, L_R_Playback_Volume lPlaybackVol);
 
-/* JackSens Enable Disable */
+/* Reading Digital Audio */
 /*
- * @brief  :JackSens Enable Disable.
- * @param1 :JackSens Enable Disable.
- * @Note   :0 = Enables pullups on LOUTP and JACKSNS/AUX to detect jack insertion.
- * 			1 = Enables the comparator circuitry on JACKSNS/AUX to detect voltage changes.
+ * @brief  :Reading Digital Audio from (RAM/SDcard/...etc).
+ * @param1 :choose digital audio mode (Audio,Voice).
+ * @Note   :Audio like(song/speech/...etc from line-input) Voice like (sound produced by vocal cords from microphone).
+ * @param2 :choose Audio channel(L/R/both of them).
+ * @param3 :preamplifier gain(just voice stream).
+ * @param4 :programmable amplifier gain(voice and audio stream).
+ * @Note   :MAX9867 has two amplifiers(DACG,DACA) to set the DAC gain
+ * 			 we set DACG amplifier (preamplifier) just in status voice stream,in status audio stream we set it (DAC_GAIN_0dB)
+ * 			 DACA amplifier (programmable amplifier) we set it in status voice or audio stream.
+ * @param5 :choose DAC filter type.
+ * @Note   :in status digital voice data (we use IIR filter) set DAC filter type from the table below:
+  		 _________________________________________________________________________________________________________
+  		|	  CODE  |	 FILTER TYPE  |	INTENDED SAMPLE RATE | (kHz) HIGHPASS CORNER FREQUENCY (Hz) | 217Hz NOTCH |
+  		|___________|_________________|______________________|______________________________________|_____________|
+        |     0x0   |                                     Disabled												  |
+        |___________|_____________________________________________________________________________________________|
+        |     0x1  	|    Elliptical   |       	  16         |                  256                 |     Yes     |
+        |___________|_________________|______________________|______________________________________|_____________|
+		|     0x2  	|    Butterworth  |       	  16         |                  500                 |     No      |
+		|___________|_________________|______________________|______________________________________|_____________|
+        |     0x3  	|    Elliptical   |            8         |                  256                 |     Yes     |
+        |___________|_________________|______________________|______________________________________|_____________|
+        |     0x4  	|    Butterworth  |            8         |                  500                 |     No      |
+        |___________|_________________|______________________|______________________________________|_____________|
+        |     0x5  	|    Butterworth  |          8 to 24     |                 fS/240               |     No      |
+        |___________|_________________|______________________|______________________________________|_____________|
+        | 0x6 to 0x7|                 |                   Reserved                                                |
+        |___________|_________________|___________________________________________________________________________|
+ * @Note   :in status digital audio data (we use FIR filter) set DAC filter type from the configure below:
+ * 		    0 = DC-blocking filter is disabled.
+ * 			Any other setting = DC-blocking filter is enabled.
+ * @param6 :right Audio level control.
+ * @param7 :left Audio level control.
  * @retval :Status
  */
 Status_TypeDef ReadingDigitalAudio(Digital_Audio_Mode audioMode, L_R_Playback_Volume_Channel channel, DAC_Gain firstAmp,
 		DAC_Level_Ctrl progAmp, ADC_DAC_Digital_Audio_Filter_Sٍpecifications DAC_Specifications, L_R_Playback_Volume rPlaybackVol,
 		L_R_Playback_Volume lPlaybackVol);
 
-/* Amplifier Gain */
+/* DC measurement */
 /*
- * @brief  :Audio level control.
- * @param1 :Gain Modes
- * @retval :Nothing
+ * @brief  :dc Measurement on JACKSNS/AUX pin.
+ * @param1 :return a value with dc measurement.
+ * @retval :Status
  */
-Status_TypeDef DcMeasurment(uint32_t *dcMeasurment);
+Status_TypeDef DcMeasurement(uint32_t *dcMeasurement);
 #endif /* INC_MAX9867_CODEC_H_ */
 
 /************************ (C) COPYRIGHT Hexabitz *****END OF FILE****/
