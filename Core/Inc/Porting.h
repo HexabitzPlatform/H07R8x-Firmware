@@ -19,6 +19,7 @@
 typedef GPIO_TypeDef GPIO_HANDLE;
 
 extern  I2C_HandleTypeDef                   hi2c2;
+extern  I2S_HandleTypeDef                   hi2s1;
 typedef I2C_HandleTypeDef 					I2C_HANDLE;
 typedef I2S_HandleTypeDef 					I2S_HANDLE;
 #define TIM_OUT_1MS         				50
