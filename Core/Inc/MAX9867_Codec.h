@@ -1135,7 +1135,7 @@ Status_TypeDef MAX9867_JackSensEnableDisable(Jack_Sense_En_Dis jackSens);
  * @retval  :Status
  */
 
-Status_TypeDef AudioAmplifyRecording(Line_Input_Mode lineInputMode, L_R_Line_Input lrLineInput,L_R_Line_Input_Gain gain, L_R_Playback_Volume_Channel channel, L_R_Playback_Volume rPlaybackVol,
+Status_TypeDef AudioAmplifyRecordingInit(Line_Input_Mode lineInputMode, L_R_Line_Input lrLineInput,L_R_Line_Input_Gain gain, L_R_Playback_Volume_Channel channel, L_R_Playback_Volume rPlaybackVol,
 		L_R_Playback_Volume lPlaybackVol, ADC_L_R adc, L_R_ADC_Level_Ctrl adcGain,
 		ADC_DAC_Digital_Audio_Filter_Sٍpecifications ADC_Specifications);
 
@@ -1183,7 +1183,7 @@ Status_TypeDef AudioAmplifyRecording(Line_Input_Mode lineInputMode, L_R_Line_Inp
  * @param15 :left Audio level control (Amplify mode).
  * @retval  :Status
  */
-Status_TypeDef VoiceAmplifyRecording(Mic_Mode micMode, L_R_Mic mic,
+Status_TypeDef VoiceAmplifyRecordingInit(Mic_Mode micMode, L_R_Mic mic,
 		L_R_Mic_Preamp_Gain preAmpGain, L_R_Mic_Programble_Gain_Amp progGain,
 		ADC_DAC_Digital_Audio_Filter_Sٍpecifications ADC_Specifications,
 		ADC_DAC_Digital_Audio_Filter_Sٍpecifications DAC_Specifications,
@@ -1229,7 +1229,7 @@ Status_TypeDef VoiceAmplifyRecording(Mic_Mode micMode, L_R_Mic mic,
  * @param7 :left Audio level control.
  * @retval :Status
  */
-Status_TypeDef ReadingDigitalAudio(Digital_Audio_Mode audioMode, L_R_Playback_Volume_Channel channel, DAC_Gain firstAmp,
+Status_TypeDef ReadingDigitalAudioInit(Digital_Audio_Mode audioMode, L_R_Playback_Volume_Channel channel, DAC_Gain firstAmp,
 		DAC_Level_Ctrl progAmp, ADC_DAC_Digital_Audio_Filter_Sٍpecifications DAC_Specifications, L_R_Playback_Volume rPlaybackVol,
 		L_R_Playback_Volume lPlaybackVol);
 

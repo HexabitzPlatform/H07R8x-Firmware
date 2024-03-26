@@ -687,7 +687,7 @@ Status_TypeDef MAX9867_JackSensEnableDisable(Jack_Sense_En_Dis jackSens)
 	return STATUS_OK;
 }
 
-Status_TypeDef AudioAmplifyRecording(Line_Input_Mode lineInputMode, L_R_Line_Input lrLineInput,L_R_Line_Input_Gain gain, L_R_Playback_Volume_Channel channel, L_R_Playback_Volume rPlaybackVol,
+Status_TypeDef AudioAmplifyRecordingInit(Line_Input_Mode lineInputMode, L_R_Line_Input lrLineInput,L_R_Line_Input_Gain gain, L_R_Playback_Volume_Channel channel, L_R_Playback_Volume rPlaybackVol,
 		L_R_Playback_Volume lPlaybackVol, ADC_L_R adc, L_R_ADC_Level_Ctrl adcGain, ADC_DAC_Digital_Audio_Filter_Sٍpecifications ADC_Specifications)
 {
 	/* Line-input gain */
@@ -725,7 +725,7 @@ Status_TypeDef AudioAmplifyRecording(Line_Input_Mode lineInputMode, L_R_Line_Inp
 	return STATUS_OK;
 }
 
-Status_TypeDef VoiceAmplifyRecording(Mic_Mode micMode, L_R_Mic mic,
+Status_TypeDef VoiceAmplifyRecordingInit(Mic_Mode micMode, L_R_Mic mic,
 		L_R_Mic_Preamp_Gain preAmpGain, L_R_Mic_Programble_Gain_Amp progGain,
 		ADC_DAC_Digital_Audio_Filter_Sٍpecifications ADC_Specifications,
 		ADC_DAC_Digital_Audio_Filter_Sٍpecifications DAC_Specifications,
@@ -768,7 +768,7 @@ Status_TypeDef VoiceAmplifyRecording(Mic_Mode micMode, L_R_Mic mic,
 	return STATUS_OK;
 }
 
-Status_TypeDef ReadingDigitalAudio(Digital_Audio_Mode audioMode, L_R_Playback_Volume_Channel channel, DAC_Gain firstAmp, DAC_Level_Ctrl progAmp,
+Status_TypeDef ReadingDigitalAudioInit(Digital_Audio_Mode audioMode, L_R_Playback_Volume_Channel channel, DAC_Gain firstAmp, DAC_Level_Ctrl progAmp,
 		ADC_DAC_Digital_Audio_Filter_Sٍpecifications DAC_Specifications, L_R_Playback_Volume rPlaybackVol, L_R_Playback_Volume lPlaybackVol)
 {
 	if(audioMode == AUDIO)
@@ -804,35 +804,49 @@ Status_TypeDef ReadingDigitalAudio(Digital_Audio_Mode audioMode, L_R_Playback_Vo
 Status_TypeDef DcMeasurement(uint32_t *dcMeasurement)
 {
 	uint16_t aux,k;
-	MAX9867_DigitalAudioInterfaceInit(MAX9867_SLAVE_MODE,
+	if( STATUS_OK != MAX9867_DigitalAudioInterfaceInit(MAX9867_SLAVE_MODE,
 			LEFT_CHN_DATA_IN_OUT, SDIN_LATCHED_RISING_EDGE_BCLK, SDOUT_TRANS_AFTER_SDIN_LATCHED,
 			SDIN_SDOUT_LATCHED_FIRST_BCLK_EDGE, SDOUT_HIGH_IMPEDANCE_AFTER_DATA_TRANS,
 			LRCLK_INDICATE_L_R_AUDIO, OFF, SDIN_PROCESS_SEPARATELY,
-			TRACKS_VOLL_VOLR_BITS);
-	MAX9867_JackSensEnableDisable(JACKSNS_ENABLE);
+			TRACKS_VOLL_VOLR_BITS))
+			return STATUS_ERR;
+	if( STATUS_OK != MAX9867_JackSensEnableDisable(JACKSNS_ENABLE))
+			return STATUS_ERR;
 	if( STATUS_OK != MAX9867_ADC_EnableDisable(ADC_ENABLE))
 			return STATUS_ERR;
 	/* Calibrate the offset */
-	MAX9867_AuxiliaryInputType(JACKSNS_PIN_FOR_DC_MEASUREMENT);
-	MAX9867_AuxiliaryInputOffsetCalibration(ADC_AUTO_CALIBRATE_ANY_OFFSET);
+	if( STATUS_OK != MAX9867_AuxiliaryInputType(JACKSNS_PIN_FOR_DC_MEASUREMENT))
+			return STATUS_ERR;
+	if( STATUS_OK != MAX9867_AuxiliaryInputOffsetCalibration(ADC_AUTO_CALIBRATE_ANY_OFFSET))
+		    return STATUS_ERR;
 	_DELAY_MS(40);
-	MAX9867_AuxiliaryInputOffsetCalibration(OFFSET_NORMAL_OPERATION);
-	MAX9867_AuxiliaryInputGainCalibration(CONNECT_INPUT_BUFFER_TO_INTERNAL_VOLTAGE);
+	if( STATUS_OK != MAX9867_AuxiliaryInputOffsetCalibration(OFFSET_NORMAL_OPERATION))
+			return STATUS_ERR;
+	if( STATUS_OK != MAX9867_AuxiliaryInputGainCalibration(CONNECT_INPUT_BUFFER_TO_INTERNAL_VOLTAGE))
+			return STATUS_ERR;
 	_DELAY_MS(40);
-	MAX9867_AuxiliaryInputCapture(CONNECT_INPUT_BUFFER_TO_INTERNAL_VOLTAGE);
-	MAX9867_AuxiliaryRegRead(&k);
-	MAX9867_AuxiliaryInputCapture(GAIN_NORMAL_OPERATION);
-	MAX9867_AuxiliaryInputGainCalibration(GAIN_NORMAL_OPERATION);
-	MAX9867_AuxiliaryInputType(JACKSNS_PIN_FOR_JACK_DETECTION);
+	if( STATUS_OK != MAX9867_AuxiliaryInputCapture(CONNECT_INPUT_BUFFER_TO_INTERNAL_VOLTAGE))
+			return STATUS_ERR;
+	if( STATUS_OK != MAX9867_AuxiliaryRegRead(&k))
+			return STATUS_ERR;
+	if( STATUS_OK != MAX9867_AuxiliaryInputCapture(GAIN_NORMAL_OPERATION))
+			return STATUS_ERR;
+	if( STATUS_OK != MAX9867_AuxiliaryInputGainCalibration(GAIN_NORMAL_OPERATION))
+			return STATUS_ERR;
+		if( STATUS_OK != MAX9867_AuxiliaryInputType(JACKSNS_PIN_FOR_JACK_DETECTION))
+			return STATUS_ERR;
 	/* Measure the voltage on JACKSNS/AUX */
-	MAX9867_AuxiliaryInputType(JACKSNS_PIN_FOR_DC_MEASUREMENT);
+	if( STATUS_OK != MAX9867_AuxiliaryInputType(JACKSNS_PIN_FOR_DC_MEASUREMENT))
+			return STATUS_ERR;
 	_DELAY_MS(40);
-	MAX9867_AuxiliaryInputCapture(CONNECT_INPUT_BUFFER_TO_INTERNAL_VOLTAGE);
-	MAX9867_AuxiliaryRegRead(&aux);
-	MAX9867_AuxiliaryInputCapture(GAIN_NORMAL_OPERATION);
+	if( STATUS_OK != MAX9867_AuxiliaryInputCapture(CONNECT_INPUT_BUFFER_TO_INTERNAL_VOLTAGE))
+			return STATUS_ERR;
+	if( STATUS_OK != MAX9867_AuxiliaryRegRead(&aux))
+			return STATUS_ERR;
+	if( STATUS_OK != MAX9867_AuxiliaryInputCapture(GAIN_NORMAL_OPERATION))
+			return STATUS_ERR;
 	/* DC measurement complete */
 	*dcMeasurment = 0.738 * (aux/k);
 	return STATUS_OK;
 }
-
 /************************ (C) COPYRIGHT Hexabitz *****END OF FILE****/
