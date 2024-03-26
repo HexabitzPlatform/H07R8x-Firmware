@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "MAX9867_Codec.h"
+#include "MAX9704_Amplifier.h"
 #include "MUS_Tribal_Kick_st_os_01.h"
 #include "SFX_Tribal_Exhale_st_os_01.h"
 #include "SFX_Tribal_Inhale_st_os_01.h"
@@ -95,7 +96,8 @@ int main(void)
   MX_I2C2_Init();
   MX_I2S1_Init();
   /* USER CODE BEGIN 2 */
-//  MAX9867_Init();
+  MAX9704_AmpInit(SWITCHING_MODE_670KHZ, GAIN_MODE_13dB);
+  MAX9867_CodecInit(DAC_LVL_GAIN_MINUS_15dB,PLAYBACK_VOLUME_GAIN_MINUS_38dB,PLAYBACK_VOLUME_GAIN_MINUS_38dB);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -103,17 +105,11 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-	    for(int i=0; i<13000; i++) {
-	    	WriteI2S(MAX9867_I2S_HANDLE, (uint16_t *)&kick_data[i], 1);
-	    }
+	    SendingDigitalAudio((uint16_t *)&kick_data,13000);
 	  _DELAY_MS(5000);
-	    for(int i=0; i<13000; i++) {
-	    	WriteI2S(MAX9867_I2S_HANDLE, (uint16_t *)&inhale_data[i], 1);
-	    }
+	    SendingDigitalAudio((uint16_t *)&inhale_data,13000);
 	  _DELAY_MS(5000);
-	    for(int i=0; i<13000; i++) {
-	    	WriteI2S(MAX9867_I2S_HANDLE, (uint16_t *)&exhale_data[i], 1);
-	    }
+	    SendingDigitalAudio((uint16_t *)&exhale_data,13000);
 	  _DELAY_MS(5000);
     /* USER CODE BEGIN 3 */
   }
