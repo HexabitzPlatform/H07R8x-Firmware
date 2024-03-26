@@ -1124,8 +1124,8 @@ Status_TypeDef MAX9867_JackSensEnableDisable(Jack_Sense_En_Dis jackSens);
  * @param2  :line-input channel(L/R/both of them) (Amplify and Recording).
  * @param3  :line-input gain (Amplify and recording).
  * @param4  :choose Audio channel(L/R/both of them) (Amplify mode).
- * @param5  :right Audio level control (Amplify mode).
- * @param6  :left Audio level control (Amplify mode).
+ * @param5  :right Audio amplifier level control (Amplify mode).
+ * @param6  :left Audio amplifier level control (Amplify mode).
  * @param7  :choose ADC channel(L/R/both of them) (Recording).
  * @param8  :Set ADC gain (Recording).
  * @param9  :choose Audio ADC filter type (Recording).
@@ -1179,8 +1179,8 @@ Status_TypeDef AudioAmplifyRecordingInit(Line_Input_Mode lineInputMode, L_R_Line
  * @Note    :ignore it in status differential headphone type
  * @param12 :amplifier type (differential/capacitorless/single-endded) (Amplify mode).
  * @param13 :choose Audio channel(L/R/both of them) (Amplify mode).
- * @param14 :right Audio level control (Amplify mode).
- * @param15 :left Audio level control (Amplify mode).
+ * @param14 :right Audio amplifier level control (Amplify mode).
+ * @param15 :left Audio amplifier level control (Amplify mode).
  * @retval  :Status
  */
 Status_TypeDef VoiceAmplifyRecordingInit(Mic_Mode micMode, L_R_Mic mic,
@@ -1225,8 +1225,8 @@ Status_TypeDef VoiceAmplifyRecordingInit(Mic_Mode micMode, L_R_Mic mic,
  * @Note   :in status digital audio data (we use FIR filter) set DAC filter type from the configure below:
  * 		    0 = DC-blocking filter is disabled.
  * 			Any other setting = DC-blocking filter is enabled.
- * @param6 :right Audio level control.
- * @param7 :left Audio level control.
+ * @param6 :right Audio amplifier level control.
+ * @param7 :left Audio amplifier level control.
  * @retval :Status
  */
 Status_TypeDef ReadingDigitalAudioInit(Digital_Audio_Mode audioMode, L_R_Playback_Volume_Channel channel, DAC_Gain firstAmp,
@@ -1240,6 +1240,19 @@ Status_TypeDef ReadingDigitalAudioInit(Digital_Audio_Mode audioMode, L_R_Playbac
  * @retval :Status
  */
 Status_TypeDef DcMeasurement(uint32_t *dcMeasurement);
+
+/* MAX9867 Init Application */
+/*
+ * @brief  :this API contain:
+ * 		    - initializing digital audio interface unit.
+ * 		    - initializing Reading Digital Audio.
+ * 		    - choosing headphone amplifier type.
+ * @param1 :control DAC gain.
+ * @param2 :right Audio amplifier level control.
+ * @param3 :left Audio amplifier level control.
+ * @retval :Status
+ */
+Status_TypeDef MAX9867_Init(DAC_Level_Ctrl dacGain,L_R_Playback_Volume rPlaybackVol,L_R_Playback_Volume lPlaybackVol);
 #endif /* INC_MAX9867_CODEC_H_ */
 
 /************************ (C) COPYRIGHT Hexabitz *****END OF FILE****/

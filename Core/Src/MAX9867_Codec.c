@@ -803,7 +803,7 @@ Status_TypeDef ReadingDigitalAudioInit(Digital_Audio_Mode audioMode, L_R_Playbac
 
 Status_TypeDef DcMeasurement(uint32_t *dcMeasurement)
 {
-	uint16_t aux,k;
+	uint16_t aux, calibrationFactor;
 	if( STATUS_OK != MAX9867_DigitalAudioInterfaceInit(MAX9867_SLAVE_MODE,
 			LEFT_CHN_DATA_IN_OUT, SDIN_LATCHED_RISING_EDGE_BCLK, SDOUT_TRANS_AFTER_SDIN_LATCHED,
 			SDIN_SDOUT_LATCHED_FIRST_BCLK_EDGE, SDOUT_HIGH_IMPEDANCE_AFTER_DATA_TRANS,
@@ -827,7 +827,7 @@ Status_TypeDef DcMeasurement(uint32_t *dcMeasurement)
 	_DELAY_MS(40);
 	if( STATUS_OK != MAX9867_AuxiliaryInputCapture(CONNECT_INPUT_BUFFER_TO_INTERNAL_VOLTAGE))
 			return STATUS_ERR;
-	if( STATUS_OK != MAX9867_AuxiliaryRegRead(&k))
+	if( STATUS_OK != MAX9867_AuxiliaryRegRead(&calibrationFactor))
 			return STATUS_ERR;
 	if( STATUS_OK != MAX9867_AuxiliaryInputCapture(GAIN_NORMAL_OPERATION))
 			return STATUS_ERR;
@@ -846,7 +846,29 @@ Status_TypeDef DcMeasurement(uint32_t *dcMeasurement)
 	if( STATUS_OK != MAX9867_AuxiliaryInputCapture(GAIN_NORMAL_OPERATION))
 			return STATUS_ERR;
 	/* DC measurement complete */
-	*dcMeasurement = 0.738 * (aux/k);
+	*dcMeasurement = 0.738 * (aux/calibrationFactor);
 	return STATUS_OK;
+}
+
+Status_TypeDef MAX9867_Init(DAC_Level_Ctrl dacGain,L_R_Playback_Volume rPlaybackVol,L_R_Playback_Volume lPlaybackVol)
+{
+	if( STATUS_OK != MAX9867_Shoutdown(SHOUTDOWN_ENABLE))
+		return STATUS_ERR;
+	if( STATUS_OK != MAX9867_ClockControlInit(MCLK_BETWEEN_10_20_MHZ, NORMAL_OR_PLL_MODE,
+	  		PLL_DISABLE, 0, 0))
+		return STATUS_ERR;
+	if( STATUS_OK != MAX9867_DigitalAudioInterfaceInit(MAX9867_SLAVE_MODE,
+			  LEFT_CHN_DATA_IN_OUT, SDIN_LATCHED_RISING_EDGE_BCLK, SDOUT_TRANS_AFTER_SDIN_LATCHED,
+			  SDIN_SDOUT_LATCHED_SECOND_BCLK_EDGE, SDOUT_HIGH_IMPEDANCE_AFTER_DATA_TRANS,
+			  LRCLK_INDICATE_L_R_AUDIO, OFF, SDIN_PROCESS_SEPARATELY,
+			  TRACKS_VOLL_VOLR_BITS))
+		return STATUS_ERR;
+	ReadingDigitalAudioInit(AUDIO, LEFT_RIGHT_VOLUME_CHA, DAC_GAIN_0dB, dacGain,
+			TYPE1, rPlaybackVol, lPlaybackVol);
+	if( STATUS_OK != MAX9867_HeadphoneAmpType(STEREO_DIFF_CLICKLESS))
+		return STATUS_ERR;
+	if( STATUS_OK != MAX9867_Shoutdown(SHOUTDOWN_DISABLE))
+		return STATUS_ERR;
+	 return STATUS_OK;
 }
 /************************ (C) COPYRIGHT Hexabitz *****END OF FILE****/
