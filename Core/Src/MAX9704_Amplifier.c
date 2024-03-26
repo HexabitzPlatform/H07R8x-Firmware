@@ -143,3 +143,5 @@ Status_TypeDef MAX9704_AmpInit(Switching_Modes switchMode, Amp_Gain gain)
 		return STATUS_ERR;
 	return STATUS_OK;
 }
+
+/************************ (C) COPYRIGHT Hexabitz *****END OF FILE****/
