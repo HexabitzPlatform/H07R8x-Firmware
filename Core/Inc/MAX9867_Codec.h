@@ -19,7 +19,7 @@
 #include "Porting.h"
 #include <stdbool.h>
 
-
+#define MAX9867_SLAVE_ADDRESS            	0x18
 #define MAX9867_SLAVE_ADDRESS_W            	0x30
 #define MAX9867_SLAVE_ADDRESS_R				0x31
 

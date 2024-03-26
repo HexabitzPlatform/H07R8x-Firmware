@@ -61,12 +61,12 @@ Status_TypeDef MAX9867_DigitalAudioInterfaceInit(MAX9867_Master_Slave_Mode mode,
 
 	tDataCodec[0] = MAX9867_REG_INTERFACE_MODE1;
 	tDataCodec[1] = digAudReg1.digAudReg1;
-	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 			return STATUS_ERR;
 
 	tDataCodec[0] = MAX9867_REG_INTERFACE_MODE2;
 	tDataCodec[1] = digAudReg2.digAudReg2;
-	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 			return STATUS_ERR;
 	return STATUS_OK;
 }
@@ -79,7 +79,7 @@ Status_TypeDef MAX9867_DigitalFilterInit(Digital_Audio_Filter_Mode mode, ADC_DAC
 	codecFilterReg.DVFLT = DAC_Specifications;
 	tDataCodec[0] = MAX9867_REG_CODEC_FILTERS;
 	tDataCodec[1] = codecFilterReg.digtlFltrReg;
-	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 			return STATUS_ERR;
 	return STATUS_OK;
 }
@@ -98,17 +98,17 @@ Status_TypeDef MAX9867_ClockControlInit(MCLK_Prescaler mclkPresclr, Exact_Intege
 
 	tDataCodec[0] = MAX9867_REG_SYSTEM_CLK;
 	tDataCodec[1] = sysClkReg.sysClkReg;
-	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 			return STATUS_ERR;
 
 	tDataCodec[0] = MAX9867_REG_STEREO_AUD_CLK_CTRL_H;
 	tDataCodec[1] = stereoAudClkRegH.stereoAudClkRegH;
-	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 			return STATUS_ERR;
 
 	tDataCodec[0] = MAX9867_REG_STEREO_AUD_CLK_CTRL_L;
 	tDataCodec[1] = stereoAudClkRegL.stereoAudClkRegL;
-	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 			return STATUS_ERR;
 
 	return STATUS_OK;
@@ -123,7 +123,7 @@ Status_TypeDef MAX9867_InterruptEnable(bool clipDetect,bool slewDetect,bool pllU
 
 	tDataCodec[0] = MAX9867_REG_INT_ENA;
 	tDataCodec[1] = interruptEnReg.interruptEnReg;
-	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 			return STATUS_ERR;
 	return STATUS_OK;
 }
@@ -133,7 +133,7 @@ Status_TypeDef MAX9867_Shoutdown(Shoutdown shtdown)
 	powerMangReg.SHDN = shtdown;
 	tDataCodec[0] = MAX9867_REG_SYS_SHUTDOWN;
 	tDataCodec[1] = powerMangReg.pwrManagReg;
-	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 			return STATUS_ERR;
 	return STATUS_OK;
 }
@@ -143,7 +143,7 @@ Status_TypeDef MAX9867_HeadphoneAmpType(Headphone_Amp_Type ampMode)
 	configModeReg.HPMODE = ampMode;
 	tDataCodec[0] = MAX9867_REG_MODE;
 	tDataCodec[1] = configModeReg.configModeReg;
-	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 			return STATUS_ERR;
 	return STATUS_OK;
 }
@@ -154,7 +154,7 @@ Status_TypeDef MAX9867_DAC_EnableDisable(DAC_En_Dis dac)
 		powerMangReg.DAREN = dac;
 		tDataCodec[0] = MAX9867_REG_CODEC_FILTERS;
 		tDataCodec[1] = powerMangReg.pwrManagReg;
-		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 				return STATUS_ERR;
 	return STATUS_OK;
 }
@@ -165,7 +165,7 @@ Status_TypeDef MAX9867_DAC_Gain(DAC_Gain firstAmp, DAC_Level_Ctrl progAmp)
 	DAC_LevelReg.DACA = progAmp;
 	tDataCodec[0] = MAX9867_REG_DAC_LVL;
 	tDataCodec[1] = DAC_LevelReg.DACLvlReg;
-	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 			return STATUS_ERR;
 	return STATUS_OK;
 }
@@ -175,7 +175,7 @@ Status_TypeDef MAX9867_DAC_Mute(DAC_Mute_En_Dis dacMute)
 	DAC_LevelReg.DACM = dacMute;
 	tDataCodec[0] = MAX9867_REG_CODEC_FILTERS;
 	tDataCodec[1] = DAC_LevelReg.DACLvlReg;
-	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 			return STATUS_ERR;
 	return STATUS_OK;
 }
@@ -186,7 +186,7 @@ Status_TypeDef MAX9867_ADC_EnableDisable(ADC_En_Dis adc)
 	powerMangReg.ADREN = adc;
 	tDataCodec[0] = MAX9867_REG_CODEC_FILTERS;
 	tDataCodec[1] = powerMangReg.pwrManagReg;
-	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 			return STATUS_ERR;
 	return STATUS_OK;
 }
@@ -198,7 +198,7 @@ Status_TypeDef MAX9867_ADC_Gain(ADC_L_R adc, L_R_ADC_Level_Ctrl adcGain)
 		ADCLvlReg.AVL = adcGain;
 		tDataCodec[0] = MAX9867_REG_DAC_LVL;
 		tDataCodec[1] = ADCLvlReg.ADCLvlReg;
-		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 				return STATUS_ERR;
 	}
 	else if(adc == ADC_RIGHT)
@@ -206,7 +206,7 @@ Status_TypeDef MAX9867_ADC_Gain(ADC_L_R adc, L_R_ADC_Level_Ctrl adcGain)
 		ADCLvlReg.AVR = adcGain;
 		tDataCodec[0] = MAX9867_REG_DAC_LVL;
 		tDataCodec[1] = ADCLvlReg.ADCLvlReg;
-		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 				return STATUS_ERR;
 	}
 
@@ -215,13 +215,13 @@ Status_TypeDef MAX9867_ADC_Gain(ADC_L_R adc, L_R_ADC_Level_Ctrl adcGain)
 		ADCLvlReg.AVL = adcGain;
 		tDataCodec[0] = MAX9867_REG_DAC_LVL;
 		tDataCodec[1] = ADCLvlReg.ADCLvlReg;
-		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 				return STATUS_ERR;
 
 		ADCLvlReg.AVR = adcGain;
 		tDataCodec[0] = MAX9867_REG_DAC_LVL;
 		tDataCodec[1] = ADCLvlReg.ADCLvlReg;
-		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 				return STATUS_ERR;
 	}
 	return STATUS_OK;
@@ -234,7 +234,7 @@ Status_TypeDef MAX9867_ADC_AduioInputMixer(ADC_L_R lrAdcInput, L_R_ADC_Audio_Inp
 		adcInputReg.MXINL = mixer;
 		tDataCodec[0] = MAX9867_REG_ADC_IN;
 		tDataCodec[1] = adcInputReg.adcInputReg;
-		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 				return STATUS_ERR;
 	}
 
@@ -243,7 +243,7 @@ Status_TypeDef MAX9867_ADC_AduioInputMixer(ADC_L_R lrAdcInput, L_R_ADC_Audio_Inp
 	adcInputReg.MXINR = mixer;
 	tDataCodec[0] = MAX9867_REG_ADC_IN;
 	tDataCodec[1] = adcInputReg.adcInputReg;
-	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 			return STATUS_ERR;
 	}
 
@@ -252,13 +252,13 @@ Status_TypeDef MAX9867_ADC_AduioInputMixer(ADC_L_R lrAdcInput, L_R_ADC_Audio_Inp
 		adcInputReg.MXINL = mixer;
 		tDataCodec[0] = MAX9867_REG_ADC_IN;
 		tDataCodec[1] = adcInputReg.adcInputReg;
-		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 				return STATUS_ERR;
 
 		adcInputReg.MXINR = mixer;
 		tDataCodec[0] = MAX9867_REG_ADC_IN;
 		tDataCodec[1] = adcInputReg.adcInputReg;
-		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 				return STATUS_ERR;
 	}
 	return STATUS_OK;
@@ -273,7 +273,7 @@ Status_TypeDef MAX9867_LineInputEnableDisable(L_R_Line_Input_En_Dis lineInput, L
 			powerMangReg.LNLEN = LINE_INPUT_EN;
 			tDataCodec[0] = MAX9867_REG_SYS_SHUTDOWN;
 			tDataCodec[1] = powerMangReg.pwrManagReg;
-			if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+			if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 					return STATUS_ERR;
 		}
 		else if(lineInput == LINE_INPUT_DIS)
@@ -281,7 +281,7 @@ Status_TypeDef MAX9867_LineInputEnableDisable(L_R_Line_Input_En_Dis lineInput, L
 			powerMangReg.LNLEN = LINE_INPUT_DIS;
 			tDataCodec[0] = MAX9867_REG_SYS_SHUTDOWN;
 			tDataCodec[1] = powerMangReg.pwrManagReg;
-			if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+			if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 					return STATUS_ERR;
 		}
 	}
@@ -292,7 +292,7 @@ Status_TypeDef MAX9867_LineInputEnableDisable(L_R_Line_Input_En_Dis lineInput, L
 			powerMangReg.LNREN = LINE_INPUT_EN;
 			tDataCodec[0] = MAX9867_REG_SYS_SHUTDOWN;
 			tDataCodec[1] = powerMangReg.pwrManagReg;
-			if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+			if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 					return STATUS_ERR;
 		}
 		else if(lineInput == LINE_INPUT_DIS)
@@ -300,7 +300,7 @@ Status_TypeDef MAX9867_LineInputEnableDisable(L_R_Line_Input_En_Dis lineInput, L
 			powerMangReg.LNREN = LINE_INPUT_DIS;
 			tDataCodec[0] = MAX9867_REG_SYS_SHUTDOWN;
 			tDataCodec[1] = powerMangReg.pwrManagReg;
-			if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+			if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 					return STATUS_ERR;
 		}
 	}
@@ -311,13 +311,13 @@ Status_TypeDef MAX9867_LineInputEnableDisable(L_R_Line_Input_En_Dis lineInput, L
 			powerMangReg.LNLEN = LINE_INPUT_EN;
 			tDataCodec[0] = MAX9867_REG_SYS_SHUTDOWN;
 			tDataCodec[1] = powerMangReg.pwrManagReg;
-			if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+			if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 					return STATUS_ERR;
 
 			powerMangReg.LNREN = LINE_INPUT_DIS;
 			tDataCodec[0] = MAX9867_REG_SYS_SHUTDOWN;
 			tDataCodec[1] = powerMangReg.pwrManagReg;
-			if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+			if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 					return STATUS_ERR;
 		}
 		else if(lineInput == LINE_INPUT_DIS)
@@ -325,13 +325,13 @@ Status_TypeDef MAX9867_LineInputEnableDisable(L_R_Line_Input_En_Dis lineInput, L
 			powerMangReg.LNLEN = LINE_INPUT_DIS;
 			tDataCodec[0] = MAX9867_REG_SYS_SHUTDOWN;
 			tDataCodec[1] = powerMangReg.pwrManagReg;
-			if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+			if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 					return STATUS_ERR;
 
 			powerMangReg.LNREN = LINE_INPUT_DIS;
 			tDataCodec[0] = MAX9867_REG_SYS_SHUTDOWN;
 			tDataCodec[1] = powerMangReg.pwrManagReg;
-			if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+			if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 					return STATUS_ERR;
 		}
 	}
@@ -345,7 +345,7 @@ Status_TypeDef MAX9867_LineInputGain(L_R_Line_Input lineInput, L_R_Line_Input_Ga
 		lLineInReg.LIGL = lineInputGain;
 		tDataCodec[0] = MAX9867_REG_L_LINE_INPUT_LVL;
 		tDataCodec[1] = lLineInReg.lLineInReg;
-		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 				return STATUS_ERR;
 	}
 	else if(lineInput == RIGHT_LINE_INPUT)
@@ -353,7 +353,7 @@ Status_TypeDef MAX9867_LineInputGain(L_R_Line_Input lineInput, L_R_Line_Input_Ga
 		rLineInReg.LIGR = lineInputGain;
 		tDataCodec[0] = MAX9867_REG_R_LINE_INPUT_LVL;
 		tDataCodec[1] = rLineInReg.rLineInReg;
-		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 				return STATUS_ERR;
 	}
 	else if(lineInput == LEFT_RIGHT_LINE_INPUT)
@@ -362,11 +362,11 @@ Status_TypeDef MAX9867_LineInputGain(L_R_Line_Input lineInput, L_R_Line_Input_Ga
 		rLineInReg.LIGR = lineInputGain;
 		tDataCodec[0] = MAX9867_REG_L_LINE_INPUT_LVL;
 		tDataCodec[1] = lLineInReg.lLineInReg;
-		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 				return STATUS_ERR;
 		tDataCodec[0] = MAX9867_REG_R_LINE_INPUT_LVL;
 		tDataCodec[1] = rLineInReg.rLineInReg;
-		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 				return STATUS_ERR;
 	}
 	return STATUS_OK;
@@ -381,7 +381,7 @@ Status_TypeDef MAX9867_LineInputMute(L_R_Line_Input lineInput, Line_Input_Mute_E
 			lLineInReg.LILM = LINE_INPUT_MUTE_EN;
 			tDataCodec[0] = MAX9867_REG_L_LINE_INPUT_LVL;
 			tDataCodec[1] = lLineInReg.lLineInReg;
-			if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+			if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 					return STATUS_ERR;
 		}
 		else if(mute == LINE_INPUT_UNMUTE)
@@ -389,7 +389,7 @@ Status_TypeDef MAX9867_LineInputMute(L_R_Line_Input lineInput, Line_Input_Mute_E
 			lLineInReg.LILM = LINE_INPUT_MUTE_DIS;
 			tDataCodec[0] = MAX9867_REG_L_LINE_INPUT_LVL;
 			tDataCodec[1] = lLineInReg.lLineInReg;
-			if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+			if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 					return STATUS_ERR;
 		}
 	}
@@ -400,7 +400,7 @@ Status_TypeDef MAX9867_LineInputMute(L_R_Line_Input lineInput, Line_Input_Mute_E
 			rLineInReg.LIGR = LINE_INPUT_MUTE_EN;
 			tDataCodec[0] = MAX9867_REG_R_LINE_INPUT_LVL;
 			tDataCodec[1] = rLineInReg.rLineInReg;
-			if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+			if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 					return STATUS_ERR;
 		}
 		else if(mute == LINE_INPUT_UNMUTE)
@@ -408,7 +408,7 @@ Status_TypeDef MAX9867_LineInputMute(L_R_Line_Input lineInput, Line_Input_Mute_E
 			rLineInReg.LIGR = LINE_INPUT_MUTE_DIS;
 			tDataCodec[0] = MAX9867_REG_R_LINE_INPUT_LVL;
 			tDataCodec[1] = rLineInReg.rLineInReg;
-			if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+			if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 					return STATUS_ERR;
 		}
 	}
@@ -419,13 +419,13 @@ Status_TypeDef MAX9867_LineInputMute(L_R_Line_Input lineInput, Line_Input_Mute_E
 			lLineInReg.LILM = LINE_INPUT_MUTE_EN;
 			tDataCodec[0] = MAX9867_REG_L_LINE_INPUT_LVL;
 			tDataCodec[1] = lLineInReg.lLineInReg;
-			if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+			if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 					return STATUS_ERR;
 
 			rLineInReg.LIGR = LINE_INPUT_MUTE_EN;
 			tDataCodec[0] = MAX9867_REG_R_LINE_INPUT_LVL;
 			tDataCodec[1] = rLineInReg.rLineInReg;
-			if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+			if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 					return STATUS_ERR;
 		}
 		else if(mute == LINE_INPUT_UNMUTE)
@@ -433,13 +433,13 @@ Status_TypeDef MAX9867_LineInputMute(L_R_Line_Input lineInput, Line_Input_Mute_E
 			lLineInReg.LILM = LINE_INPUT_MUTE_DIS;
 			tDataCodec[0] = MAX9867_REG_L_LINE_INPUT_LVL;
 			tDataCodec[1] = lLineInReg.lLineInReg;
-			if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+			if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 					return STATUS_ERR;
 
 			rLineInReg.LIGR = LINE_INPUT_MUTE_DIS;
 			tDataCodec[0] = MAX9867_REG_R_LINE_INPUT_LVL;
 			tDataCodec[1] = rLineInReg.rLineInReg;
-			if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+			if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 					return STATUS_ERR;
 		}
 	}
@@ -453,7 +453,7 @@ Status_TypeDef MAX9867_AudioLevel(L_R_Playback_Volume_Channel channel, L_R_Playb
 		lVolumeCtrlReg.VOLL = rPlaybackVol;
 		tDataCodec[0] = MAX9867_REG_R_VOL_CTRL;
 		tDataCodec[1] = lVolumeCtrlReg.LVolCtrlReg;
-		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 				return STATUS_ERR;
 	}
 	else if(channel == RIGHT_VOLUME_CHA)
@@ -461,7 +461,7 @@ Status_TypeDef MAX9867_AudioLevel(L_R_Playback_Volume_Channel channel, L_R_Playb
 		rVolumeCtrlReg.VOLR = rPlaybackVol;
 		tDataCodec[0] = MAX9867_REG_L_VOL_CTRL;
 		tDataCodec[1] = rVolumeCtrlReg.RVolCtrlReg;
-		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 				return STATUS_ERR;
 	}
 	else if(channel == LEFT_RIGHT_VOLUME_CHA)
@@ -470,11 +470,11 @@ Status_TypeDef MAX9867_AudioLevel(L_R_Playback_Volume_Channel channel, L_R_Playb
 		lVolumeCtrlReg.VOLL = rPlaybackVol;
 		tDataCodec[0] = MAX9867_REG_L_VOL_CTRL;
 		tDataCodec[1] = rVolumeCtrlReg.RVolCtrlReg;
-		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 				return STATUS_ERR;
 		tDataCodec[0] = MAX9867_REG_R_VOL_CTRL;
 		tDataCodec[1] = lVolumeCtrlReg.LVolCtrlReg;
-		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 				return STATUS_ERR;
 	}
 	return STATUS_OK;
@@ -488,11 +488,11 @@ Status_TypeDef MAX9867_AudioMute(Audio_Mute audioMute)
 		lVolumeCtrlReg.VOLLM = AUDIO_MUTE_ENABLE;
 		tDataCodec[0] = MAX9867_REG_L_VOL_CTRL;
 		tDataCodec[1] = rVolumeCtrlReg.RVolCtrlReg;
-		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 				return STATUS_ERR;
 		tDataCodec[0] = MAX9867_REG_R_VOL_CTRL;
 		tDataCodec[1] = lVolumeCtrlReg.LVolCtrlReg;
-		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 				return STATUS_ERR;
 	}
 	else if(audioMute == AUDIO_MUTE_DISABLE)
@@ -501,11 +501,11 @@ Status_TypeDef MAX9867_AudioMute(Audio_Mute audioMute)
 		lVolumeCtrlReg.VOLLM = AUDIO_MUTE_DISABLE;
 		tDataCodec[0] = MAX9867_REG_L_VOL_CTRL;
 		tDataCodec[1] = rVolumeCtrlReg.RVolCtrlReg;
-		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 				return STATUS_ERR;
 		tDataCodec[0] = MAX9867_REG_R_VOL_CTRL;
 		tDataCodec[1] = lVolumeCtrlReg.LVolCtrlReg;
-		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 				return STATUS_ERR;
 	}
 	return STATUS_OK;
@@ -519,7 +519,7 @@ Status_TypeDef MAX9867_MicAmpGain(L_R_Mic mic, L_R_Mic_Preamp_Gain preAmpGain, L
 		lMicGainReg.PGAML = progGain;
 		tDataCodec[0] = MAX9867_REG_L_MIC_GAIN;
 		tDataCodec[1] = lMicGainReg.lMicGainReg;
-		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 				return STATUS_ERR;
 	}
 
@@ -529,7 +529,7 @@ Status_TypeDef MAX9867_MicAmpGain(L_R_Mic mic, L_R_Mic_Preamp_Gain preAmpGain, L
 		rMicGainReg.PGAMR = progGain;
 		tDataCodec[0] = MAX9867_REG_R_MIN_GAIN;
 		tDataCodec[1] = rMicGainReg.rMicGainReg;
-		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 				return STATUS_ERR;
 	}
 	else if(mic == MIC_LEFT_RIGHT)
@@ -538,14 +538,14 @@ Status_TypeDef MAX9867_MicAmpGain(L_R_Mic mic, L_R_Mic_Preamp_Gain preAmpGain, L
 		lMicGainReg.PGAML = progGain;
 		tDataCodec[0] = MAX9867_REG_L_MIC_GAIN;
 		tDataCodec[1] = lMicGainReg.lMicGainReg;
-		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 				return STATUS_ERR;
 
 		rMicGainReg.PAREN = preAmpGain;
 		rMicGainReg.PGAMR = progGain;
 		tDataCodec[0] = MAX9867_REG_R_MIN_GAIN;
 		tDataCodec[1] = rMicGainReg.rMicGainReg;
-		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 				return STATUS_ERR;
 	}
 	return STATUS_OK;
@@ -557,14 +557,14 @@ Status_TypeDef MAX9867_MicSidetoneSourceAndGain(Digital_Sidetone_Source_Mixer so
 	sidetoneReg.DSTS = sourceMixer;
 	tDataCodec[0] = MAX9867_REG_SIDETONE;
 	tDataCodec[1] = sidetoneReg.sidetoneReg;
-	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 			return STATUS_ERR;
 	if(ampType == DIFFERENTIAL_AMP)
 	{
 		sidetoneReg.DVST = sidGainDiff;
 		tDataCodec[0] = MAX9867_REG_SIDETONE;
 		tDataCodec[1] = sidetoneReg.sidetoneReg;
-		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 				return STATUS_ERR;
 	}
 	else if(ampType == CAPACITORLESS_AMP || ampType == SINGLE_ENDED_AMP)
@@ -572,7 +572,7 @@ Status_TypeDef MAX9867_MicSidetoneSourceAndGain(Digital_Sidetone_Source_Mixer so
 		sidetoneReg.DVST = sidGainCapSinEnd;
 		tDataCodec[0] = MAX9867_REG_SIDETONE;
 		tDataCodec[1] = sidetoneReg.sidetoneReg;
-		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 				return STATUS_ERR;
 	}
 	return STATUS_OK;
@@ -583,7 +583,7 @@ Status_TypeDef MAX9867_MicDigitalClock(Digital_Mic_Clk_Pre clock)
     digMicClkReg.MICCLK = clock;
 	tDataCodec[0] = MAX9867_REG_MIC;
 	tDataCodec[1] = digMicClkReg.digMicClkReg;
-	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 			return STATUS_ERR;
 	return STATUS_OK;
 }
@@ -614,7 +614,7 @@ Status_TypeDef MAX9867_MicDigitalLeftRightEnableDisable(Digital_Mic_Clk_Mode mod
 	}
 	tDataCodec[0] = MAX9867_REG_MIC;
 	tDataCodec[1] = digMicClkReg.digMicClkReg;
-	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 			return STATUS_ERR;
 	return STATUS_OK;
 }
@@ -624,7 +624,7 @@ Status_TypeDef MAX9867_AuxiliaryInputCapture(Auxiliary_Input_Capture auxCapture)
 	adcInputReg.AUXCAP = auxCapture;
 	tDataCodec[0] = MAX9867_REG_ADC_IN;
 	tDataCodec[1] = adcInputReg.adcInputReg;
-	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 			return STATUS_ERR;
 	return STATUS_OK;
 }
@@ -634,7 +634,7 @@ Status_TypeDef MAX9867_AuxiliaryInputGainCalibration(Auxiliary_Input_Gain_Calibr
 	adcInputReg.AUXGAIN = auxGain;
 	tDataCodec[0] = MAX9867_REG_ADC_IN;
 	tDataCodec[1] = adcInputReg.adcInputReg;
-	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 			return STATUS_ERR;
 	return STATUS_OK;
 }
@@ -644,7 +644,7 @@ Status_TypeDef MAX9867_AuxiliaryInputOffsetCalibration(Auxiliary_Input_Offset_Ca
 	adcInputReg.AUXCAL = auxOffset;
 	tDataCodec[0] = MAX9867_REG_ADC_IN;
 	tDataCodec[1] = adcInputReg.adcInputReg;
-	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 			return STATUS_ERR;
 	return STATUS_OK;
 }
@@ -654,7 +654,7 @@ Status_TypeDef MAX9867_AuxiliaryInputType(Auxiliary_Input_Type auxType)
 	adcInputReg.AUXEN = auxType;
 	tDataCodec[0] = MAX9867_REG_ADC_IN;
 	tDataCodec[1] = adcInputReg.adcInputReg;
-	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 			return STATUS_ERR;
 	return STATUS_OK;
 }
@@ -662,15 +662,15 @@ Status_TypeDef MAX9867_AuxiliaryInputType(Auxiliary_Input_Type auxType)
 Status_TypeDef MAX9867_AuxiliaryRegRead(uint16_t *aux)
 {
 	tDataCodec[0] = MAX9867_REG_AUX_L;
-	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 1) )
+	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 1) )
 			return STATUS_ERR;
-	if( STATUS_OK != ReadI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_R, &auxRegL.auxRegL, 1) )
+	if( STATUS_OK != ReadI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, &auxRegL.auxRegL, 1) )
 			return STATUS_ERR;
 
 	tDataCodec[0] = MAX9867_REG_AUX_H;
-	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 1) )
+	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 1) )
 			return STATUS_ERR;
-	if( STATUS_OK != ReadI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_R, &auxRegH.auxRegH, 1) )
+	if( STATUS_OK != ReadI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, &auxRegH.auxRegH, 1) )
 			return STATUS_ERR;
 
 	*aux = ((auxRegH.auxRegH << 8) | auxRegL.auxRegL);
@@ -682,7 +682,7 @@ Status_TypeDef MAX9867_JackSensEnableDisable(Jack_Sense_En_Dis jackSens)
 	configModeReg.JDETEN = jackSens;
 	tDataCodec[0] = MAX9867_REG_MODE;
 	tDataCodec[1] = configModeReg.configModeReg;
-	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
 			return STATUS_ERR;
 	return STATUS_OK;
 }
@@ -846,7 +846,7 @@ Status_TypeDef DcMeasurement(uint32_t *dcMeasurement)
 	if( STATUS_OK != MAX9867_AuxiliaryInputCapture(GAIN_NORMAL_OPERATION))
 			return STATUS_ERR;
 	/* DC measurement complete */
-	*dcMeasurment = 0.738 * (aux/k);
+	*dcMeasurement = 0.738 * (aux/k);
 	return STATUS_OK;
 }
 /************************ (C) COPYRIGHT Hexabitz *****END OF FILE****/
