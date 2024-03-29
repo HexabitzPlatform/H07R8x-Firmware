@@ -345,7 +345,15 @@ Module_Status Module_MessagingTask(uint16_t code,uint8_t port,uint8_t src,uint8_
 
 
 	switch(code){
-
+		case(CODE_H0FR7_STREAM_AUDIO):
+				MAX9867_SendingDigitalAudio();
+				break;
+		case(CODE_H0FR7_SOUND_LEVEL_CTRL):
+				MAX9867_SoundLevel();
+				break;
+		case(CODE_H0FR7_SOUND_MUTE):
+				MAX9867_SoundMute();
+				break;
 		default:
 			result =H07R8_ERR_UnknownMessage;
 			break;
@@ -381,31 +389,6 @@ void RegisterModuleCLICommands(void){
 
 /*-----------------------------------------------------------*/
 
-/* Module special task function (if needed) */
-
-//void EXGTask(void *argument){
-//
-//	EyeBlinkingStatus eyeBlinkStatus;
-//	LeadsStatus_EXG wiresStatus;
-//
-//	/* Infinite loop */
-//	uint8_t cases; // Test variable.
-//
-//
-//	for(;;){
-//		/*  */
-//		switch(cases){
-//
-//
-//			default:
-//				osDelay(10);
-//				break;
-//		}
-//
-//		taskYIELD();
-//	}
-//
-//}
 
 
 /*-----------------------------------------------------------*/
@@ -419,10 +402,33 @@ void RegisterModuleCLICommands(void){
 
 /* -----------------------------------------------------------------------
  |								  APIs							          |
+
 /* -----------------------------------------------------------------------
  */
 /*       */
+Module_Status MAX9867_Init()
+{
+	Module_Status Status = H07R8_OK;
+	return Status;
+}
 
+Module_Status MAX9867_SendingDigitalAudio()
+{
+	Module_Status Status = H07R8_OK;
+	return Status;
+}
+
+Module_Status MAX9867_SoundLevel()
+{
+	Module_Status Status = H07R8_OK;
+	return Status;
+}
+
+Module_Status MAX9867_SoundMute()
+{
+	Module_Status Status = H07R8_OK;
+	return Status;
+}
 
 /*-----------------------------------------------------------*/
 /*  */
