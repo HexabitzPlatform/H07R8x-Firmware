@@ -893,7 +893,7 @@ uint32_t Get_channel(UART_HandleTypeDef *huart, char *side) {
 
 void Error_Handler(void) {
 
-	HAL_Delay(100);
+	while(1);
 
 }
 
