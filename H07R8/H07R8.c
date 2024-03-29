@@ -15,8 +15,9 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "BOS.h"
-#include "H07R8_inputs.h"
-
+#include "H07R8.h"
+#include "H07R8_i2c.h"
+#include "H07R8_i2s.h"
 /* Define UART variables */
 UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
@@ -317,9 +318,8 @@ void Module_Peripheral_Init(void){
 	MX_USART3_UART_Init();
 	MX_USART5_UART_Init();
 	MX_USART6_UART_Init();
-	MX_TIM2_Init();
-	MX_ADC1_Init();
-
+	MX_I2C2_Init();
+	MX_I2S1_Init();
 	 //Circulating DMA Channels ON All Module
 	for (int i = 1; i <= NumOfPorts; i++) {
 		if (GetUart(i) == &huart1) {

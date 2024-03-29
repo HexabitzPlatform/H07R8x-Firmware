@@ -17,7 +17,6 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include "BOS.h"
-
 /* USER CODE BEGIN Includes */
 
 /* USER CODE END Includes */
