@@ -99,6 +99,40 @@
 #define _IND_LED_PORT			GPIOA
 #define _IND_LED_PIN			GPIO_PIN_12
 
+/* Module GPIO Pinout */
+#define CODEC_IRQN_OUT_Pin GPIO_PIN_1
+#define CODEC_IRQN_OUT_GPIO_Port GPIOB
+#define AMP_MUTE_Pin GPIO_PIN_1
+#define AMP_MUTE_GPIO_Port GPIOD
+#define AMP_FS2_Pin GPIO_PIN_3
+#define AMP_FS2_GPIO_Port GPIOB
+#define AMP_FS1_Pin GPIO_PIN_4
+#define AMP_FS1_GPIO_Port GPIOB
+#define AMP_GAIN2_Pin GPIO_PIN_5
+#define AMP_GAIN2_GPIO_Port GPIOB
+#define AMP_GAIN1_Pin GPIO_PIN_6
+#define AMP_GAIN1_GPIO_Port GPIOB
+#define AMP_SHUTDOWN_Pin GPIO_PIN_7
+#define AMP_SHUTDOWN_GPIO_Port GPIOB
+
+/* Module I2C Pinout */
+#define I2C_SDA_Pin          GPIO_PIN_14
+#define I2C_SDA_GPIO_Port    GPIOB
+#define I2C_SCL_Pin          GPIO_PIN_13
+#define I2C_SCL_GPIO_Port    GPIOB
+#define I2C_GPIO_Port    	 GPIOB
+
+/* Module I2S Pinout */
+#define I2S_WS_Pin          GPIO_PIN_4
+#define I2S_WS_GPIO_Port    GPIOA
+#define I2S_CK_Pin          GPIO_PIN_5
+#define I2S_CK_GPIO_Port    GPIOA
+#define I2S_MCK_Pin         GPIO_PIN_6
+#define I2S_MCK_GPIO_Port   GPIOA
+#define I2S_SD_Pin          GPIO_PIN_7
+#define I2S_SD_GPIO_Port    GPIOA
+#define I2S_GPIO_Port    	GPIOA
+
 #define NUM_MODULE_PARAMS		1
 
 /* Audio Module GPIO Pinout */
