@@ -30,7 +30,7 @@ extern void ReadADCChannel(uint8_t Port,char *side,float *ADC_Value);
 extern void ADCSelectChannel(uint8_t ADC_port,char *side);
 extern float GetReadPrecentage(uint8_t port,float *precentageValue);
 extern void Deinit_ADC_Channel(uint8_t port);
-
+extern void Error_Handler(void);
 /*-----------------------------------------------------------*/
 
 /************************ (C) COPYRIGHT HEXABITZ *****END OF FILE****/
