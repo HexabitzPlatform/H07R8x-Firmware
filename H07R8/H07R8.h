@@ -187,9 +187,13 @@ void SetupPortForRemoteBootloaderUpdate(uint8_t port);
 void remoteBootloaderUpdate(uint8_t src,uint8_t dst,uint8_t inport,uint8_t outport);
 
 Module_Status MAX9867_Init();
-Module_Status MAX9867_SendingDigitalAudio();
+Module_Status MAX9867_StreamingDigitalAudio();
 Module_Status MAX9867_SoundLevel();
 Module_Status MAX9867_SoundMute();
+Module_Status MAX9867_Shoutdown();
+Module_Status MAX9704_AmpInit();
+Module_Status MAX9704_AmpMute();
+Module_Status MAX9704_AmpShutdown();
 
 /* -----------------------------------------------------------------------
  |								Commands							      ||

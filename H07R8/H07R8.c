@@ -47,14 +47,87 @@ portBASE_TYPE CLI_ECG_SampleCommand( int8_t *pcWriteBuffer, size_t xWriteBufferL
 portBASE_TYPE CLI_EOG_SampleCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
 portBASE_TYPE CLI_EEG_SampleCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
 portBASE_TYPE CLI_EMG_SampleCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
-portBASE_TYPE CLI_EMG_SetThresholdCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
-portBASE_TYPE CLI_EMG_CheckPulseCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
-portBASE_TYPE CLI_ECG_HeartRateCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
-portBASE_TYPE CLI_CheckEyeBlinkCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
-portBASE_TYPE CLI_LeadsStatusCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
 
 
+const CLI_Command_Definition_t CLI_CodecInitDefinition =
+{
+	( const int8_t * ) "codecinit", /* The command string to type. */
+	( const int8_t * ) "streamAudio:\r\n stream audio from processor to MAX9867 codec ic by i2s \r\n\r\n",
+	CLI_ReadCellVoltageCommand, /* The function to run. */
+	0 /* zero parameters are expected. */
+};
 
+const CLI_Command_Definition_t CLI_StreamingDigitalAudioDefinition =
+{
+	( const int8_t * ) "soundlevel", /* The command string to type. */
+	( const int8_t * ) "soundlevel:\r\n stream audio from processor to MAX9867 codec ic by i2s \r\n\r\n",
+	CLI_ReadCellVoltageCommand, /* The function to run. */
+	0 /* zero parameters are expected. */
+};
+
+const CLI_Command_Definition_t CLI_CodecSoundLevelDefinition =
+{
+	( const int8_t * ) "soundmute", /* The command string to type. */
+	( const int8_t * ) "soundmute:\r\n stream audio from processor to MAX9867 codec ic by i2s \r\n\r\n",
+	CLI_ReadCellVoltageCommand, /* The function to run. */
+	0 /* zero parameters are expected. */
+};
+
+const CLI_Command_Definition_t CLI_CodecSoundMuteDefinition =
+{
+	( const int8_t * ) "soundunmute", /* The command string to type. */
+	( const int8_t * ) "soundunmute:\r\n stream audio from processor to MAX9867 codec ic by i2s \r\n\r\n",
+	CLI_ReadCellVoltageCommand, /* The function to run. */
+	0 /* zero parameters are expected. */
+};
+
+const CLI_Command_Definition_t CLI_CodecSoundUnMuteDefinition =
+{
+	( const int8_t * ) "codecshut", /* The command string to type. */
+	( const int8_t * ) "codecshut:\r\n stream audio from processor to MAX9867 codec ic by i2s \r\n\r\n",
+	CLI_ReadCellVoltageCommand, /* The function to run. */
+	0 /* zero parameters are expected. */
+};
+
+const CLI_Command_Definition_t CLI_CodecShoutdownDefinition =
+{
+	( const int8_t * ) "codecshut", /* The command string to type. */
+	( const int8_t * ) "codecshut:\r\n stream audio from processor to MAX9867 codec ic by i2s \r\n\r\n",
+	CLI_ReadCellVoltageCommand, /* The function to run. */
+	0 /* zero parameters are expected. */
+};
+
+const CLI_Command_Definition_t CLI_AmpInitDefinition =
+{
+	( const int8_t * ) "ampinit", /* The command string to type. */
+	( const int8_t * ) "ampinit:\r\n stream audio from processor to MAX9867 codec ic by i2s \r\n\r\n",
+	CLI_ReadCellVoltageCommand, /* The function to run. */
+	0 /* zero parameters are expected. */
+};
+
+const CLI_Command_Definition_t CLI_AmpMuteDefinition =
+{
+	( const int8_t * ) "ampmute", /* The command string to type. */
+	( const int8_t * ) "ampmute:\r\n stream audio from processor to MAX9867 codec ic by i2s \r\n\r\n",
+	CLI_ReadCellVoltageCommand, /* The function to run. */
+	0 /* zero parameters are expected. */
+};
+
+const CLI_Command_Definition_t CLI_SoundUnMuteDefinition =
+{
+	( const int8_t * ) "ampunmute", /* The command string to type. */
+	( const int8_t * ) "ampunmute:\r\n stream audio from processor to MAX9867 codec ic by i2s \r\n\r\n",
+	CLI_ReadCellVoltageCommand, /* The function to run. */
+	0 /* zero parameters are expected. */
+};
+
+const CLI_Command_Definition_t CLI_AmpShoutdownDefinition =
+{
+	( const int8_t * ) "ampshut", /* The command string to type. */
+	( const int8_t * ) "ampshut:\r\n stream audio from processor to MAX9867 codec ic by i2s \r\n\r\n",
+	CLI_ReadCellVoltageCommand, /* The function to run. */
+	0 /* zero parameters are expected. */
+};
 /*-----------------------------------------------------------*/
 
 /* -----------------------------------------------------------------------
@@ -345,14 +418,31 @@ Module_Status Module_MessagingTask(uint16_t code,uint8_t port,uint8_t src,uint8_
 
 
 	switch(code){
-		case(CODE_H0FR7_STREAM_AUDIO):
-				MAX9867_SendingDigitalAudio();
+		case(CODE_H0FR7_CODEC_INIT):
+				MAX9867_Init();
 				break;
-		case(CODE_H0FR7_SOUND_LEVEL_CTRL):
+		case(CODE_H0FR7_CODEC_STREAM_AUDIO):
+				MAX9867_StreamingDigitalAudio();
+				break;
+		case(CODE_H0FR7_CODEC_SOUND_LEVEL_CTRL):
 				MAX9867_SoundLevel();
 				break;
-		case(CODE_H0FR7_SOUND_MUTE):
+		case(CODE_H0FR7_CODEC_SOUND_MUTE):
+		case(CODE_H0FR7_CODEC_SOUND_UNMUTE):
 				MAX9867_SoundMute();
+				break;
+		case(CODE_H0FR7_CODEC_SHOUTDOWN):
+				MAX9867_Shoutdown();
+				break;
+		case(CODE_H0FR7_AMP_INIT):
+				MAX9704_AmpInit();
+				break;
+		case(CODE_H0FR7_AMP_MUTE):
+		case(CODE_H0FR7_AMP_UNMUTE):
+				MAX9704_AmpMute();
+				break;
+		case(CODE_H0FR7_AMP_SHOUTDOWN):
+				MAX9704_AmpShutdown();
 				break;
 		default:
 			result =H07R8_ERR_UnknownMessage;
@@ -412,7 +502,7 @@ Module_Status MAX9867_Init()
 	return Status;
 }
 
-Module_Status MAX9867_SendingDigitalAudio()
+Module_Status MAX9867_StreamingDigitalAudio()
 {
 	Module_Status Status = H07R8_OK;
 	return Status;
@@ -430,6 +520,29 @@ Module_Status MAX9867_SoundMute()
 	return Status;
 }
 
+Module_Status MAX9867_Shoutdown()
+{
+	Module_Status Status = H07R8_OK;
+	return Status;
+}
+
+Module_Status MAX9704_AmpInit()
+{
+	Module_Status Status = H07R8_OK;
+		return Status;
+}
+
+Module_Status MAX9704_AmpMute()
+{
+	Module_Status Status = H07R8_OK;
+		return Status;
+}
+
+Module_Status MAX9704_AmpShutdown()
+{
+	Module_Status Status = H07R8_OK;
+		return Status;
+}
 /*-----------------------------------------------------------*/
 /*  */
 
@@ -440,7 +553,205 @@ Module_Status MAX9867_SoundMute()
    -----------------------------------------------------------------------
  */
 
+portBASE_TYPE CLI_ReadCellVoltageCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
+	Module_Status status = H05R0_OK;
+	float batVolt=0;
+	static const int8_t *pcOKMessage=(int8_t* )"CellVoltage is:%0.3fV\n\r";
+	static const int8_t *pcErrorsMessage =(int8_t* )"Error Params!\n\r";
 
+		(void )xWriteBufferLen;
+		configASSERT(pcWriteBuffer);
+
+	 	status=ReadCellVoltage(&batVolt);
+
+	 if(status == H05R0_OK)
+	 {
+			 sprintf((char* )pcWriteBuffer,(char* )pcOKMessage,batVolt);
+
+	 }
+
+	 else if(status == H05R0_ERROR)
+			strcpy((char* )pcWriteBuffer,(char* )pcErrorsMessage);
+
+
+	return pdFALSE;
+
+}
+
+portBASE_TYPE CLI_ReadCellVoltageCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
+	Module_Status status = H05R0_OK;
+	float batVolt=0;
+	static const int8_t *pcOKMessage=(int8_t* )"CellVoltage is:%0.3fV\n\r";
+	static const int8_t *pcErrorsMessage =(int8_t* )"Error Params!\n\r";
+
+		(void )xWriteBufferLen;
+		configASSERT(pcWriteBuffer);
+
+	 	status=ReadCellVoltage(&batVolt);
+
+	 if(status == H05R0_OK)
+	 {
+			 sprintf((char* )pcWriteBuffer,(char* )pcOKMessage,batVolt);
+
+	 }
+
+	 else if(status == H05R0_ERROR)
+			strcpy((char* )pcWriteBuffer,(char* )pcErrorsMessage);
+
+
+	return pdFALSE;
+
+}
+
+portBASE_TYPE CLI_ReadCellVoltageCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
+	Module_Status status = H05R0_OK;
+	float batVolt=0;
+	static const int8_t *pcOKMessage=(int8_t* )"CellVoltage is:%0.3fV\n\r";
+	static const int8_t *pcErrorsMessage =(int8_t* )"Error Params!\n\r";
+
+		(void )xWriteBufferLen;
+		configASSERT(pcWriteBuffer);
+
+	 	status=ReadCellVoltage(&batVolt);
+
+	 if(status == H05R0_OK)
+	 {
+			 sprintf((char* )pcWriteBuffer,(char* )pcOKMessage,batVolt);
+
+	 }
+
+	 else if(status == H05R0_ERROR)
+			strcpy((char* )pcWriteBuffer,(char* )pcErrorsMessage);
+
+
+	return pdFALSE;
+
+}
+
+portBASE_TYPE CLI_ReadCellVoltageCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
+	Module_Status status = H05R0_OK;
+	float batVolt=0;
+	static const int8_t *pcOKMessage=(int8_t* )"CellVoltage is:%0.3fV\n\r";
+	static const int8_t *pcErrorsMessage =(int8_t* )"Error Params!\n\r";
+
+		(void )xWriteBufferLen;
+		configASSERT(pcWriteBuffer);
+
+	 	status=ReadCellVoltage(&batVolt);
+
+	 if(status == H05R0_OK)
+	 {
+			 sprintf((char* )pcWriteBuffer,(char* )pcOKMessage,batVolt);
+
+	 }
+
+	 else if(status == H05R0_ERROR)
+			strcpy((char* )pcWriteBuffer,(char* )pcErrorsMessage);
+
+
+	return pdFALSE;
+
+}
+
+portBASE_TYPE CLI_ReadCellVoltageCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
+	Module_Status status = H05R0_OK;
+	float batVolt=0;
+	static const int8_t *pcOKMessage=(int8_t* )"CellVoltage is:%0.3fV\n\r";
+	static const int8_t *pcErrorsMessage =(int8_t* )"Error Params!\n\r";
+
+		(void )xWriteBufferLen;
+		configASSERT(pcWriteBuffer);
+
+	 	status=ReadCellVoltage(&batVolt);
+
+	 if(status == H05R0_OK)
+	 {
+			 sprintf((char* )pcWriteBuffer,(char* )pcOKMessage,batVolt);
+
+	 }
+
+	 else if(status == H05R0_ERROR)
+			strcpy((char* )pcWriteBuffer,(char* )pcErrorsMessage);
+
+
+	return pdFALSE;
+
+}
+
+portBASE_TYPE CLI_ReadCellVoltageCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
+	Module_Status status = H05R0_OK;
+	float batVolt=0;
+	static const int8_t *pcOKMessage=(int8_t* )"CellVoltage is:%0.3fV\n\r";
+	static const int8_t *pcErrorsMessage =(int8_t* )"Error Params!\n\r";
+
+		(void )xWriteBufferLen;
+		configASSERT(pcWriteBuffer);
+
+	 	status=ReadCellVoltage(&batVolt);
+
+	 if(status == H05R0_OK)
+	 {
+			 sprintf((char* )pcWriteBuffer,(char* )pcOKMessage,batVolt);
+
+	 }
+
+	 else if(status == H05R0_ERROR)
+			strcpy((char* )pcWriteBuffer,(char* )pcErrorsMessage);
+
+
+	return pdFALSE;
+
+}
+
+portBASE_TYPE CLI_ReadCellVoltageCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
+	Module_Status status = H05R0_OK;
+	float batVolt=0;
+	static const int8_t *pcOKMessage=(int8_t* )"CellVoltage is:%0.3fV\n\r";
+	static const int8_t *pcErrorsMessage =(int8_t* )"Error Params!\n\r";
+
+		(void )xWriteBufferLen;
+		configASSERT(pcWriteBuffer);
+
+	 	status=ReadCellVoltage(&batVolt);
+
+	 if(status == H05R0_OK)
+	 {
+			 sprintf((char* )pcWriteBuffer,(char* )pcOKMessage,batVolt);
+
+	 }
+
+	 else if(status == H05R0_ERROR)
+			strcpy((char* )pcWriteBuffer,(char* )pcErrorsMessage);
+
+
+	return pdFALSE;
+
+}
+
+portBASE_TYPE CLI_ReadCellVoltageCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
+	Module_Status status = H05R0_OK;
+	float batVolt=0;
+	static const int8_t *pcOKMessage=(int8_t* )"CellVoltage is:%0.3fV\n\r";
+	static const int8_t *pcErrorsMessage =(int8_t* )"Error Params!\n\r";
+
+		(void )xWriteBufferLen;
+		configASSERT(pcWriteBuffer);
+
+	 	status=ReadCellVoltage(&batVolt);
+
+	 if(status == H05R0_OK)
+	 {
+			 sprintf((char* )pcWriteBuffer,(char* )pcOKMessage,batVolt);
+
+	 }
+
+	 else if(status == H05R0_ERROR)
+			strcpy((char* )pcWriteBuffer,(char* )pcErrorsMessage);
+
+
+	return pdFALSE;
+
+}
 
 /*-----------------------------------------------------------*/
 
