@@ -49,11 +49,11 @@ portBASE_TYPE CLI_CodecStreamingDigitalAudioCommand( int8_t *pcWriteBuffer, size
 portBASE_TYPE CLI_CodecSoundLevelCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
 portBASE_TYPE CLI_CodecSoundMuteCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
 portBASE_TYPE CLI_CodecSoundUnMuteCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
-portBASE_TYPE CLI_CodecShoutdownCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
+portBASE_TYPE CLI_CodecShutdownCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
 portBASE_TYPE CLI_AmpInitCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
 portBASE_TYPE CLI_AmpMuteCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
 portBASE_TYPE CLI_AmpUnMuteCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
-portBASE_TYPE CLI_AmpShoutdownCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
+portBASE_TYPE CLI_AmpShutdownCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
 
 const CLI_Command_Definition_t CLI_CodecInitDefinition =
 {
@@ -99,7 +99,7 @@ const CLI_Command_Definition_t CLI_CodecShoutdownDefinition =
 {
 	( const int8_t * ) "codecshut", /* The command string to type. */
 	( const int8_t * ) "codecshut:\r\n stream audio from processor to MAX9867 codec ic by i2s \r\n\r\n",
-	CLI_CodecShoutdownCommand, /* The function to run. */
+	CLI_CodecShutdownCommand, /* The function to run. */
 	0 /* zero parameters are expected. */
 };
 
@@ -131,7 +131,7 @@ const CLI_Command_Definition_t CLI_AmpShoutdownDefinition =
 {
 	( const int8_t * ) "ampshut", /* The command string to type. */
 	( const int8_t * ) "ampshut:\r\n stream audio from processor to MAX9867 codec ic by i2s \r\n\r\n",
-	CLI_AmpShoutdownCommand, /* The function to run. */
+	CLI_AmpShutdownCommand, /* The function to run. */
 	0 /* zero parameters are expected. */
 };
 /*-----------------------------------------------------------*/
@@ -428,7 +428,7 @@ Module_Status Module_MessagingTask(uint16_t code,uint8_t port,uint8_t src,uint8_
 				MAX9867_Init();
 				break;
 		case(CODE_H0FR7_CODEC_STREAM_AUDIO):
-				MAX9867_StreamingDigitalAudio();
+//				MAX9867_StreamingDigitalAudio();
 				break;
 		case(CODE_H0FR7_CODEC_SOUND_LEVEL_CTRL):
 				MAX9867_SoundLevel();
@@ -438,7 +438,7 @@ Module_Status Module_MessagingTask(uint16_t code,uint8_t port,uint8_t src,uint8_
 				MAX9867_SoundMute();
 				break;
 		case(CODE_H0FR7_CODEC_SHOUTDOWN):
-				MAX9867_Shoutdown();
+				MAX9867_Shutdown();
 				break;
 		case(CODE_H0FR7_AMP_INIT):
 				MAX9704_AmpInit();
@@ -508,9 +508,13 @@ Module_Status MAX9867_Init()
 	return Status;
 }
 
-Module_Status MAX9867_StreamingDigitalAudio()
+Module_Status MAX9867_StreamingDigitalAudio(uint16_t *data,size_t size)
 {
 	Module_Status Status = H07R8_OK;
+    for(int i=0; i<size; i++) {
+    	if( H07R8_OK != WriteI2S(I2S_PORT, &data[i], 1))
+    		return H07R8_ERROR;
+    }
 	return Status;
 }
 
@@ -526,7 +530,7 @@ Module_Status MAX9867_SoundMute()
 	return Status;
 }
 
-Module_Status MAX9867_Shoutdown()
+Module_Status MAX9867_Shutdown()
 {
 	Module_Status Status = H07R8_OK;
 	return Status;
@@ -560,18 +564,24 @@ Module_Status MAX9704_AmpShutdown()
  */
 portBASE_TYPE CLI_CodecInitCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
 	Module_Status status = H07R8_OK;
-	float batVolt=0;
-	static const int8_t *pcOKMessage=(int8_t* )"CellVoltage is:%0.3fV\n\r";
-	static const int8_t *pcErrorsMessage =(int8_t* )"Error Params!\n\r";
+	static const int8_t *pcOKMessage=(int8_t* )"Ok\n\r";
+	static const int8_t *pcErrorsMessage =(int8_t* )"Error!\n\r";
+
+	const char *pDacGainStr = NULL;
+	uint8_t dacGain = 0;
+	portBASE_TYPE dacGainStrLen = 0;
 
 		(void )xWriteBufferLen;
 		configASSERT(pcWriteBuffer);
 
-//	 	status=ReadCellVoltage(&batVolt);
+		pDacGainStr = (const char *)FreeRTOS_CLIGetParameter(pcWriteBuffer, 2, &dacGainStrLen);
+
+		dacGain = atoi(pDacGainStr);
+		status = MAX9867_Init(/*dacGain*/);
 
 	 if(status == H07R8_OK)
 	 {
-			 sprintf((char* )pcWriteBuffer,(char* )pcOKMessage,batVolt);
+			 sprintf((char* )pcWriteBuffer,(char* )pcOKMessage);
 
 	 }
 
@@ -586,18 +596,16 @@ portBASE_TYPE CLI_CodecInitCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLe
 
 portBASE_TYPE CLI_CodecStreamingDigitalAudioCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
 	Module_Status status = H07R8_OK;
-	float batVolt=0;
-	static const int8_t *pcOKMessage=(int8_t* )"CellVoltage is:%0.3fV\n\r";
-	static const int8_t *pcErrorsMessage =(int8_t* )"Error Params!\n\r";
+	static const int8_t *pcOKMessage=(int8_t* )"Ok\n\r";
+	static const int8_t *pcErrorsMessage =(int8_t* )"Error!\n\r";
 
 		(void )xWriteBufferLen;
 		configASSERT(pcWriteBuffer);
 
-//	 	status=ReadCellVoltage(&batVolt);
-
+//		status = MAX9867_StreamingDigitalAudio();
 	 if(status == H07R8_OK)
 	 {
-			 sprintf((char* )pcWriteBuffer,(char* )pcOKMessage,batVolt);
+			 sprintf((char* )pcWriteBuffer,(char* )pcOKMessage);
 
 	 }
 
@@ -611,18 +619,27 @@ portBASE_TYPE CLI_CodecStreamingDigitalAudioCommand( int8_t *pcWriteBuffer, size
 
 portBASE_TYPE CLI_CodecSoundLevelCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
 	Module_Status status = H07R8_OK;
-	float batVolt=0;
-	static const int8_t *pcOKMessage=(int8_t* )"CellVoltage is:%0.3fV\n\r";
-	static const int8_t *pcErrorsMessage =(int8_t* )"Error Params!\n\r";
+	static const int8_t *pcOKMessage=(int8_t* )"Ok\n\r";
+	static const int8_t *pcErrorsMessage =(int8_t* )"Error!\n\r";
+	const char *pLeftSoundLvlStr = NULL;
+	const char *pRightSoundLvlStr = NULL;
+	uint8_t leftSoundLvl = 0,rightSoundLvl = 0;
+	portBASE_TYPE leftSoundLvlStrLen = 0;
+	portBASE_TYPE rightSoundLvlStrLen = 0;
 
 		(void )xWriteBufferLen;
 		configASSERT(pcWriteBuffer);
 
-//	 	status=ReadCellVoltage(&batVolt);
+		pLeftSoundLvlStr = (const char *)FreeRTOS_CLIGetParameter(pcWriteBuffer, 2, &leftSoundLvlStrLen);
+		pRightSoundLvlStr = (const char *)FreeRTOS_CLIGetParameter(pcWriteBuffer, 3, &rightSoundLvlStrLen);
 
+		leftSoundLvl = atoi(pLeftSoundLvlStr);
+		rightSoundLvl = atoi(pRightSoundLvlStr);
+
+		MAX9867_SoundLevel();
 	 if(status == H07R8_OK)
 	 {
-			 sprintf((char* )pcWriteBuffer,(char* )pcOKMessage,batVolt);
+			 sprintf((char* )pcWriteBuffer,(char* )pcOKMessage);
 
 	 }
 
@@ -636,18 +653,24 @@ portBASE_TYPE CLI_CodecSoundLevelCommand( int8_t *pcWriteBuffer, size_t xWriteBu
 
 portBASE_TYPE CLI_CodecSoundMuteCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
 	Module_Status status = H07R8_OK;
-	float batVolt=0;
-	static const int8_t *pcOKMessage=(int8_t* )"CellVoltage is:%0.3fV\n\r";
-	static const int8_t *pcErrorsMessage =(int8_t* )"Error Params!\n\r";
+	static const int8_t *pcOKMessage=(int8_t* )"Ok\n\r";
+	static const int8_t *pcErrorsMessage =(int8_t* )"Error!\n\r";
+	const char *pMuteStr = NULL;
+	uint8_t mute = 0;
+	portBASE_TYPE muteStrLen = 0;
 
 		(void )xWriteBufferLen;
 		configASSERT(pcWriteBuffer);
 
-//	 	status=ReadCellVoltage(&batVolt);
+		pMuteStr = (const char *)FreeRTOS_CLIGetParameter(pcWriteBuffer, 2, &muteStrLen);
+
+		mute = atoi(pMuteStr);
+
+		status = MAX9867_SoundMute();
 
 	 if(status == H07R8_OK)
 	 {
-			 sprintf((char* )pcWriteBuffer,(char* )pcOKMessage,batVolt);
+			 sprintf((char* )pcWriteBuffer,(char* )pcOKMessage);
 
 	 }
 
@@ -661,18 +684,23 @@ portBASE_TYPE CLI_CodecSoundMuteCommand( int8_t *pcWriteBuffer, size_t xWriteBuf
 
 portBASE_TYPE CLI_CodecSoundUnMuteCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
 	Module_Status status = H07R8_OK;
-	float batVolt=0;
-	static const int8_t *pcOKMessage=(int8_t* )"CellVoltage is:%0.3fV\n\r";
-	static const int8_t *pcErrorsMessage =(int8_t* )"Error Params!\n\r";
+	static const int8_t *pcOKMessage=(int8_t* )"Ok\n\r";
+	static const int8_t *pcErrorsMessage =(int8_t* )"Error!\n\r";
+	const char *pMuteStr = NULL;
+	uint8_t mute = 0;
+	portBASE_TYPE muteStrLen = 0;
 
 		(void )xWriteBufferLen;
 		configASSERT(pcWriteBuffer);
 
-//	 	status=ReadCellVoltage(&batVolt);
+		pMuteStr = (const char *)FreeRTOS_CLIGetParameter(pcWriteBuffer, 2, &muteStrLen);
+
+		mute = atoi(pMuteStr);
+		status = MAX9867_SoundMute();
 
 	 if(status == H07R8_OK)
 	 {
-			 sprintf((char* )pcWriteBuffer,(char* )pcOKMessage,batVolt);
+			 sprintf((char* )pcWriteBuffer,(char* )pcOKMessage);
 
 	 }
 
@@ -684,20 +712,24 @@ portBASE_TYPE CLI_CodecSoundUnMuteCommand( int8_t *pcWriteBuffer, size_t xWriteB
 
 }
 
-portBASE_TYPE CLI_CodecShoutdownCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
+portBASE_TYPE CLI_CodecShutdownCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
 	Module_Status status = H07R8_OK;
-	float batVolt=0;
-	static const int8_t *pcOKMessage=(int8_t* )"CellVoltage is:%0.3fV\n\r";
-	static const int8_t *pcErrorsMessage =(int8_t* )"Error Params!\n\r";
+	static const int8_t *pcOKMessage=(int8_t* )"Ok\n\r";
+	static const int8_t *pcErrorsMessage =(int8_t* )"Error!\n\r";
+	const char *pShutdownStr = NULL;
+	uint8_t shutdown = 0;
+	portBASE_TYPE shutdownStrLen = 0;
 
 		(void )xWriteBufferLen;
 		configASSERT(pcWriteBuffer);
 
-//	 	status=ReadCellVoltage(&batVolt);
+		pShutdownStr = (const char *)FreeRTOS_CLIGetParameter(pcWriteBuffer, 2, &shutdownStrLen);
 
+		shutdown = atoi(pShutdownStr);
+		status = MAX9867_Shutdown();
 	 if(status == H07R8_OK)
 	 {
-			 sprintf((char* )pcWriteBuffer,(char* )pcOKMessage,batVolt);
+			 sprintf((char* )pcWriteBuffer,(char* )pcOKMessage);
 
 	 }
 
@@ -711,18 +743,27 @@ portBASE_TYPE CLI_CodecShoutdownCommand( int8_t *pcWriteBuffer, size_t xWriteBuf
 
 portBASE_TYPE CLI_AmpInitCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
 	Module_Status status = H07R8_OK;
-	float batVolt=0;
-	static const int8_t *pcOKMessage=(int8_t* )"CellVoltage is:%0.3fV\n\r";
-	static const int8_t *pcErrorsMessage =(int8_t* )"Error Params!\n\r";
+	static const int8_t *pcOKMessage=(int8_t* )"Ok\n\r";
+	static const int8_t *pcErrorsMessage =(int8_t* )"Error!\n\r";
+	const char *pSwitchingModeStr = NULL;
+	const char *pAmpGainStr = NULL;
+	uint8_t switchingMode = 0,ampGain = 0;
+	portBASE_TYPE switchingModeStrLen = 0;
+	portBASE_TYPE ampGainStrLen = 0;
 
 		(void )xWriteBufferLen;
 		configASSERT(pcWriteBuffer);
 
-//	 	status=ReadCellVoltage(&batVolt);
+		pSwitchingModeStr = (const char *)FreeRTOS_CLIGetParameter(pcWriteBuffer, 2, &switchingModeStrLen);
+		pAmpGainStr = (const char *)FreeRTOS_CLIGetParameter(pcWriteBuffer, 3, &ampGainStrLen);
 
+		switchingMode = atoi(pSwitchingModeStr);
+		ampGain = atoi(pAmpGainStr);
+
+		 status = MAX9704_AmpInit();
 	 if(status == H07R8_OK)
 	 {
-			 sprintf((char* )pcWriteBuffer,(char* )pcOKMessage,batVolt);
+			 sprintf((char* )pcWriteBuffer,(char* )pcOKMessage);
 
 	 }
 
@@ -736,18 +777,23 @@ portBASE_TYPE CLI_AmpInitCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen,
 
 portBASE_TYPE CLI_AmpMuteCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
 	Module_Status status = H07R8_OK;
-	float batVolt=0;
-	static const int8_t *pcOKMessage=(int8_t* )"CellVoltage is:%0.3fV\n\r";
-	static const int8_t *pcErrorsMessage =(int8_t* )"Error Params!\n\r";
+	static const int8_t *pcOKMessage=(int8_t* )"Ok\n\r";
+	static const int8_t *pcErrorsMessage =(int8_t* )"Error!\n\r";
+	const char *pMuteStr = NULL;
+	uint8_t mute = 0;
+	portBASE_TYPE muteStrLen = 0;
 
 		(void )xWriteBufferLen;
 		configASSERT(pcWriteBuffer);
 
-//	 	status=ReadCellVoltage(&batVolt);
+		pMuteStr = (const char *)FreeRTOS_CLIGetParameter(pcWriteBuffer, 2, &muteStrLen);
+
+		mute = atoi(pMuteStr);
+		status = MAX9704_AmpMute();
 
 	 if(status == H07R8_OK)
 	 {
-			 sprintf((char* )pcWriteBuffer,(char* )pcOKMessage,batVolt);
+			 sprintf((char* )pcWriteBuffer,(char* )pcOKMessage);
 
 	 }
 
@@ -761,18 +807,23 @@ portBASE_TYPE CLI_AmpMuteCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen,
 
 portBASE_TYPE CLI_AmpUnMuteCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
 	Module_Status status = H07R8_OK;
-	float batVolt=0;
-	static const int8_t *pcOKMessage=(int8_t* )"CellVoltage is:%0.3fV\n\r";
-	static const int8_t *pcErrorsMessage =(int8_t* )"Error Params!\n\r";
+	static const int8_t *pcOKMessage=(int8_t* )"Ok\n\r";
+	static const int8_t *pcErrorsMessage =(int8_t* )"Error!\n\r";
+	const char *pMuteStr = NULL;
+	uint8_t mute = 0;
+	portBASE_TYPE muteStrLen = 0;
 
 		(void )xWriteBufferLen;
 		configASSERT(pcWriteBuffer);
 
-//	 	status=ReadCellVoltage(&batVolt);
+		pMuteStr = (const char *)FreeRTOS_CLIGetParameter(pcWriteBuffer, 2, &muteStrLen);
+
+		mute = atoi(pMuteStr);
+
 
 	 if(status == H07R8_OK)
 	 {
-			 sprintf((char* )pcWriteBuffer,(char* )pcOKMessage,batVolt);
+			 sprintf((char* )pcWriteBuffer,(char* )pcOKMessage);
 
 	 }
 
@@ -784,20 +835,25 @@ portBASE_TYPE CLI_AmpUnMuteCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLe
 
 }
 
-portBASE_TYPE CLI_AmpShoutdownCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
+portBASE_TYPE CLI_AmpShutdownCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
 	Module_Status status = H07R8_OK;
-	float batVolt=0;
-	static const int8_t *pcOKMessage=(int8_t* )"CellVoltage is:%0.3fV\n\r";
-	static const int8_t *pcErrorsMessage =(int8_t* )"Error Params!\n\r";
+	static const int8_t *pcOKMessage=(int8_t* )"Ok\n\r";
+	static const int8_t *pcErrorsMessage =(int8_t* )"Error!\n\r";
+	const char *pShutdownStr = NULL;
+	uint8_t shutdown = 0;
+	portBASE_TYPE shutdownStrLen = 0;
 
 		(void )xWriteBufferLen;
 		configASSERT(pcWriteBuffer);
 
-//	 	status=ReadCellVoltage(&batVolt);
+		pShutdownStr = (const char *)FreeRTOS_CLIGetParameter(pcWriteBuffer, 2, &shutdownStrLen);
+
+		shutdown = atoi(pShutdownStr);
+		status = MAX9704_AmpShutdown();
 
 	 if(status == H07R8_OK)
 	 {
-			 sprintf((char* )pcWriteBuffer,(char* )pcOKMessage,batVolt);
+			 sprintf((char* )pcWriteBuffer,(char* )pcOKMessage);
 
 	 }
 

@@ -30,7 +30,6 @@ typedef I2S_HandleTypeDef 			I2S_HANDLE;
 #define I2S_PORT					&hi2s1
 #define TIM_OUT_1MS         		1u
 
-
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
