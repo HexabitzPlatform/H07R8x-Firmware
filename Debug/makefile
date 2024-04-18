@@ -60,8 +60,8 @@ all: main-build
 main-build: Audio.elf secondary-outputs
 
 # Tool invocations
-Audio.elf Audio.map: $(OBJS) $(USER_OBJS) C:\Users\Abdulrhman_Battikh\Desktop\Projects\H07R8x-Firmware\STM32G0B1CEUXN_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "Audio.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m0plus -T"C:\Users\Abdulrhman_Battikh\Desktop\Projects\H07R8x-Firmware\STM32G0B1CEUXN_FLASH.ld" --specs=nosys.specs -Wl,-Map="Audio.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Audio.elf Audio.map: $(OBJS) $(USER_OBJS) C:\Users\Abdulrhman_Battikh\Desktop\codec\ driver\STM32G0B1CEUXN_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "Audio.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m0plus -T"C:\Users\Abdulrhman_Battikh\Desktop\codec driver\STM32G0B1CEUXN_FLASH.ld" --specs=nosys.specs -Wl,-Map="Audio.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

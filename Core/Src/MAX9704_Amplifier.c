@@ -68,13 +68,13 @@ Status_TypeDef MAX9704_AmpGain(Amp_Gain gain)
 			if( STATUS_OK != SetGPIOsPin(AMP_GAIN2_GPIO_Port, AMP_GAIN2_Pin))
 				return STATUS_ERR;
 			break;
-		case GAIN_MODE_16dB:
+		case GAIN_MODE_13dB:
 			if( STATUS_OK != SetGPIOsPin(AMP_GAIN1_GPIO_Port, AMP_GAIN1_Pin))
 				return STATUS_ERR;
 			if( STATUS_OK != ResetGPIOsPin(AMP_GAIN2_GPIO_Port, AMP_GAIN2_Pin))
 				return STATUS_ERR;
 			break;
-		case GAIN_MODE_13dB:
+		case GAIN_MODE_16dB:
 			if( STATUS_OK != SetGPIOsPin(AMP_GAIN1_GPIO_Port, AMP_GAIN1_Pin))
 				return STATUS_ERR;
 			if( STATUS_OK != SetGPIOsPin(AMP_GAIN2_GPIO_Port, AMP_GAIN2_Pin))
