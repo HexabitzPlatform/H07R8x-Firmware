@@ -424,30 +424,30 @@ Module_Status Module_MessagingTask(uint16_t code,uint8_t port,uint8_t src,uint8_
 
 
 	switch(code){
-		case(CODE_H0FR7_CODEC_INIT):
+		case(CODE_H07R8_CODEC_INIT):
 				MAX9867_Init();
 				break;
-		case(CODE_H0FR7_CODEC_STREAM_AUDIO):
+		case(CODE_H07R8_CODEC_STREAM_AUDIO):
 //				MAX9867_StreamingDigitalAudio();
 				break;
-		case(CODE_H0FR7_CODEC_SOUND_LEVEL_CTRL):
+		case(CODE_H07R8_CODEC_SOUND_LEVEL_CTRL):
 				MAX9867_SoundLevel();
 				break;
-		case(CODE_H0FR7_CODEC_SOUND_MUTE):
-		case(CODE_H0FR7_CODEC_SOUND_UNMUTE):
+		case(CODE_H07R8_CODEC_SOUND_MUTE):
+		case(CODE_H07R8_CODEC_SOUND_UNMUTE):
 				MAX9867_SoundMute();
 				break;
-		case(CODE_H0FR7_CODEC_SHOUTDOWN):
+		case(CODE_H07R8_CODEC_SHOUTDOWN):
 				MAX9867_Shutdown();
 				break;
-		case(CODE_H0FR7_AMP_INIT):
+		case(CODE_H07R8_AMP_INIT):
 				MAX9704_AmpInit();
 				break;
-		case(CODE_H0FR7_AMP_MUTE):
-		case(CODE_H0FR7_AMP_UNMUTE):
+		case(CODE_H07R8_AMP_MUTE):
+		case(CODE_H07R8_AMP_UNMUTE):
 				MAX9704_AmpMute();
 				break;
-		case(CODE_H0FR7_AMP_SHOUTDOWN):
+		case(CODE_H07R8_AMP_SHOUTDOWN):
 				MAX9704_AmpShutdown();
 				break;
 		default:
