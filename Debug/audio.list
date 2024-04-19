@@ -27,23 +27,23 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   ALLOC
  11 .ARM.attributes 00000028  00000000  00000000  0003000c  2**0
                   CONTENTS, READONLY
- 12 .debug_info   0000dadd  00000000  00000000  00030034  2**0
+ 12 .debug_info   0000dc27  00000000  00000000  00030034  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 13 .debug_abbrev 00002023  00000000  00000000  0003db11  2**0
+ 13 .debug_abbrev 00002048  00000000  00000000  0003dc5b  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 14 .debug_aranges 00000b58  00000000  00000000  0003fb38  2**3
+ 14 .debug_aranges 00000b58  00000000  00000000  0003fca8  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 15 .debug_ranges 00000a50  00000000  00000000  00040690  2**3
+ 15 .debug_ranges 00000a50  00000000  00000000  00040800  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_macro  0001af18  00000000  00000000  000410e0  2**0
+ 16 .debug_macro  0001af18  00000000  00000000  00041250  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_line   0000db36  00000000  00000000  0005bff8  2**0
+ 17 .debug_line   0000db36  00000000  00000000  0005c168  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_str    000ad761  00000000  00000000  00069b2e  2**0
+ 18 .debug_str    000ad761  00000000  00000000  00069c9e  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .comment      00000050  00000000  00000000  0011728f  2**0
+ 19 .comment      00000050  00000000  00000000  001173ff  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  00002768  00000000  00000000  001172e0  2**2
+ 20 .debug_frame  00002768  00000000  00000000  00117450  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -401,10 +401,10 @@ Status_TypeDef MAX9704_AmpGain(Amp_Gain gain)
  8000320:	1dfb      	adds	r3, r7, #7
  8000322:	781b      	ldrb	r3, [r3, #0]
  8000324:	2b03      	cmp	r3, #3
- 8000326:	d03e      	beq.n	80003a6 <MAX9704_AmpGain+0x92>
+ 8000326:	d02c      	beq.n	8000382 <MAX9704_AmpGain+0x6e>
  8000328:	dc4f      	bgt.n	80003ca <MAX9704_AmpGain+0xb6>
  800032a:	2b02      	cmp	r3, #2
- 800032c:	d029      	beq.n	8000382 <MAX9704_AmpGain+0x6e>
+ 800032c:	d03b      	beq.n	80003a6 <MAX9704_AmpGain+0x92>
  800032e:	dc4c      	bgt.n	80003ca <MAX9704_AmpGain+0xb6>
  8000330:	2b00      	cmp	r3, #0
  8000332:	d002      	beq.n	800033a <MAX9704_AmpGain+0x26>
@@ -456,7 +456,7 @@ Status_TypeDef MAX9704_AmpGain(Amp_Gain gain)
  800037e:	23ff      	movs	r3, #255	; 0xff
  8000380:	e03d      	b.n	80003fe <MAX9704_AmpGain+0xea>
 			break;
-		case GAIN_MODE_16dB:
+		case GAIN_MODE_13dB:
 			if( STATUS_OK != SetGPIOsPin(AMP_GAIN1_GPIO_Port, AMP_GAIN1_Pin))
  8000382:	4b21      	ldr	r3, [pc, #132]	; (8000408 <MAX9704_AmpGain+0xf4>)
  8000384:	2140      	movs	r1, #64	; 0x40
@@ -478,7 +478,7 @@ Status_TypeDef MAX9704_AmpGain(Amp_Gain gain)
  80003a2:	23ff      	movs	r3, #255	; 0xff
  80003a4:	e02b      	b.n	80003fe <MAX9704_AmpGain+0xea>
 			break;
-		case GAIN_MODE_13dB:
+		case GAIN_MODE_16dB:
 			if( STATUS_OK != SetGPIOsPin(AMP_GAIN1_GPIO_Port, AMP_GAIN1_Pin))
  80003a6:	4b18      	ldr	r3, [pc, #96]	; (8000408 <MAX9704_AmpGain+0xf4>)
  80003a8:	2140      	movs	r1, #64	; 0x40
@@ -707,13 +707,13 @@ Status_TypeDef MAX9867_DigitalAudioInterfaceInit(MAX9867_Master_Slave_Mode mode,
  80004fa:	b2da      	uxtb	r2, r3
  80004fc:	4b5a      	ldr	r3, [pc, #360]	; (8000668 <MAX9867_DigitalAudioInterfaceInit+0x19c>)
  80004fe:	01d0      	lsls	r0, r2, #7
- 8000500:	785a      	ldrb	r2, [r3, #1]
+ 8000500:	781a      	ldrb	r2, [r3, #0]
  8000502:	217f      	movs	r1, #127	; 0x7f
  8000504:	400a      	ands	r2, r1
  8000506:	1c11      	adds	r1, r2, #0
  8000508:	1c02      	adds	r2, r0, #0
  800050a:	430a      	orrs	r2, r1
- 800050c:	705a      	strb	r2, [r3, #1]
+ 800050c:	701a      	strb	r2, [r3, #0]
 	digAudReg1.WCI = lrclk;
  800050e:	1dbb      	adds	r3, r7, #6
  8000510:	781b      	ldrb	r3, [r3, #0]
@@ -724,13 +724,13 @@ Status_TypeDef MAX9867_DigitalAudioInterfaceInit(MAX9867_Master_Slave_Mode mode,
  800051a:	2101      	movs	r1, #1
  800051c:	400a      	ands	r2, r1
  800051e:	0190      	lsls	r0, r2, #6
- 8000520:	785a      	ldrb	r2, [r3, #1]
+ 8000520:	781a      	ldrb	r2, [r3, #0]
  8000522:	2140      	movs	r1, #64	; 0x40
  8000524:	438a      	bics	r2, r1
  8000526:	1c11      	adds	r1, r2, #0
  8000528:	1c02      	adds	r2, r0, #0
  800052a:	430a      	orrs	r2, r1
- 800052c:	705a      	strb	r2, [r3, #1]
+ 800052c:	701a      	strb	r2, [r3, #0]
 	digAudReg1.BCI = bclkMode;
  800052e:	1d7b      	adds	r3, r7, #5
  8000530:	781b      	ldrb	r3, [r3, #0]
@@ -741,13 +741,13 @@ Status_TypeDef MAX9867_DigitalAudioInterfaceInit(MAX9867_Master_Slave_Mode mode,
  800053a:	2101      	movs	r1, #1
  800053c:	400a      	ands	r2, r1
  800053e:	0150      	lsls	r0, r2, #5
- 8000540:	785a      	ldrb	r2, [r3, #1]
+ 8000540:	781a      	ldrb	r2, [r3, #0]
  8000542:	2120      	movs	r1, #32
  8000544:	438a      	bics	r2, r1
  8000546:	1c11      	adds	r1, r2, #0
  8000548:	1c02      	adds	r2, r0, #0
  800054a:	430a      	orrs	r2, r1
- 800054c:	705a      	strb	r2, [r3, #1]
+ 800054c:	701a      	strb	r2, [r3, #0]
 	digAudReg1.DLY = sdoutDelay;
  800054e:	1d3b      	adds	r3, r7, #4
  8000550:	781b      	ldrb	r3, [r3, #0]
@@ -758,13 +758,13 @@ Status_TypeDef MAX9867_DigitalAudioInterfaceInit(MAX9867_Master_Slave_Mode mode,
  800055a:	2101      	movs	r1, #1
  800055c:	400a      	ands	r2, r1
  800055e:	0110      	lsls	r0, r2, #4
- 8000560:	785a      	ldrb	r2, [r3, #1]
+ 8000560:	781a      	ldrb	r2, [r3, #0]
  8000562:	2110      	movs	r1, #16
  8000564:	438a      	bics	r2, r1
  8000566:	1c11      	adds	r1, r2, #0
  8000568:	1c02      	adds	r2, r0, #0
  800056a:	430a      	orrs	r2, r1
- 800056c:	705a      	strb	r2, [r3, #1]
+ 800056c:	701a      	strb	r2, [r3, #0]
 	digAudReg1.HIZOFF = sdoutMode;
  800056e:	231c      	movs	r3, #28
  8000570:	18fb      	adds	r3, r7, r3
@@ -776,13 +776,13 @@ Status_TypeDef MAX9867_DigitalAudioInterfaceInit(MAX9867_Master_Slave_Mode mode,
  800057c:	2101      	movs	r1, #1
  800057e:	400a      	ands	r2, r1
  8000580:	00d0      	lsls	r0, r2, #3
- 8000582:	785a      	ldrb	r2, [r3, #1]
+ 8000582:	781a      	ldrb	r2, [r3, #0]
  8000584:	2108      	movs	r1, #8
  8000586:	438a      	bics	r2, r1
  8000588:	1c11      	adds	r1, r2, #0
  800058a:	1c02      	adds	r2, r0, #0
  800058c:	430a      	orrs	r2, r1
- 800058e:	705a      	strb	r2, [r3, #1]
+ 800058e:	701a      	strb	r2, [r3, #0]
 	digAudReg1.TDM = tdmMode;
  8000590:	2320      	movs	r3, #32
  8000592:	18fb      	adds	r3, r7, r3
@@ -794,13 +794,13 @@ Status_TypeDef MAX9867_DigitalAudioInterfaceInit(MAX9867_Master_Slave_Mode mode,
  800059e:	2101      	movs	r1, #1
  80005a0:	400a      	ands	r2, r1
  80005a2:	0090      	lsls	r0, r2, #2
- 80005a4:	785a      	ldrb	r2, [r3, #1]
+ 80005a4:	781a      	ldrb	r2, [r3, #0]
  80005a6:	2104      	movs	r1, #4
  80005a8:	438a      	bics	r2, r1
  80005aa:	1c11      	adds	r1, r2, #0
  80005ac:	1c02      	adds	r2, r0, #0
  80005ae:	430a      	orrs	r2, r1
- 80005b0:	705a      	strb	r2, [r3, #1]
+ 80005b0:	701a      	strb	r2, [r3, #0]
 
 	digAudReg2.BSEL = bclkSelect;
  80005b2:	2324      	movs	r3, #36	; 0x24
@@ -813,13 +813,13 @@ Status_TypeDef MAX9867_DigitalAudioInterfaceInit(MAX9867_Master_Slave_Mode mode,
  80005c0:	2107      	movs	r1, #7
  80005c2:	400a      	ands	r2, r1
  80005c4:	0010      	movs	r0, r2
- 80005c6:	785a      	ldrb	r2, [r3, #1]
+ 80005c6:	781a      	ldrb	r2, [r3, #0]
  80005c8:	2107      	movs	r1, #7
  80005ca:	438a      	bics	r2, r1
  80005cc:	1c11      	adds	r1, r2, #0
  80005ce:	1c02      	adds	r2, r0, #0
  80005d0:	430a      	orrs	r2, r1
- 80005d2:	705a      	strb	r2, [r3, #1]
+ 80005d2:	701a      	strb	r2, [r3, #0]
 	digAudReg2.DMONO = monoMode;
  80005d4:	2328      	movs	r3, #40	; 0x28
  80005d6:	18fb      	adds	r3, r7, r3
@@ -831,13 +831,13 @@ Status_TypeDef MAX9867_DigitalAudioInterfaceInit(MAX9867_Master_Slave_Mode mode,
  80005e2:	2101      	movs	r1, #1
  80005e4:	400a      	ands	r2, r1
  80005e6:	00d0      	lsls	r0, r2, #3
- 80005e8:	785a      	ldrb	r2, [r3, #1]
+ 80005e8:	781a      	ldrb	r2, [r3, #0]
  80005ea:	2108      	movs	r1, #8
  80005ec:	438a      	bics	r2, r1
  80005ee:	1c11      	adds	r1, r2, #0
  80005f0:	1c02      	adds	r2, r0, #0
  80005f2:	430a      	orrs	r2, r1
- 80005f4:	705a      	strb	r2, [r3, #1]
+ 80005f4:	701a      	strb	r2, [r3, #0]
 	digAudReg2.LVOLFIX = fixLineVol;
  80005f6:	232c      	movs	r3, #44	; 0x2c
  80005f8:	18fb      	adds	r3, r7, r3
@@ -849,13 +849,13 @@ Status_TypeDef MAX9867_DigitalAudioInterfaceInit(MAX9867_Master_Slave_Mode mode,
  8000604:	2101      	movs	r1, #1
  8000606:	400a      	ands	r2, r1
  8000608:	0110      	lsls	r0, r2, #4
- 800060a:	785a      	ldrb	r2, [r3, #1]
+ 800060a:	781a      	ldrb	r2, [r3, #0]
  800060c:	2110      	movs	r1, #16
  800060e:	438a      	bics	r2, r1
  8000610:	1c11      	adds	r1, r2, #0
  8000612:	1c02      	adds	r2, r0, #0
  8000614:	430a      	orrs	r2, r1
- 8000616:	705a      	strb	r2, [r3, #1]
+ 8000616:	701a      	strb	r2, [r3, #0]
 
 	tDataCodec[0] = MAX9867_REG_INTERFACE_MODE1;
  8000618:	4b15      	ldr	r3, [pc, #84]	; (8000670 <MAX9867_DigitalAudioInterfaceInit+0x1a4>)
@@ -866,11 +866,11 @@ Status_TypeDef MAX9867_DigitalAudioInterfaceInit(MAX9867_Master_Slave_Mode mode,
  8000620:	781a      	ldrb	r2, [r3, #0]
  8000622:	4b13      	ldr	r3, [pc, #76]	; (8000670 <MAX9867_DigitalAudioInterfaceInit+0x1a4>)
  8000624:	705a      	strb	r2, [r3, #1]
-	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
+	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
  8000626:	4a12      	ldr	r2, [pc, #72]	; (8000670 <MAX9867_DigitalAudioInterfaceInit+0x1a4>)
  8000628:	4812      	ldr	r0, [pc, #72]	; (8000674 <MAX9867_DigitalAudioInterfaceInit+0x1a8>)
  800062a:	2302      	movs	r3, #2
- 800062c:	2118      	movs	r1, #24
+ 800062c:	2130      	movs	r1, #48	; 0x30
  800062e:	f000 fbe9 	bl	8000e04 <WriteI2C>
  8000632:	1e03      	subs	r3, r0, #0
  8000634:	d001      	beq.n	800063a <MAX9867_DigitalAudioInterfaceInit+0x16e>
@@ -887,11 +887,11 @@ Status_TypeDef MAX9867_DigitalAudioInterfaceInit(MAX9867_Master_Slave_Mode mode,
  8000642:	781a      	ldrb	r2, [r3, #0]
  8000644:	4b0a      	ldr	r3, [pc, #40]	; (8000670 <MAX9867_DigitalAudioInterfaceInit+0x1a4>)
  8000646:	705a      	strb	r2, [r3, #1]
-	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
+	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
  8000648:	4a09      	ldr	r2, [pc, #36]	; (8000670 <MAX9867_DigitalAudioInterfaceInit+0x1a4>)
  800064a:	480a      	ldr	r0, [pc, #40]	; (8000674 <MAX9867_DigitalAudioInterfaceInit+0x1a8>)
  800064c:	2302      	movs	r3, #2
- 800064e:	2118      	movs	r1, #24
+ 800064e:	2130      	movs	r1, #48	; 0x30
  8000650:	f000 fbd8 	bl	8000e04 <WriteI2C>
  8000654:	1e03      	subs	r3, r0, #0
  8000656:	d001      	beq.n	800065c <MAX9867_DigitalAudioInterfaceInit+0x190>
@@ -939,13 +939,13 @@ Status_TypeDef MAX9867_DigitalFilterInit(Digital_Audio_Filter_Mode mode, ADC_DAC
  800069e:	b2da      	uxtb	r2, r3
  80006a0:	4b1f      	ldr	r3, [pc, #124]	; (8000720 <MAX9867_DigitalFilterInit+0xa8>)
  80006a2:	01d0      	lsls	r0, r2, #7
- 80006a4:	785a      	ldrb	r2, [r3, #1]
+ 80006a4:	781a      	ldrb	r2, [r3, #0]
  80006a6:	217f      	movs	r1, #127	; 0x7f
  80006a8:	400a      	ands	r2, r1
  80006aa:	1c11      	adds	r1, r2, #0
  80006ac:	1c02      	adds	r2, r0, #0
  80006ae:	430a      	orrs	r2, r1
- 80006b0:	705a      	strb	r2, [r3, #1]
+ 80006b0:	701a      	strb	r2, [r3, #0]
 	codecFilterReg.AVFLT = ADC_Specifications;
  80006b2:	1dbb      	adds	r3, r7, #6
  80006b4:	781b      	ldrb	r3, [r3, #0]
@@ -956,13 +956,13 @@ Status_TypeDef MAX9867_DigitalFilterInit(Digital_Audio_Filter_Mode mode, ADC_DAC
  80006be:	2107      	movs	r1, #7
  80006c0:	400a      	ands	r2, r1
  80006c2:	0110      	lsls	r0, r2, #4
- 80006c4:	785a      	ldrb	r2, [r3, #1]
+ 80006c4:	781a      	ldrb	r2, [r3, #0]
  80006c6:	2170      	movs	r1, #112	; 0x70
  80006c8:	438a      	bics	r2, r1
  80006ca:	1c11      	adds	r1, r2, #0
  80006cc:	1c02      	adds	r2, r0, #0
  80006ce:	430a      	orrs	r2, r1
- 80006d0:	705a      	strb	r2, [r3, #1]
+ 80006d0:	701a      	strb	r2, [r3, #0]
 	codecFilterReg.DVFLT = DAC_Specifications;
  80006d2:	1d7b      	adds	r3, r7, #5
  80006d4:	781b      	ldrb	r3, [r3, #0]
@@ -973,13 +973,13 @@ Status_TypeDef MAX9867_DigitalFilterInit(Digital_Audio_Filter_Mode mode, ADC_DAC
  80006de:	2107      	movs	r1, #7
  80006e0:	400a      	ands	r2, r1
  80006e2:	0010      	movs	r0, r2
- 80006e4:	785a      	ldrb	r2, [r3, #1]
+ 80006e4:	781a      	ldrb	r2, [r3, #0]
  80006e6:	2107      	movs	r1, #7
  80006e8:	438a      	bics	r2, r1
  80006ea:	1c11      	adds	r1, r2, #0
  80006ec:	1c02      	adds	r2, r0, #0
  80006ee:	430a      	orrs	r2, r1
- 80006f0:	705a      	strb	r2, [r3, #1]
+ 80006f0:	701a      	strb	r2, [r3, #0]
 	tDataCodec[0] = MAX9867_REG_CODEC_FILTERS;
  80006f2:	4b0c      	ldr	r3, [pc, #48]	; (8000724 <MAX9867_DigitalFilterInit+0xac>)
  80006f4:	220a      	movs	r2, #10
@@ -989,11 +989,11 @@ Status_TypeDef MAX9867_DigitalFilterInit(Digital_Audio_Filter_Mode mode, ADC_DAC
  80006fa:	781a      	ldrb	r2, [r3, #0]
  80006fc:	4b09      	ldr	r3, [pc, #36]	; (8000724 <MAX9867_DigitalFilterInit+0xac>)
  80006fe:	705a      	strb	r2, [r3, #1]
-	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
+	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
  8000700:	4a08      	ldr	r2, [pc, #32]	; (8000724 <MAX9867_DigitalFilterInit+0xac>)
  8000702:	4809      	ldr	r0, [pc, #36]	; (8000728 <MAX9867_DigitalFilterInit+0xb0>)
  8000704:	2302      	movs	r3, #2
- 8000706:	2118      	movs	r1, #24
+ 8000706:	2130      	movs	r1, #48	; 0x30
  8000708:	f000 fb7c 	bl	8000e04 <WriteI2C>
  800070c:	1e03      	subs	r3, r0, #0
  800070e:	d001      	beq.n	8000714 <MAX9867_DigitalFilterInit+0x9c>
@@ -1042,31 +1042,31 @@ Status_TypeDef MAX9867_ClockControlInit(MCLK_Prescaler mclkPresclr, Exact_Intege
  8000756:	4b48      	ldr	r3, [pc, #288]	; (8000878 <MAX9867_ClockControlInit+0x14c>)
  8000758:	2103      	movs	r1, #3
  800075a:	400a      	ands	r2, r1
- 800075c:	00d0      	lsls	r0, r2, #3
- 800075e:	785a      	ldrb	r2, [r3, #1]
- 8000760:	2118      	movs	r1, #24
+ 800075c:	0110      	lsls	r0, r2, #4
+ 800075e:	781a      	ldrb	r2, [r3, #0]
+ 8000760:	2130      	movs	r1, #48	; 0x30
  8000762:	438a      	bics	r2, r1
  8000764:	1c11      	adds	r1, r2, #0
  8000766:	1c02      	adds	r2, r0, #0
  8000768:	430a      	orrs	r2, r1
- 800076a:	705a      	strb	r2, [r3, #1]
+ 800076a:	701a      	strb	r2, [r3, #0]
 	sysClkReg.FREQ = exactIntMode;
  800076c:	1dbb      	adds	r3, r7, #6
  800076e:	781b      	ldrb	r3, [r3, #0]
- 8000770:	2207      	movs	r2, #7
+ 8000770:	220f      	movs	r2, #15
  8000772:	4013      	ands	r3, r2
  8000774:	b2da      	uxtb	r2, r3
  8000776:	4b40      	ldr	r3, [pc, #256]	; (8000878 <MAX9867_ClockControlInit+0x14c>)
- 8000778:	2107      	movs	r1, #7
+ 8000778:	210f      	movs	r1, #15
  800077a:	400a      	ands	r2, r1
  800077c:	0010      	movs	r0, r2
- 800077e:	785a      	ldrb	r2, [r3, #1]
- 8000780:	2107      	movs	r1, #7
+ 800077e:	781a      	ldrb	r2, [r3, #0]
+ 8000780:	210f      	movs	r1, #15
  8000782:	438a      	bics	r2, r1
  8000784:	1c11      	adds	r1, r2, #0
  8000786:	1c02      	adds	r2, r0, #0
  8000788:	430a      	orrs	r2, r1
- 800078a:	705a      	strb	r2, [r3, #1]
+ 800078a:	701a      	strb	r2, [r3, #0]
 
 	stereoAudClkRegH.PLL = pllMode;
  800078c:	1d7b      	adds	r3, r7, #5
@@ -1076,13 +1076,13 @@ Status_TypeDef MAX9867_ClockControlInit(MCLK_Prescaler mclkPresclr, Exact_Intege
  8000794:	b2da      	uxtb	r2, r3
  8000796:	4b39      	ldr	r3, [pc, #228]	; (800087c <MAX9867_ClockControlInit+0x150>)
  8000798:	01d0      	lsls	r0, r2, #7
- 800079a:	785a      	ldrb	r2, [r3, #1]
+ 800079a:	781a      	ldrb	r2, [r3, #0]
  800079c:	217f      	movs	r1, #127	; 0x7f
  800079e:	400a      	ands	r2, r1
  80007a0:	1c11      	adds	r1, r2, #0
  80007a2:	1c02      	adds	r2, r0, #0
  80007a4:	430a      	orrs	r2, r1
- 80007a6:	705a      	strb	r2, [r3, #1]
+ 80007a6:	701a      	strb	r2, [r3, #0]
 	stereoAudClkRegH.NI = NI >> 8;
  80007a8:	683b      	ldr	r3, [r7, #0]
  80007aa:	0a1b      	lsrs	r3, r3, #8
@@ -1094,13 +1094,13 @@ Status_TypeDef MAX9867_ClockControlInit(MCLK_Prescaler mclkPresclr, Exact_Intege
  80007b6:	217f      	movs	r1, #127	; 0x7f
  80007b8:	400a      	ands	r2, r1
  80007ba:	0010      	movs	r0, r2
- 80007bc:	785a      	ldrb	r2, [r3, #1]
+ 80007bc:	781a      	ldrb	r2, [r3, #0]
  80007be:	217f      	movs	r1, #127	; 0x7f
  80007c0:	438a      	bics	r2, r1
  80007c2:	1c11      	adds	r1, r2, #0
  80007c4:	1c02      	adds	r2, r0, #0
  80007c6:	430a      	orrs	r2, r1
- 80007c8:	705a      	strb	r2, [r3, #1]
+ 80007c8:	701a      	strb	r2, [r3, #0]
 
 	stereoAudClkRegL.NI0 = pllRapidLock;
  80007ca:	2318      	movs	r3, #24
@@ -1113,13 +1113,13 @@ Status_TypeDef MAX9867_ClockControlInit(MCLK_Prescaler mclkPresclr, Exact_Intege
  80007d8:	2101      	movs	r1, #1
  80007da:	400a      	ands	r2, r1
  80007dc:	0010      	movs	r0, r2
- 80007de:	785a      	ldrb	r2, [r3, #1]
+ 80007de:	781a      	ldrb	r2, [r3, #0]
  80007e0:	2101      	movs	r1, #1
  80007e2:	438a      	bics	r2, r1
  80007e4:	1c11      	adds	r1, r2, #0
  80007e6:	1c02      	adds	r2, r0, #0
  80007e8:	430a      	orrs	r2, r1
- 80007ea:	705a      	strb	r2, [r3, #1]
+ 80007ea:	701a      	strb	r2, [r3, #0]
 	stereoAudClkRegL.NI = NI;
  80007ec:	683b      	ldr	r3, [r7, #0]
  80007ee:	1c1a      	adds	r2, r3, #0
@@ -1128,13 +1128,13 @@ Status_TypeDef MAX9867_ClockControlInit(MCLK_Prescaler mclkPresclr, Exact_Intege
  80007f4:	b2da      	uxtb	r2, r3
  80007f6:	4b22      	ldr	r3, [pc, #136]	; (8000880 <MAX9867_ClockControlInit+0x154>)
  80007f8:	1890      	adds	r0, r2, r2
- 80007fa:	785a      	ldrb	r2, [r3, #1]
+ 80007fa:	781a      	ldrb	r2, [r3, #0]
  80007fc:	2101      	movs	r1, #1
  80007fe:	400a      	ands	r2, r1
  8000800:	1c11      	adds	r1, r2, #0
  8000802:	1c02      	adds	r2, r0, #0
  8000804:	430a      	orrs	r2, r1
- 8000806:	705a      	strb	r2, [r3, #1]
+ 8000806:	701a      	strb	r2, [r3, #0]
 
 	tDataCodec[0] = MAX9867_REG_SYSTEM_CLK;
  8000808:	4b1e      	ldr	r3, [pc, #120]	; (8000884 <MAX9867_ClockControlInit+0x158>)
@@ -1145,11 +1145,11 @@ Status_TypeDef MAX9867_ClockControlInit(MCLK_Prescaler mclkPresclr, Exact_Intege
  8000810:	781a      	ldrb	r2, [r3, #0]
  8000812:	4b1c      	ldr	r3, [pc, #112]	; (8000884 <MAX9867_ClockControlInit+0x158>)
  8000814:	705a      	strb	r2, [r3, #1]
-	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
+	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
  8000816:	4a1b      	ldr	r2, [pc, #108]	; (8000884 <MAX9867_ClockControlInit+0x158>)
  8000818:	481b      	ldr	r0, [pc, #108]	; (8000888 <MAX9867_ClockControlInit+0x15c>)
  800081a:	2302      	movs	r3, #2
- 800081c:	2118      	movs	r1, #24
+ 800081c:	2130      	movs	r1, #48	; 0x30
  800081e:	f000 faf1 	bl	8000e04 <WriteI2C>
  8000822:	1e03      	subs	r3, r0, #0
  8000824:	d001      	beq.n	800082a <MAX9867_ClockControlInit+0xfe>
@@ -1166,11 +1166,11 @@ Status_TypeDef MAX9867_ClockControlInit(MCLK_Prescaler mclkPresclr, Exact_Intege
  8000832:	781a      	ldrb	r2, [r3, #0]
  8000834:	4b13      	ldr	r3, [pc, #76]	; (8000884 <MAX9867_ClockControlInit+0x158>)
  8000836:	705a      	strb	r2, [r3, #1]
-	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
+	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
  8000838:	4a12      	ldr	r2, [pc, #72]	; (8000884 <MAX9867_ClockControlInit+0x158>)
  800083a:	4813      	ldr	r0, [pc, #76]	; (8000888 <MAX9867_ClockControlInit+0x15c>)
  800083c:	2302      	movs	r3, #2
- 800083e:	2118      	movs	r1, #24
+ 800083e:	2130      	movs	r1, #48	; 0x30
  8000840:	f000 fae0 	bl	8000e04 <WriteI2C>
  8000844:	1e03      	subs	r3, r0, #0
  8000846:	d001      	beq.n	800084c <MAX9867_ClockControlInit+0x120>
@@ -1187,11 +1187,11 @@ Status_TypeDef MAX9867_ClockControlInit(MCLK_Prescaler mclkPresclr, Exact_Intege
  8000854:	781a      	ldrb	r2, [r3, #0]
  8000856:	4b0b      	ldr	r3, [pc, #44]	; (8000884 <MAX9867_ClockControlInit+0x158>)
  8000858:	705a      	strb	r2, [r3, #1]
-	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
+	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
  800085a:	4a0a      	ldr	r2, [pc, #40]	; (8000884 <MAX9867_ClockControlInit+0x158>)
  800085c:	480a      	ldr	r0, [pc, #40]	; (8000888 <MAX9867_ClockControlInit+0x15c>)
  800085e:	2302      	movs	r3, #2
- 8000860:	2118      	movs	r1, #24
+ 8000860:	2130      	movs	r1, #48	; 0x30
  8000862:	f000 facf 	bl	8000e04 <WriteI2C>
  8000866:	1e03      	subs	r3, r0, #0
  8000868:	d001      	beq.n	800086e <MAX9867_ClockControlInit+0x142>
@@ -1233,13 +1233,13 @@ Status_TypeDef MAX9867_Shoutdown(Shoutdown shtdown)
  80008a0:	b2da      	uxtb	r2, r3
  80008a2:	4b0f      	ldr	r3, [pc, #60]	; (80008e0 <MAX9867_Shoutdown+0x54>)
  80008a4:	01d0      	lsls	r0, r2, #7
- 80008a6:	785a      	ldrb	r2, [r3, #1]
+ 80008a6:	781a      	ldrb	r2, [r3, #0]
  80008a8:	217f      	movs	r1, #127	; 0x7f
  80008aa:	400a      	ands	r2, r1
  80008ac:	1c11      	adds	r1, r2, #0
  80008ae:	1c02      	adds	r2, r0, #0
  80008b0:	430a      	orrs	r2, r1
- 80008b2:	705a      	strb	r2, [r3, #1]
+ 80008b2:	701a      	strb	r2, [r3, #0]
 	tDataCodec[0] = MAX9867_REG_SYS_SHUTDOWN;
  80008b4:	4b0b      	ldr	r3, [pc, #44]	; (80008e4 <MAX9867_Shoutdown+0x58>)
  80008b6:	2217      	movs	r2, #23
@@ -1249,11 +1249,11 @@ Status_TypeDef MAX9867_Shoutdown(Shoutdown shtdown)
  80008bc:	781a      	ldrb	r2, [r3, #0]
  80008be:	4b09      	ldr	r3, [pc, #36]	; (80008e4 <MAX9867_Shoutdown+0x58>)
  80008c0:	705a      	strb	r2, [r3, #1]
-	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
+	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
  80008c2:	4a08      	ldr	r2, [pc, #32]	; (80008e4 <MAX9867_Shoutdown+0x58>)
  80008c4:	4808      	ldr	r0, [pc, #32]	; (80008e8 <MAX9867_Shoutdown+0x5c>)
  80008c6:	2302      	movs	r3, #2
- 80008c8:	2118      	movs	r1, #24
+ 80008c8:	2130      	movs	r1, #48	; 0x30
  80008ca:	f000 fa9b 	bl	8000e04 <WriteI2C>
  80008ce:	1e03      	subs	r3, r0, #0
  80008d0:	d001      	beq.n	80008d6 <MAX9867_Shoutdown+0x4a>
@@ -1291,13 +1291,13 @@ Status_TypeDef MAX9867_HeadphoneAmpType(Headphone_Amp_Type ampMode)
  8000904:	2107      	movs	r1, #7
  8000906:	400a      	ands	r2, r1
  8000908:	0010      	movs	r0, r2
- 800090a:	785a      	ldrb	r2, [r3, #1]
+ 800090a:	781a      	ldrb	r2, [r3, #0]
  800090c:	2107      	movs	r1, #7
  800090e:	438a      	bics	r2, r1
  8000910:	1c11      	adds	r1, r2, #0
  8000912:	1c02      	adds	r2, r0, #0
  8000914:	430a      	orrs	r2, r1
- 8000916:	705a      	strb	r2, [r3, #1]
+ 8000916:	701a      	strb	r2, [r3, #0]
 	tDataCodec[0] = MAX9867_REG_MODE;
  8000918:	4b0b      	ldr	r3, [pc, #44]	; (8000948 <MAX9867_HeadphoneAmpType+0x5c>)
  800091a:	2216      	movs	r2, #22
@@ -1307,11 +1307,11 @@ Status_TypeDef MAX9867_HeadphoneAmpType(Headphone_Amp_Type ampMode)
  8000920:	781a      	ldrb	r2, [r3, #0]
  8000922:	4b09      	ldr	r3, [pc, #36]	; (8000948 <MAX9867_HeadphoneAmpType+0x5c>)
  8000924:	705a      	strb	r2, [r3, #1]
-	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
+	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
  8000926:	4a08      	ldr	r2, [pc, #32]	; (8000948 <MAX9867_HeadphoneAmpType+0x5c>)
  8000928:	4808      	ldr	r0, [pc, #32]	; (800094c <MAX9867_HeadphoneAmpType+0x60>)
  800092a:	2302      	movs	r3, #2
- 800092c:	2118      	movs	r1, #24
+ 800092c:	2130      	movs	r1, #48	; 0x30
  800092e:	f000 fa69 	bl	8000e04 <WriteI2C>
  8000932:	1e03      	subs	r3, r0, #0
  8000934:	d001      	beq.n	800093a <MAX9867_HeadphoneAmpType+0x4e>
@@ -1349,13 +1349,13 @@ Status_TypeDef MAX9867_DAC_EnableDisable(DAC_En_Dis dac)
  8000968:	2101      	movs	r1, #1
  800096a:	400a      	ands	r2, r1
  800096c:	00d0      	lsls	r0, r2, #3
- 800096e:	785a      	ldrb	r2, [r3, #1]
+ 800096e:	781a      	ldrb	r2, [r3, #0]
  8000970:	2108      	movs	r1, #8
  8000972:	438a      	bics	r2, r1
  8000974:	1c11      	adds	r1, r2, #0
  8000976:	1c02      	adds	r2, r0, #0
  8000978:	430a      	orrs	r2, r1
- 800097a:	705a      	strb	r2, [r3, #1]
+ 800097a:	701a      	strb	r2, [r3, #0]
 		powerMangReg.DAREN = dac;
  800097c:	1dfb      	adds	r3, r7, #7
  800097e:	781b      	ldrb	r3, [r3, #0]
@@ -1366,13 +1366,13 @@ Status_TypeDef MAX9867_DAC_EnableDisable(DAC_En_Dis dac)
  8000988:	2101      	movs	r1, #1
  800098a:	400a      	ands	r2, r1
  800098c:	0090      	lsls	r0, r2, #2
- 800098e:	785a      	ldrb	r2, [r3, #1]
+ 800098e:	781a      	ldrb	r2, [r3, #0]
  8000990:	2104      	movs	r1, #4
  8000992:	438a      	bics	r2, r1
  8000994:	1c11      	adds	r1, r2, #0
  8000996:	1c02      	adds	r2, r0, #0
  8000998:	430a      	orrs	r2, r1
- 800099a:	705a      	strb	r2, [r3, #1]
+ 800099a:	701a      	strb	r2, [r3, #0]
 		tDataCodec[0] = MAX9867_REG_CODEC_FILTERS;
  800099c:	4b0b      	ldr	r3, [pc, #44]	; (80009cc <MAX9867_DAC_EnableDisable+0x7c>)
  800099e:	220a      	movs	r2, #10
@@ -1382,11 +1382,11 @@ Status_TypeDef MAX9867_DAC_EnableDisable(DAC_En_Dis dac)
  80009a4:	781a      	ldrb	r2, [r3, #0]
  80009a6:	4b09      	ldr	r3, [pc, #36]	; (80009cc <MAX9867_DAC_EnableDisable+0x7c>)
  80009a8:	705a      	strb	r2, [r3, #1]
-		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
+		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
  80009aa:	4a08      	ldr	r2, [pc, #32]	; (80009cc <MAX9867_DAC_EnableDisable+0x7c>)
  80009ac:	4808      	ldr	r0, [pc, #32]	; (80009d0 <MAX9867_DAC_EnableDisable+0x80>)
  80009ae:	2302      	movs	r3, #2
- 80009b0:	2118      	movs	r1, #24
+ 80009b0:	2130      	movs	r1, #48	; 0x30
  80009b2:	f000 fa27 	bl	8000e04 <WriteI2C>
  80009b6:	1e03      	subs	r3, r0, #0
  80009b8:	d001      	beq.n	80009be <MAX9867_DAC_EnableDisable+0x6e>
@@ -1427,13 +1427,13 @@ Status_TypeDef MAX9867_DAC_Gain(DAC_Gain firstAmp, DAC_Level_Ctrl progAmp)
  80009f2:	2103      	movs	r1, #3
  80009f4:	400a      	ands	r2, r1
  80009f6:	0110      	lsls	r0, r2, #4
- 80009f8:	785a      	ldrb	r2, [r3, #1]
+ 80009f8:	781a      	ldrb	r2, [r3, #0]
  80009fa:	2130      	movs	r1, #48	; 0x30
  80009fc:	438a      	bics	r2, r1
  80009fe:	1c11      	adds	r1, r2, #0
  8000a00:	1c02      	adds	r2, r0, #0
  8000a02:	430a      	orrs	r2, r1
- 8000a04:	705a      	strb	r2, [r3, #1]
+ 8000a04:	701a      	strb	r2, [r3, #0]
 	DAC_LevelReg.DACA = progAmp;
  8000a06:	1dbb      	adds	r3, r7, #6
  8000a08:	781b      	ldrb	r3, [r3, #0]
@@ -1444,13 +1444,13 @@ Status_TypeDef MAX9867_DAC_Gain(DAC_Gain firstAmp, DAC_Level_Ctrl progAmp)
  8000a12:	210f      	movs	r1, #15
  8000a14:	400a      	ands	r2, r1
  8000a16:	0010      	movs	r0, r2
- 8000a18:	785a      	ldrb	r2, [r3, #1]
+ 8000a18:	781a      	ldrb	r2, [r3, #0]
  8000a1a:	210f      	movs	r1, #15
  8000a1c:	438a      	bics	r2, r1
  8000a1e:	1c11      	adds	r1, r2, #0
  8000a20:	1c02      	adds	r2, r0, #0
  8000a22:	430a      	orrs	r2, r1
- 8000a24:	705a      	strb	r2, [r3, #1]
+ 8000a24:	701a      	strb	r2, [r3, #0]
 	tDataCodec[0] = MAX9867_REG_DAC_LVL;
  8000a26:	4b0c      	ldr	r3, [pc, #48]	; (8000a58 <MAX9867_DAC_Gain+0x84>)
  8000a28:	220c      	movs	r2, #12
@@ -1460,11 +1460,11 @@ Status_TypeDef MAX9867_DAC_Gain(DAC_Gain firstAmp, DAC_Level_Ctrl progAmp)
  8000a2e:	781a      	ldrb	r2, [r3, #0]
  8000a30:	4b09      	ldr	r3, [pc, #36]	; (8000a58 <MAX9867_DAC_Gain+0x84>)
  8000a32:	705a      	strb	r2, [r3, #1]
-	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
+	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
  8000a34:	4a08      	ldr	r2, [pc, #32]	; (8000a58 <MAX9867_DAC_Gain+0x84>)
  8000a36:	4809      	ldr	r0, [pc, #36]	; (8000a5c <MAX9867_DAC_Gain+0x88>)
  8000a38:	2302      	movs	r3, #2
- 8000a3a:	2118      	movs	r1, #24
+ 8000a3a:	2130      	movs	r1, #48	; 0x30
  8000a3c:	f000 f9e2 	bl	8000e04 <WriteI2C>
  8000a40:	1e03      	subs	r3, r0, #0
  8000a42:	d001      	beq.n	8000a48 <MAX9867_DAC_Gain+0x74>
@@ -1521,13 +1521,13 @@ Status_TypeDef MAX9867_AudioLevel(L_R_Playback_Volume_Channel channel, L_R_Playb
  8000a92:	213f      	movs	r1, #63	; 0x3f
  8000a94:	400a      	ands	r2, r1
  8000a96:	0010      	movs	r0, r2
- 8000a98:	785a      	ldrb	r2, [r3, #1]
+ 8000a98:	781a      	ldrb	r2, [r3, #0]
  8000a9a:	213f      	movs	r1, #63	; 0x3f
  8000a9c:	438a      	bics	r2, r1
  8000a9e:	1c11      	adds	r1, r2, #0
  8000aa0:	1c02      	adds	r2, r0, #0
  8000aa2:	430a      	orrs	r2, r1
- 8000aa4:	705a      	strb	r2, [r3, #1]
+ 8000aa4:	701a      	strb	r2, [r3, #0]
 		tDataCodec[0] = MAX9867_REG_R_VOL_CTRL;
  8000aa6:	4b41      	ldr	r3, [pc, #260]	; (8000bac <MAX9867_AudioLevel+0x14c>)
  8000aa8:	2211      	movs	r2, #17
@@ -1537,11 +1537,11 @@ Status_TypeDef MAX9867_AudioLevel(L_R_Playback_Volume_Channel channel, L_R_Playb
  8000aae:	781a      	ldrb	r2, [r3, #0]
  8000ab0:	4b3e      	ldr	r3, [pc, #248]	; (8000bac <MAX9867_AudioLevel+0x14c>)
  8000ab2:	705a      	strb	r2, [r3, #1]
-		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
+		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
  8000ab4:	4a3d      	ldr	r2, [pc, #244]	; (8000bac <MAX9867_AudioLevel+0x14c>)
  8000ab6:	483e      	ldr	r0, [pc, #248]	; (8000bb0 <MAX9867_AudioLevel+0x150>)
  8000ab8:	2302      	movs	r3, #2
- 8000aba:	2118      	movs	r1, #24
+ 8000aba:	2130      	movs	r1, #48	; 0x30
  8000abc:	f000 f9a2 	bl	8000e04 <WriteI2C>
  8000ac0:	1e03      	subs	r3, r0, #0
  8000ac2:	d06c      	beq.n	8000b9e <MAX9867_AudioLevel+0x13e>
@@ -1565,13 +1565,13 @@ Status_TypeDef MAX9867_AudioLevel(L_R_Playback_Volume_Channel channel, L_R_Playb
  8000adc:	213f      	movs	r1, #63	; 0x3f
  8000ade:	400a      	ands	r2, r1
  8000ae0:	0010      	movs	r0, r2
- 8000ae2:	785a      	ldrb	r2, [r3, #1]
+ 8000ae2:	781a      	ldrb	r2, [r3, #0]
  8000ae4:	213f      	movs	r1, #63	; 0x3f
  8000ae6:	438a      	bics	r2, r1
  8000ae8:	1c11      	adds	r1, r2, #0
  8000aea:	1c02      	adds	r2, r0, #0
  8000aec:	430a      	orrs	r2, r1
- 8000aee:	705a      	strb	r2, [r3, #1]
+ 8000aee:	701a      	strb	r2, [r3, #0]
 		tDataCodec[0] = MAX9867_REG_L_VOL_CTRL;
  8000af0:	4b2e      	ldr	r3, [pc, #184]	; (8000bac <MAX9867_AudioLevel+0x14c>)
  8000af2:	2210      	movs	r2, #16
@@ -1581,11 +1581,11 @@ Status_TypeDef MAX9867_AudioLevel(L_R_Playback_Volume_Channel channel, L_R_Playb
  8000af8:	781a      	ldrb	r2, [r3, #0]
  8000afa:	4b2c      	ldr	r3, [pc, #176]	; (8000bac <MAX9867_AudioLevel+0x14c>)
  8000afc:	705a      	strb	r2, [r3, #1]
-		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
+		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
  8000afe:	4a2b      	ldr	r2, [pc, #172]	; (8000bac <MAX9867_AudioLevel+0x14c>)
  8000b00:	482b      	ldr	r0, [pc, #172]	; (8000bb0 <MAX9867_AudioLevel+0x150>)
  8000b02:	2302      	movs	r3, #2
- 8000b04:	2118      	movs	r1, #24
+ 8000b04:	2130      	movs	r1, #48	; 0x30
  8000b06:	f000 f97d 	bl	8000e04 <WriteI2C>
  8000b0a:	1e03      	subs	r3, r0, #0
  8000b0c:	d047      	beq.n	8000b9e <MAX9867_AudioLevel+0x13e>
@@ -1609,13 +1609,13 @@ Status_TypeDef MAX9867_AudioLevel(L_R_Playback_Volume_Channel channel, L_R_Playb
  8000b26:	213f      	movs	r1, #63	; 0x3f
  8000b28:	400a      	ands	r2, r1
  8000b2a:	0010      	movs	r0, r2
- 8000b2c:	785a      	ldrb	r2, [r3, #1]
+ 8000b2c:	781a      	ldrb	r2, [r3, #0]
  8000b2e:	213f      	movs	r1, #63	; 0x3f
  8000b30:	438a      	bics	r2, r1
  8000b32:	1c11      	adds	r1, r2, #0
  8000b34:	1c02      	adds	r2, r0, #0
  8000b36:	430a      	orrs	r2, r1
- 8000b38:	705a      	strb	r2, [r3, #1]
+ 8000b38:	701a      	strb	r2, [r3, #0]
 		lVolumeCtrlReg.VOLL = rPlaybackVol;
  8000b3a:	1dbb      	adds	r3, r7, #6
  8000b3c:	781b      	ldrb	r3, [r3, #0]
@@ -1626,13 +1626,13 @@ Status_TypeDef MAX9867_AudioLevel(L_R_Playback_Volume_Channel channel, L_R_Playb
  8000b46:	213f      	movs	r1, #63	; 0x3f
  8000b48:	400a      	ands	r2, r1
  8000b4a:	0010      	movs	r0, r2
- 8000b4c:	785a      	ldrb	r2, [r3, #1]
+ 8000b4c:	781a      	ldrb	r2, [r3, #0]
  8000b4e:	213f      	movs	r1, #63	; 0x3f
  8000b50:	438a      	bics	r2, r1
  8000b52:	1c11      	adds	r1, r2, #0
  8000b54:	1c02      	adds	r2, r0, #0
  8000b56:	430a      	orrs	r2, r1
- 8000b58:	705a      	strb	r2, [r3, #1]
+ 8000b58:	701a      	strb	r2, [r3, #0]
 		tDataCodec[0] = MAX9867_REG_L_VOL_CTRL;
  8000b5a:	4b14      	ldr	r3, [pc, #80]	; (8000bac <MAX9867_AudioLevel+0x14c>)
  8000b5c:	2210      	movs	r2, #16
@@ -1642,11 +1642,11 @@ Status_TypeDef MAX9867_AudioLevel(L_R_Playback_Volume_Channel channel, L_R_Playb
  8000b62:	781a      	ldrb	r2, [r3, #0]
  8000b64:	4b11      	ldr	r3, [pc, #68]	; (8000bac <MAX9867_AudioLevel+0x14c>)
  8000b66:	705a      	strb	r2, [r3, #1]
-		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
+		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
  8000b68:	4a10      	ldr	r2, [pc, #64]	; (8000bac <MAX9867_AudioLevel+0x14c>)
  8000b6a:	4811      	ldr	r0, [pc, #68]	; (8000bb0 <MAX9867_AudioLevel+0x150>)
  8000b6c:	2302      	movs	r3, #2
- 8000b6e:	2118      	movs	r1, #24
+ 8000b6e:	2130      	movs	r1, #48	; 0x30
  8000b70:	f000 f948 	bl	8000e04 <WriteI2C>
  8000b74:	1e03      	subs	r3, r0, #0
  8000b76:	d001      	beq.n	8000b7c <MAX9867_AudioLevel+0x11c>
@@ -1662,11 +1662,11 @@ Status_TypeDef MAX9867_AudioLevel(L_R_Playback_Volume_Channel channel, L_R_Playb
  8000b84:	781a      	ldrb	r2, [r3, #0]
  8000b86:	4b09      	ldr	r3, [pc, #36]	; (8000bac <MAX9867_AudioLevel+0x14c>)
  8000b88:	705a      	strb	r2, [r3, #1]
-		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS, tDataCodec, 2) )
+		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
  8000b8a:	4a08      	ldr	r2, [pc, #32]	; (8000bac <MAX9867_AudioLevel+0x14c>)
  8000b8c:	4808      	ldr	r0, [pc, #32]	; (8000bb0 <MAX9867_AudioLevel+0x150>)
  8000b8e:	2302      	movs	r3, #2
- 8000b90:	2118      	movs	r1, #24
+ 8000b90:	2130      	movs	r1, #48	; 0x30
  8000b92:	f000 f937 	bl	8000e04 <WriteI2C>
  8000b96:	1e03      	subs	r3, r0, #0
  8000b98:	d001      	beq.n	8000b9e <MAX9867_AudioLevel+0x13e>

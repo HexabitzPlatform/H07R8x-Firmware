@@ -548,17 +548,18 @@ typedef enum
 
 
 /* 0x00 */
-typedef struct {
+typedef union{
+	struct {
         // Bit fields within the register
-	uint8_t auxRegH;
-
     uint8_t AUX: 8;
+	};
+	uint8_t auxRegH;
     // Add more bit fields as needed
 } Aux_H;
 /* 0x01 */
-typedef struct {
+typedef union{
+	struct {
         // Bit fields within the register
-	uint8_t auxRegH;
 	uint8_t reserved1: 1;
     uint8_t JDET     : 1;
     uint8_t reserved2: 1;
@@ -567,12 +568,14 @@ typedef struct {
     uint8_t ULK      : 1;
     uint8_t SLD      : 1;
     uint8_t CLD      : 1;
+	};
+	uint8_t auxRegH;
     // Add more bit fields as needed
 } Status_Reg;
 /* 0x02 */
-typedef struct {
+typedef union{
+	struct {
         // Bit fields within the register
-	uint8_t auxRegH;
 	uint8_t reserved1: 1;
     uint8_t reserved2: 1;
     uint8_t reserved3: 1;
@@ -581,23 +584,25 @@ typedef struct {
     uint8_t JKMIC    : 1;
     uint8_t JKSNS    : 1;
     uint8_t LSNS     : 1;
+	};
+	uint8_t auxRegH;
     // Add more bit fields as needed
 } Jack_Sense_Reg;
 
 /* 0x03 */
-typedef struct {
+typedef union{
+	struct {
         // Bit fields within the register
-	uint8_t auxRegL;
-
     uint8_t AUX: 8;
+	};
+	uint8_t auxRegL;
     // Add more bit fields as needed
 } Aux_L;
 
 /* 0x04 */
-typedef struct {
+typedef union{
+	struct {
         // Bit fields within the register
-	uint8_t interruptEnReg;
-
     uint8_t reserved1: 1;
     uint8_t IJDET    : 1;
     uint8_t SDODLY   : 1;
@@ -606,42 +611,50 @@ typedef struct {
     uint8_t IULK     : 1;
     uint8_t ISLD     : 1;
     uint8_t ICLD     : 1;
+	};
+	uint8_t interruptEnReg;
     // Add more bit fields as needed
 } Interrupt_Reg;
 
 /* 0x05 */
-typedef struct {
+typedef union{
+	struct {
         // Bit fields within the register
-	uint8_t sysClkReg;
-    uint8_t FREQ     : 3;
+    uint8_t FREQ     : 4;
     uint8_t PSCLK    : 2;
     uint8_t reserved1: 1;
     uint8_t reserved2: 1;
+	};
+	uint8_t sysClkReg;
     // Add more bit fields as needed
 } System_Clock_Reg;
 
 /* 0x06 */
-typedef struct {
+typedef union{
+	struct {
         // Bit fields within the register
-	uint8_t stereoAudClkRegH;
     uint8_t NI       : 7;
     uint8_t PLL      : 1;
+	};
+	uint8_t stereoAudClkRegH;
     // Add more bit fields as needed
 } Stereo_Audio_Clock_Control_High_Reg;
 
 /* 0x07 */
-typedef struct {
+typedef union{
+	struct {
         // Bit fields within the register
-	uint8_t stereoAudClkRegL;
     uint8_t NI0      : 1;
     uint8_t NI       : 7;
+	};
+	uint8_t stereoAudClkRegL;
     // Add more bit fields as needed
 } Stereo_Audio_Clock_Control_Low_Reg;
 
 /* 0x08 */
-typedef struct {
+typedef union{
+	struct {
         // Bit fields within the register
-	uint8_t digAudReg1;
     uint8_t reserved1: 1;
     uint8_t reserved2: 1;
     uint8_t TDM 	 : 1;
@@ -650,144 +663,170 @@ typedef struct {
     uint8_t BCI      : 1;
     uint8_t WCI      : 1;
     uint8_t MAS      : 1;
+	};
+	uint8_t digAudReg1;
     // Add more bit fields as needed
 } Digital_Audio_Interface_Reg_1;
 
 /* 0x09 */
-typedef struct {
+typedef union{
+	struct {
         // Bit fields within the register
-	uint8_t digAudReg2;
     uint8_t BSEL     : 3;
     uint8_t DMONO    : 1;
     uint8_t LVOLFIX  : 1;
     uint8_t reserved1: 1;
     uint8_t reserved2: 1;
     uint8_t reserved3: 1;
+	};
+	uint8_t digAudReg2;
     // Add more bit fields as needed
 } Digital_Audio_Interface_Reg_2;
 
 /* 0x0a */
-typedef struct {
+typedef union{
+	struct {
         // Bit fields within the register
-	uint8_t digtlFltrReg;
     uint8_t DVFLT	 : 3;
     uint8_t reserved : 1;
     uint8_t AVFLT    : 3;
     uint8_t MODE     : 1;
+	};
+	uint8_t digtlFltrReg;
     // Add more bit fields as needed
 } Digital_Filtering_Reg;
 
 /* 0x0b */
-typedef struct {
+typedef union{
+	struct {
         // Bit fields within the register
-	uint8_t sidetoneReg;
     uint8_t DVST	 : 5;
     uint8_t reserved : 1;
     uint8_t DSTS     : 2;
+	};
+	uint8_t sidetoneReg;
     // Add more bit fields as needed
 } Sidetone_Reg;
 
 /* 0x0c */
-typedef struct {
+typedef union{
+	struct {
         // Bit fields within the register
-	uint8_t DACLvlReg;
     uint8_t DACA	 : 4;
     uint8_t DACG 	 : 2;
     uint8_t DACM 	 : 1;
     uint8_t reserved : 1;
+	};
+	uint8_t DACLvlReg;
     // Add more bit fields as needed
 } DAC_Level_Ctrl_Reg;
 
 /* 0x0d */
-typedef struct {
+typedef union{
+	struct {
         // Bit fields within the register
-	uint8_t ADCLvlReg;
     uint8_t AVR	     : 4;
     uint8_t AVL 	 : 4;
+	};
+	uint8_t ADCLvlReg;
     // Add more bit fields as needed
 } ADC_Level_Ctrl_Reg;
 
 /* 0x0e */
-typedef struct {
+typedef union{
+	struct {
         // Bit fields within the register
-	uint8_t lLineInReg;
     uint8_t LIGL	 : 4;
     uint8_t reserved1: 1;
     uint8_t reserved2: 1;
     uint8_t LILM     : 1;
     uint8_t reserved3: 1;
+	};
+	uint8_t lLineInReg;
     // Add more bit fields as needed
 } Left_Line_input_Level_Reg;
 
 /* 0x0f */
-typedef struct {
+typedef union{
+	struct {
         // Bit fields within the register
-	uint8_t rLineInReg;
     uint8_t LIGR	 : 4;
     uint8_t reserved1: 1;
     uint8_t reserved2: 1;
     uint8_t LIRM     : 1;
     uint8_t reserved3: 1;
+	};
+	uint8_t rLineInReg;
     // Add more bit fields as needed
 } Right_Line_input_Level_Reg;
 
 /* 0x10 */
-typedef struct {
+typedef union{
+	struct {
         // Bit fields within the register
-	uint8_t LVolCtrlReg;
     uint8_t VOLL	 : 6;
     uint8_t VOLLM 	 : 1;
     uint8_t reserved : 1;
+	};
+	uint8_t LVolCtrlReg;
     // Add more bit fields as needed
 } Left_Volume_Ctrl_Reg;
 
 /* 0x11 */
-typedef struct {
+typedef union{
+	struct {
         // Bit fields within the register
-	uint8_t RVolCtrlReg;
     uint8_t VOLR	 : 6;
     uint8_t VOLRM 	 : 1;
     uint8_t reserved : 1;
+	};
+	uint8_t RVolCtrlReg;
     // Add more bit fields as needed
 } Right_Volume_Ctrl_Reg;
 
 /* 0x12 */
-typedef struct {
+typedef union{
+	struct {
         // Bit fields within the register
-	uint8_t lMicGainReg;
     uint8_t PGAML	 : 5;
     uint8_t PALEN    : 2;
     uint8_t reserved : 1;
+	};
+	uint8_t lMicGainReg;
     // Add more bit fields as needed
 } Left_Mic_Gain_Reg;
 
 /* 0x13 */
-typedef struct {
+typedef union{
+	struct {
         // Bit fields within the register
-	uint8_t rMicGainReg;
     uint8_t PGAMR	 : 5;
     uint8_t PAREN    : 2;
     uint8_t reserved : 1;
+	};
+	uint8_t rMicGainReg;
     // Add more bit fields as needed
 } Right_Mic_Gain_Reg;
 
 /* 0x14 */
-typedef struct {
+typedef union{
+	struct {
         // Bit fields within the register
-	uint8_t adcInputReg;
     uint8_t AUXEN	 : 1;
     uint8_t AUXCAL   : 1;
     uint8_t AUXGAIN  : 1;
     uint8_t AUXCAP	 : 1;
     uint8_t MXINR    : 2;
     uint8_t MXINL    : 2;
+	};
+	uint8_t adcInputReg;
     // Add more bit fields as needed
 } ADC_Input_Reg;
 
 /* 0x15 */
-typedef struct {
+typedef union{
+	struct {
         // Bit fields within the register
-	uint8_t digMicClkReg;
     uint8_t reserved1 : 1;
     uint8_t reserved2 : 1;
     uint8_t reserved3 : 1;
@@ -795,36 +834,42 @@ typedef struct {
     uint8_t DIGMICR   : 1;
     uint8_t DIGMICL   : 1;
     uint8_t MICCLK    : 2;
+	};
+	uint8_t digMicClkReg;
     // Add more bit fields as needed
 } Digital_Microphone_Input_Reg;
 
 /* 0x16 */
-typedef struct {
+typedef union{
+	struct {
         // Bit fields within the register
-	uint8_t configModeReg;
     uint8_t HPMODE	 : 3;
     uint8_t JDETEN   : 1;
     uint8_t reserved : 1;
     uint8_t ZDEN     : 1;
     uint8_t VSEN     : 1;
     uint8_t DSLEW    : 1;
+	};
+	uint8_t configModeReg;
     // Add more bit fields as needed
 } Mode_Configuration_Reg;
 
 /* 0x17 */
-typedef struct {
-        // Bit fields within the register
+typedef union{
+	struct {
+			// Bit fields within the register
+		uint8_t ADREN	 : 1;
+		uint8_t ADLEN    : 1;
+		uint8_t DAREN    : 1;
+		uint8_t DALEN    : 1;
+		uint8_t reserved : 1;
+		uint8_t LNREN    : 1;
+		uint8_t LNLEN    : 1;
+		uint8_t SHDN     : 1;
+		// Add more bit fields as needed
+	};
 	uint8_t pwrManagReg;
-    uint8_t ADREN	 : 1;
-    uint8_t ADLEN    : 1;
-    uint8_t DAREN    : 1;
-    uint8_t DALEN    : 1;
-    uint8_t reserved : 1;
-    uint8_t LNREN    : 1;
-    uint8_t LNLEN    : 1;
-    uint8_t SHDN     : 1;
-    // Add more bit fields as needed
-} Power_Management_Reg;
+}Power_Management_Reg;
 
 Status_TypeDef WriteI2C(I2C_HANDLE *xPort, uint16_t sAddress, uint8_t *pData, uint16_t Size);
 Status_TypeDef ReadI2C(I2C_HANDLE *xPort, uint16_t sAddress, uint8_t *rBuffer, uint16_t Size);
