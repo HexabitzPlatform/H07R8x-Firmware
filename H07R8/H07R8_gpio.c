@@ -12,7 +12,8 @@
 
 /*  */
 BOS_Status GetPortGPIOs(uint8_t port,uint32_t *TX_Port,uint16_t *TX_Pin,uint32_t *RX_Port,uint16_t *RX_Pin);
-
+Module_Status SetGPIOsPin(GPIO_HANDLE *GPIOx, uint16_t Pin);
+Module_Status ResetGPIOsPin(GPIO_HANDLE *GPIOx, uint16_t Pin);
 /*----------------------------------------------------------------------------*/
 /* Configure GPIO                                                             */
 /*----------------------------------------------------------------------------*/
@@ -177,5 +178,40 @@ BOS_Status GetPortGPIOs(uint8_t port,uint32_t *TX_Port,uint16_t *TX_Pin,uint32_t
 	
 	return result;
 }
+
+Module_Status SetGPIOsPin(GPIO_HANDLE *GPIOx, uint16_t Pin)
+{
+	Module_Status Status;
+
+	if (NULL!=GPIOx)
+	{
+		HAL_GPIO_WritePin(GPIOx, Pin, GPIO_PIN_SET);
+		Status=H07R8_OK;
+	}
+	else
+		Status=H07R8_ERROR;
+
+	return Status;
+}
+
+/*
+ * set a GPIO pin form a port low
+ */
+Module_Status ResetGPIOsPin(GPIO_HANDLE *GPIOx, uint16_t Pin)
+{
+	Module_Status Status;
+
+	if (NULL!=GPIOx)
+	{
+		HAL_GPIO_WritePin(GPIOx, Pin, GPIO_PIN_RESET);
+		Status=H07R8_OK;
+	}
+	else
+		Status=H07R8_ERROR;
+
+	return Status;
+}
+
+
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
