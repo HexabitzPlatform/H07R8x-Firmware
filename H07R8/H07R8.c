@@ -15,9 +15,9 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "BOS.h"
-#include "H07R8.h"
 #include "H07R8_i2c.h"
 #include "H07R8_i2s.h"
+
 
 Module_Status AmpGain(Amp_Gain gain);
 Module_Status AmpMute(Mute_En_Dis mute);
