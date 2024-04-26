@@ -18,7 +18,7 @@
 #define H07R8_H
 
 /* Includes ------------------------------------------------------------------*/
-#include "BOS.h"
+//#include "BOS.h"
 #include "H07R8_MemoryMap.h"
 #include "H07R8_uart.h"
 #include "H07R8_gpio.h"
@@ -27,6 +27,7 @@
 #include "H07R8_timers.h"
 #include "H07R8_inputs.h"
 #include "H07R8_eeprom.h"
+#include "MAX9704_Amplifier.h"
 /* Exported definitions -------------------------------------------------------*/
 
 #define	modulePN		_H07R8
@@ -159,6 +160,9 @@ typedef enum {
 	H07R8_ERROR =255
 } Module_Status;
 
+
+
+#define Module_Status1 Module_Status
 /* Export Module typedef structure */
 
 
@@ -179,25 +183,23 @@ extern void SystemClock_Config(void);
 extern void ExecuteMonitor(void);
 
 /* -----------------------------------------------------------------------
- |								  APIs							          ||
-/* -----------------------------------------------------------------------
+||								  APIs							          ||
+ -----------------------------------------------------------------------
  */
 
 void SetupPortForRemoteBootloaderUpdate(uint8_t port);
 void remoteBootloaderUpdate(uint8_t src,uint8_t dst,uint8_t inport,uint8_t outport);
 
-Module_Status MAX9867_Init();
-Module_Status MAX9867_StreamingDigitalAudio(uint16_t *data,size_t size);
-Module_Status MAX9867_SoundLevel();
-Module_Status MAX9867_SoundMute();
-Module_Status MAX9867_Shutdown();
-Module_Status MAX9704_AmpInit();
-Module_Status MAX9704_AmpMute();
-Module_Status MAX9704_AmpShutdown();
+//extern Module_Status CodecInit();
+//extern Module_Status CodecStreamingDigitalAudio(uint16_t *data,size_t size);
+//extern Module_Status CodecSoundLevel();
+//extern Module_Status CodecSoundMute();
+//extern Module_Status CodecShutdown();
+
 
 /* -----------------------------------------------------------------------
- |								Commands							      ||
-/* -----------------------------------------------------------------------
+ ||								Commands							      ||
+ -----------------------------------------------------------------------
  */
 
 

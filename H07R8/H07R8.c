@@ -18,6 +18,10 @@
 #include "H07R8.h"
 #include "H07R8_i2c.h"
 #include "H07R8_i2s.h"
+
+Module_Status AmpGain(Amp_Gain gain);
+Module_Status AmpMute(Mute_En_Dis mute);
+Module_Status AmpShutdown(Shutdown_Modes mode);
 /* Define UART variables */
 UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
@@ -36,103 +40,94 @@ module_param_t modParam[NUM_MODULE_PARAMS] ={{.paramPtr = NULL, .paramFormat =FM
 /* exported functions */
 
 /* Private variables ---------------------------------------------------------*/
-
+bool muteFlag;
 
 /* Private function prototypes -----------------------------------------------*/
 void ExecuteMonitor(void);
-
+static Module_Status AmpInit(void);
 
 /* Create CLI commands --------------------------------------------------------*/
 
-portBASE_TYPE CLI_CodecInitCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
-portBASE_TYPE CLI_CodecStreamingDigitalAudioCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
-portBASE_TYPE CLI_CodecSoundLevelCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
-portBASE_TYPE CLI_CodecSoundMuteCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
-portBASE_TYPE CLI_CodecSoundUnMuteCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
-portBASE_TYPE CLI_CodecShutdownCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
-portBASE_TYPE CLI_AmpInitCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
+//portBASE_TYPE CLI_CodecInitCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
+//portBASE_TYPE CLI_CodecStreamingDigitalAudioCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
+//portBASE_TYPE CLI_CodecSoundLevelCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
+//portBASE_TYPE CLI_CodecSoundMuteCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
+//portBASE_TYPE CLI_CodecSoundUnMuteCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
+//portBASE_TYPE CLI_CodecShutdownCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
+portBASE_TYPE CLI_AmpGainCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
 portBASE_TYPE CLI_AmpMuteCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
-portBASE_TYPE CLI_AmpUnMuteCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
 portBASE_TYPE CLI_AmpShutdownCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
 
-const CLI_Command_Definition_t CLI_CodecInitDefinition =
-{
-	( const int8_t * ) "codecinit", /* The command string to type. */
-	( const int8_t * ) "streamAudio:\r\n stream audio from processor to MAX9867 codec ic by i2s \r\n\r\n",
-	CLI_CodecInitCommand, /* The function to run. */
-	0 /* zero parameters are expected. */
-};
+//const CLI_Command_Definition_t CLI_CodecInitDefinition =
+//{
+//	( const int8_t * ) "codecinit", /* The command string to type. */
+//	( const int8_t * ) "streamAudio:\r\n stream audio from processor to MAX9867 codec ic by i2s \r\n\r\n",
+//	CLI_CodecInitCommand, /* The function to run. */
+//	0 /* zero parameters are expected. */
+//};
+//
+//const CLI_Command_Definition_t CLI_CodecStreamingDigitalAudioDefinition =
+//{
+//	( const int8_t * ) "soundlevel", /* The command string to type. */
+//	( const int8_t * ) "soundlevel:\r\n stream audio from processor to MAX9867 codec ic by i2s \r\n\r\n",
+//	CLI_CodecStreamingDigitalAudioCommand, /* The function to run. */
+//	0 /* zero parameters are expected. */
+//};
+//
+//const CLI_Command_Definition_t CLI_CodecSoundLevelDefinition =
+//{
+//	( const int8_t * ) "soundmute", /* The command string to type. */
+//	( const int8_t * ) "soundmute:\r\n stream audio from processor to MAX9867 codec ic by i2s \r\n\r\n",
+//	CLI_CodecSoundLevelCommand, /* The function to run. */
+//	0 /* zero parameters are expected. */
+//};
+//
+//const CLI_Command_Definition_t CLI_CodecSoundMuteDefinition =
+//{
+//	( const int8_t * ) "soundunmute", /* The command string to type. */
+//	( const int8_t * ) "soundunmute:\r\n stream audio from processor to MAX9867 codec ic by i2s \r\n\r\n",
+//	CLI_CodecSoundMuteCommand, /* The function to run. */
+//	0 /* zero parameters are expected. */
+//};
+//
+//const CLI_Command_Definition_t CLI_CodecSoundUnMuteDefinition =
+//{
+//	( const int8_t * ) "codecshut", /* The command string to type. */
+//	( const int8_t * ) "codecshut:\r\n stream audio from processor to MAX9867 codec ic by i2s \r\n\r\n",
+//	CLI_CodecSoundUnMuteCommand, /* The function to run. */
+//	0 /* zero parameters are expected. */
+//};
+//
+//const CLI_Command_Definition_t CLI_CodecShoutdownDefinition =
+//{
+//	( const int8_t * ) "codecshut", /* The command string to type. */
+//	( const int8_t * ) "codecshut:\r\n stream audio from processor to MAX9867 codec ic by i2s \r\n\r\n",
+//	CLI_CodecShutdownCommand, /* The function to run. */
+//	0 /* zero parameters are expected. */
+//};
 
-const CLI_Command_Definition_t CLI_CodecStreamingDigitalAudioDefinition =
+const CLI_Command_Definition_t CLI_AmpGainDefinition =
 {
-	( const int8_t * ) "soundlevel", /* The command string to type. */
-	( const int8_t * ) "soundlevel:\r\n stream audio from processor to MAX9867 codec ic by i2s \r\n\r\n",
-	CLI_CodecStreamingDigitalAudioCommand, /* The function to run. */
-	0 /* zero parameters are expected. */
-};
-
-const CLI_Command_Definition_t CLI_CodecSoundLevelDefinition =
-{
-	( const int8_t * ) "soundmute", /* The command string to type. */
-	( const int8_t * ) "soundmute:\r\n stream audio from processor to MAX9867 codec ic by i2s \r\n\r\n",
-	CLI_CodecSoundLevelCommand, /* The function to run. */
-	0 /* zero parameters are expected. */
-};
-
-const CLI_Command_Definition_t CLI_CodecSoundMuteDefinition =
-{
-	( const int8_t * ) "soundunmute", /* The command string to type. */
-	( const int8_t * ) "soundunmute:\r\n stream audio from processor to MAX9867 codec ic by i2s \r\n\r\n",
-	CLI_CodecSoundMuteCommand, /* The function to run. */
-	0 /* zero parameters are expected. */
-};
-
-const CLI_Command_Definition_t CLI_CodecSoundUnMuteDefinition =
-{
-	( const int8_t * ) "codecshut", /* The command string to type. */
-	( const int8_t * ) "codecshut:\r\n stream audio from processor to MAX9867 codec ic by i2s \r\n\r\n",
-	CLI_CodecSoundUnMuteCommand, /* The function to run. */
-	0 /* zero parameters are expected. */
-};
-
-const CLI_Command_Definition_t CLI_CodecShoutdownDefinition =
-{
-	( const int8_t * ) "codecshut", /* The command string to type. */
-	( const int8_t * ) "codecshut:\r\n stream audio from processor to MAX9867 codec ic by i2s \r\n\r\n",
-	CLI_CodecShutdownCommand, /* The function to run. */
-	0 /* zero parameters are expected. */
-};
-
-const CLI_Command_Definition_t CLI_AmpInitDefinition =
-{
-	( const int8_t * ) "ampinit", /* The command string to type. */
-	( const int8_t * ) "ampinit:\r\n stream audio from processor to MAX9867 codec ic by i2s \r\n\r\n",
-	CLI_AmpInitCommand, /* The function to run. */
-	0 /* zero parameters are expected. */
+	( const int8_t * ) "ampgain", /* The command string to type. */
+	( const int8_t * ) "ampgain:\r\n setting amplifier gain there is 5 levels start from 0 \r\n\r\n",
+	CLI_AmpGainCommand, /* The function to run. */
+	1 /* zero parameters are expected. */
 };
 
 const CLI_Command_Definition_t CLI_AmpMuteDefinition =
 {
 	( const int8_t * ) "ampmute", /* The command string to type. */
-	( const int8_t * ) "ampmute:\r\n stream audio from processor to MAX9867 codec ic by i2s \r\n\r\n",
+	( const int8_t * ) "ampmute:\r\n Amplifier mute where : 0 for disable and 1 for enable \r\n\r\n",
 	CLI_AmpMuteCommand, /* The function to run. */
-	0 /* zero parameters are expected. */
-};
-
-const CLI_Command_Definition_t CLI_AmpUnMuteDefinition =
-{
-	( const int8_t * ) "ampunmute", /* The command string to type. */
-	( const int8_t * ) "ampunmute:\r\n stream audio from processor to MAX9867 codec ic by i2s \r\n\r\n",
-	CLI_AmpUnMuteCommand, /* The function to run. */
-	0 /* zero parameters are expected. */
+	1 /* zero parameters are expected. */
 };
 
 const CLI_Command_Definition_t CLI_AmpShoutdownDefinition =
 {
 	( const int8_t * ) "ampshut", /* The command string to type. */
-	( const int8_t * ) "ampshut:\r\n stream audio from processor to MAX9867 codec ic by i2s \r\n\r\n",
+	( const int8_t * ) "ampshut:\r\n Amplifier shutdown where : 0 for disable and 1 for enable \r\n\r\n",
 	CLI_AmpShutdownCommand, /* The function to run. */
-	0 /* zero parameters are expected. */
+	1 /* zero parameters are expected. */
 };
 /*-----------------------------------------------------------*/
 
@@ -399,6 +394,7 @@ void Module_Peripheral_Init(void){
 	MX_USART6_UART_Init();
 	MX_I2C2_Init();
 	MX_I2S1_Init();
+	AmpInit();
 	 //Circulating DMA Channels ON All Module
 	for (int i = 1; i <= NumOfPorts; i++) {
 		if (GetUart(i) == &huart1) {
@@ -424,31 +420,36 @@ Module_Status Module_MessagingTask(uint16_t code,uint8_t port,uint8_t src,uint8_
 
 
 	switch(code){
-		case(CODE_H07R8_CODEC_INIT):
-				MAX9867_Init();
-				break;
-		case(CODE_H07R8_CODEC_STREAM_AUDIO):
+//		case(CODE_H07R8_CODEC_INIT):
+//				MAX9867_Init();
+//				break;
+//		case(CODE_H07R8_CODEC_STREAM_AUDIO):
 //				MAX9867_StreamingDigitalAudio();
-				break;
-		case(CODE_H07R8_CODEC_SOUND_LEVEL_CTRL):
-				MAX9867_SoundLevel();
-				break;
-		case(CODE_H07R8_CODEC_SOUND_MUTE):
-		case(CODE_H07R8_CODEC_SOUND_UNMUTE):
-				MAX9867_SoundMute();
-				break;
-		case(CODE_H07R8_CODEC_SHOUTDOWN):
-				MAX9867_Shutdown();
-				break;
-		case(CODE_H07R8_AMP_INIT):
-				MAX9704_AmpInit();
+//				break;
+//		case(CODE_H07R8_CODEC_SOUND_LEVEL_CTRL):
+//				MAX9867_SoundLevel();
+//				break;
+//		case(CODE_H07R8_CODEC_SOUND_MUTE):
+//		case(CODE_H07R8_CODEC_SOUND_UNMUTE):
+//				MAX9867_SoundMute();
+//				break;
+//		case(CODE_H07R8_CODEC_SHOUTDOWN):
+//				MAX9867_Shutdown();
+//				break;
+		case(CODE_H07R8_AMP_GAIN):
+				AmpGain(cMessage[port-1][shift]);
 				break;
 		case(CODE_H07R8_AMP_MUTE):
-		case(CODE_H07R8_AMP_UNMUTE):
-				MAX9704_AmpMute();
+				AmpMute(MUTE_ENABLE);
 				break;
-		case(CODE_H07R8_AMP_SHOUTDOWN):
-				MAX9704_AmpShutdown();
+		case(CODE_H07R8_AMP_UNMUTE):
+				AmpMute(MUTE_DISABLE);
+				break;
+		case(CODE_H07R8_AMP_ENABLE_SHOUTDOWN):
+				AmpShutdown(SHUTDOWN_ENABLE);
+				break;
+		case(CODE_H07R8_AMP_DISABLE_SHOUTDOWN):
+				AmpShutdown(SHUTDOWN_DISABLE);
 				break;
 		default:
 			result =H07R8_ERR_UnknownMessage;
@@ -481,6 +482,9 @@ uint8_t GetPort(UART_HandleTypeDef *huart){
  */
 void RegisterModuleCLICommands(void){
 
+	FreeRTOS_CLIRegisterCommand(&CLI_AmpGainDefinition);
+	FreeRTOS_CLIRegisterCommand(&CLI_AmpMuteDefinition);
+	FreeRTOS_CLIRegisterCommand(&CLI_AmpShoutdownDefinition);
 }
 
 /*-----------------------------------------------------------*/
@@ -490,69 +494,106 @@ void RegisterModuleCLICommands(void){
 /*-----------------------------------------------------------*/
 
 /* -----------------------------------------------------------------------
- |							 	Local  APIs			    		          | 																 	|
-/* -----------------------------------------------------------------------
+ ||							 	Local  APIs			    		          | 																 	|
+ -----------------------------------------------------------------------
  */
 
 
 
 /* -----------------------------------------------------------------------
- |								  APIs							          |
-
-/* -----------------------------------------------------------------------
+ ||								  APIs							          |
+ -----------------------------------------------------------------------
  */
 /*       */
-Module_Status MAX9867_Init()
+//Module_Status CodecInit()
+//{
+//	Module_Status Status = H07R8_OK;
+//	return Status;
+//}
+//
+//Module_Status CodecStreamingDigitalAudio(uint16_t *data,size_t size)
+//{
+//	Module_Status Status = H07R8_OK;
+//    for(int i=0; i<size; i++) {
+//    	if( H07R8_OK != WriteI2S(I2S_PORT, &data[i], 1))
+//    		return H07R8_ERROR;
+//    }
+//	return Status;
+//}
+//
+//Module_Status CodecSoundLevel()
+//{
+//	Module_Status Status = H07R8_OK;
+//	return Status;
+//}
+//
+//Module_Status CodecSoundMute()
+//{
+//	Module_Status Status = H07R8_OK;
+//	return Status;
+//}
+//
+//Module_Status CodecShutdown()
+//{
+//	Module_Status Status = H07R8_OK;
+//	return Status;
+//}
+
+static Module_Status AmpInit(void)
 {
 	Module_Status Status = H07R8_OK;
+
+	if(MAX9704_AmpInit(SWITCHING_MODE_670KHZ, GAIN_MODE_13dB) != STATUS_OK)
+		return H07R8_ERROR;
+
 	return Status;
 }
 
-Module_Status MAX9867_StreamingDigitalAudio(uint16_t *data,size_t size)
+Module_Status AmpGain(Amp_Gain gain)
 {
 	Module_Status Status = H07R8_OK;
-    for(int i=0; i<size; i++) {
-    	if( H07R8_OK != WriteI2S(I2S_PORT, &data[i], 1))
-    		return H07R8_ERROR;
-    }
+	if(gain == GAIN_MODE_0db)
+	{
+		if(AmpMute(MUTE_ENABLE) != H07R8_OK)
+			return H07R8_ERROR;
+		muteFlag = 1;
+	}
+	else
+	{
+		if(MAX9704_AmpGain(gain) != STATUS_OK)
+			return H07R8_ERROR;
+		if(muteFlag == 1)
+		{
+			if(AmpMute(MUTE_DISABLE) != H07R8_OK)
+				return H07R8_ERROR;
+			muteFlag = 0;
+		}
+	}
+
 	return Status;
 }
 
-Module_Status MAX9867_SoundLevel()
+Module_Status AmpMute(Mute_En_Dis mute)
 {
 	Module_Status Status = H07R8_OK;
+
+	if(MAX9704_AmpMute(mute) != STATUS_OK)
+		return H07R8_ERROR;
+
 	return Status;
 }
 
-Module_Status MAX9867_SoundMute()
+Module_Status AmpShutdown(Shutdown_Modes mode)
 {
 	Module_Status Status = H07R8_OK;
+
+	if(MAX9704_AmpShutdown(mode) != STATUS_OK)
+		return H07R8_ERROR;
+
 	return Status;
 }
 
-Module_Status MAX9867_Shutdown()
-{
-	Module_Status Status = H07R8_OK;
-	return Status;
-}
 
-Module_Status MAX9704_AmpInit()
-{
-	Module_Status Status = H07R8_OK;
-		return Status;
-}
-
-Module_Status MAX9704_AmpMute()
-{
-	Module_Status Status = H07R8_OK;
-		return Status;
-}
-
-Module_Status MAX9704_AmpShutdown()
-{
-	Module_Status Status = H07R8_OK;
-		return Status;
-}
 /*-----------------------------------------------------------*/
 /*  */
 
@@ -562,205 +603,201 @@ Module_Status MAX9704_AmpShutdown()
  |								Commands							      |
    -----------------------------------------------------------------------
  */
-portBASE_TYPE CLI_CodecInitCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
+//portBASE_TYPE CLI_CodecInitCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
+//	Module_Status status = H07R8_OK;
+//	static const int8_t *pcOKMessage=(int8_t* )"Ok\n\r";
+//	static const int8_t *pcErrorsMessage =(int8_t* )"Error!\n\r";
+//
+//	const char *pDacGainStr = NULL;
+//	uint8_t dacGain = 0;
+//	portBASE_TYPE dacGainStrLen = 0;
+//
+//		(void )xWriteBufferLen;
+//		configASSERT(pcWriteBuffer);
+//
+//		pDacGainStr = (const char *)FreeRTOS_CLIGetParameter(pcWriteBuffer, 2, &dacGainStrLen);
+//
+//		dacGain = atoi(pDacGainStr);
+//		status = MAX9867_Init(/*dacGain*/);
+//
+//	 if(status == H07R8_OK)
+//	 {
+//			 sprintf((char* )pcWriteBuffer,(char* )pcOKMessage);
+//
+//	 }
+//
+//	 else if(status == H07R8_ERROR)
+//			strcpy((char* )pcWriteBuffer,(char* )pcErrorsMessage);
+//
+//
+//	return pdFALSE;
+//
+//}
+//
+//
+//portBASE_TYPE CLI_CodecStreamingDigitalAudioCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
+//	Module_Status status = H07R8_OK;
+//	static const int8_t *pcOKMessage=(int8_t* )"Ok\n\r";
+//	static const int8_t *pcErrorsMessage =(int8_t* )"Error!\n\r";
+//
+//		(void )xWriteBufferLen;
+//		configASSERT(pcWriteBuffer);
+//
+////		status = MAX9867_StreamingDigitalAudio();
+//	 if(status == H07R8_OK)
+//	 {
+//			 sprintf((char* )pcWriteBuffer,(char* )pcOKMessage);
+//
+//	 }
+//
+//	 else if(status == H07R8_ERROR)
+//			strcpy((char* )pcWriteBuffer,(char* )pcErrorsMessage);
+//
+//
+//	return pdFALSE;
+//
+//}
+//
+//portBASE_TYPE CLI_CodecSoundLevelCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
+//	Module_Status status = H07R8_OK;
+//	static const int8_t *pcOKMessage=(int8_t* )"Ok\n\r";
+//	static const int8_t *pcErrorsMessage =(int8_t* )"Error!\n\r";
+//	const char *pLeftSoundLvlStr = NULL;
+//	const char *pRightSoundLvlStr = NULL;
+//	uint8_t leftSoundLvl = 0,rightSoundLvl = 0;
+//	portBASE_TYPE leftSoundLvlStrLen = 0;
+//	portBASE_TYPE rightSoundLvlStrLen = 0;
+//
+//		(void )xWriteBufferLen;
+//		configASSERT(pcWriteBuffer);
+//
+//		pLeftSoundLvlStr = (const char *)FreeRTOS_CLIGetParameter(pcWriteBuffer, 2, &leftSoundLvlStrLen);
+//		pRightSoundLvlStr = (const char *)FreeRTOS_CLIGetParameter(pcWriteBuffer, 3, &rightSoundLvlStrLen);
+//
+//		leftSoundLvl = atoi(pLeftSoundLvlStr);
+//		rightSoundLvl = atoi(pRightSoundLvlStr);
+//
+//		MAX9867_SoundLevel();
+//	 if(status == H07R8_OK)
+//	 {
+//			 sprintf((char* )pcWriteBuffer,(char* )pcOKMessage);
+//
+//	 }
+//
+//	 else if(status == H07R8_ERROR)
+//			strcpy((char* )pcWriteBuffer,(char* )pcErrorsMessage);
+//
+//
+//	return pdFALSE;
+//
+//}
+//
+//portBASE_TYPE CLI_CodecSoundMuteCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
+//	Module_Status status = H07R8_OK;
+//	static const int8_t *pcOKMessage=(int8_t* )"Ok\n\r";
+//	static const int8_t *pcErrorsMessage =(int8_t* )"Error!\n\r";
+//	const char *pMuteStr = NULL;
+//	uint8_t mute = 0;
+//	portBASE_TYPE muteStrLen = 0;
+//
+//		(void )xWriteBufferLen;
+//		configASSERT(pcWriteBuffer);
+//
+//		pMuteStr = (const char *)FreeRTOS_CLIGetParameter(pcWriteBuffer, 2, &muteStrLen);
+//
+//		mute = atoi(pMuteStr);
+//
+//		status = MAX9867_SoundMute();
+//
+//	 if(status == H07R8_OK)
+//	 {
+//			 sprintf((char* )pcWriteBuffer,(char* )pcOKMessage);
+//
+//	 }
+//
+//	 else if(status == H07R8_ERROR)
+//			strcpy((char* )pcWriteBuffer,(char* )pcErrorsMessage);
+//
+//
+//	return pdFALSE;
+//
+//}
+//
+//portBASE_TYPE CLI_CodecSoundUnMuteCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
+//	Module_Status status = H07R8_OK;
+//	static const int8_t *pcOKMessage=(int8_t* )"Ok\n\r";
+//	static const int8_t *pcErrorsMessage =(int8_t* )"Error!\n\r";
+//	const char *pMuteStr = NULL;
+//	uint8_t mute = 0;
+//	portBASE_TYPE muteStrLen = 0;
+//
+//		(void )xWriteBufferLen;
+//		configASSERT(pcWriteBuffer);
+//
+//		pMuteStr = (const char *)FreeRTOS_CLIGetParameter(pcWriteBuffer, 2, &muteStrLen);
+//
+//		mute = atoi(pMuteStr);
+//		status = MAX9867_SoundMute();
+//
+//	 if(status == H07R8_OK)
+//	 {
+//			 sprintf((char* )pcWriteBuffer,(char* )pcOKMessage);
+//
+//	 }
+//
+//	 else if(status == H07R8_ERROR)
+//			strcpy((char* )pcWriteBuffer,(char* )pcErrorsMessage);
+//
+//
+//	return pdFALSE;
+//
+//}
+//
+//portBASE_TYPE CLI_CodecShutdownCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
+//	Module_Status status = H07R8_OK;
+//	static const int8_t *pcOKMessage=(int8_t* )"Ok\n\r";
+//	static const int8_t *pcErrorsMessage =(int8_t* )"Error!\n\r";
+//	const char *pShutdownStr = NULL;
+//	uint8_t shutdown = 0;
+//	portBASE_TYPE shutdownStrLen = 0;
+//
+//		(void )xWriteBufferLen;
+//		configASSERT(pcWriteBuffer);
+//
+//		pShutdownStr = (const char *)FreeRTOS_CLIGetParameter(pcWriteBuffer, 2, &shutdownStrLen);
+//
+//		shutdown = atoi(pShutdownStr);
+//		status = MAX9867_Shutdown();
+//	 if(status == H07R8_OK)
+//	 {
+//			 sprintf((char* )pcWriteBuffer,(char* )pcOKMessage);
+//
+//	 }
+//
+//	 else if(status == H07R8_ERROR)
+//			strcpy((char* )pcWriteBuffer,(char* )pcErrorsMessage);
+//
+//
+//	return pdFALSE;
+//
+//}
+
+portBASE_TYPE CLI_AmpGainCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
 	Module_Status status = H07R8_OK;
 	static const int8_t *pcOKMessage=(int8_t* )"Ok\n\r";
 	static const int8_t *pcErrorsMessage =(int8_t* )"Error!\n\r";
-
-	const char *pDacGainStr = NULL;
-	uint8_t dacGain = 0;
-	portBASE_TYPE dacGainStrLen = 0;
+	const char *pGainStr = NULL;
+	uint8_t gain = 0;
+	portBASE_TYPE gainStrLen = 0;
 
 		(void )xWriteBufferLen;
 		configASSERT(pcWriteBuffer);
 
-		pDacGainStr = (const char *)FreeRTOS_CLIGetParameter(pcWriteBuffer, 2, &dacGainStrLen);
+		pGainStr = (const char *)FreeRTOS_CLIGetParameter(pcCommandString, 1, &gainStrLen);
 
-		dacGain = atoi(pDacGainStr);
-		status = MAX9867_Init(/*dacGain*/);
+		gain = atoi(pGainStr);
+		status = AmpGain(gain);
 
-	 if(status == H07R8_OK)
-	 {
-			 sprintf((char* )pcWriteBuffer,(char* )pcOKMessage);
-
-	 }
-
-	 else if(status == H07R8_ERROR)
-			strcpy((char* )pcWriteBuffer,(char* )pcErrorsMessage);
-
-
-	return pdFALSE;
-
-}
-
-
-portBASE_TYPE CLI_CodecStreamingDigitalAudioCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
-	Module_Status status = H07R8_OK;
-	static const int8_t *pcOKMessage=(int8_t* )"Ok\n\r";
-	static const int8_t *pcErrorsMessage =(int8_t* )"Error!\n\r";
-
-		(void )xWriteBufferLen;
-		configASSERT(pcWriteBuffer);
-
-//		status = MAX9867_StreamingDigitalAudio();
-	 if(status == H07R8_OK)
-	 {
-			 sprintf((char* )pcWriteBuffer,(char* )pcOKMessage);
-
-	 }
-
-	 else if(status == H07R8_ERROR)
-			strcpy((char* )pcWriteBuffer,(char* )pcErrorsMessage);
-
-
-	return pdFALSE;
-
-}
-
-portBASE_TYPE CLI_CodecSoundLevelCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
-	Module_Status status = H07R8_OK;
-	static const int8_t *pcOKMessage=(int8_t* )"Ok\n\r";
-	static const int8_t *pcErrorsMessage =(int8_t* )"Error!\n\r";
-	const char *pLeftSoundLvlStr = NULL;
-	const char *pRightSoundLvlStr = NULL;
-	uint8_t leftSoundLvl = 0,rightSoundLvl = 0;
-	portBASE_TYPE leftSoundLvlStrLen = 0;
-	portBASE_TYPE rightSoundLvlStrLen = 0;
-
-		(void )xWriteBufferLen;
-		configASSERT(pcWriteBuffer);
-
-		pLeftSoundLvlStr = (const char *)FreeRTOS_CLIGetParameter(pcWriteBuffer, 2, &leftSoundLvlStrLen);
-		pRightSoundLvlStr = (const char *)FreeRTOS_CLIGetParameter(pcWriteBuffer, 3, &rightSoundLvlStrLen);
-
-		leftSoundLvl = atoi(pLeftSoundLvlStr);
-		rightSoundLvl = atoi(pRightSoundLvlStr);
-
-		MAX9867_SoundLevel();
-	 if(status == H07R8_OK)
-	 {
-			 sprintf((char* )pcWriteBuffer,(char* )pcOKMessage);
-
-	 }
-
-	 else if(status == H07R8_ERROR)
-			strcpy((char* )pcWriteBuffer,(char* )pcErrorsMessage);
-
-
-	return pdFALSE;
-
-}
-
-portBASE_TYPE CLI_CodecSoundMuteCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
-	Module_Status status = H07R8_OK;
-	static const int8_t *pcOKMessage=(int8_t* )"Ok\n\r";
-	static const int8_t *pcErrorsMessage =(int8_t* )"Error!\n\r";
-	const char *pMuteStr = NULL;
-	uint8_t mute = 0;
-	portBASE_TYPE muteStrLen = 0;
-
-		(void )xWriteBufferLen;
-		configASSERT(pcWriteBuffer);
-
-		pMuteStr = (const char *)FreeRTOS_CLIGetParameter(pcWriteBuffer, 2, &muteStrLen);
-
-		mute = atoi(pMuteStr);
-
-		status = MAX9867_SoundMute();
-
-	 if(status == H07R8_OK)
-	 {
-			 sprintf((char* )pcWriteBuffer,(char* )pcOKMessage);
-
-	 }
-
-	 else if(status == H07R8_ERROR)
-			strcpy((char* )pcWriteBuffer,(char* )pcErrorsMessage);
-
-
-	return pdFALSE;
-
-}
-
-portBASE_TYPE CLI_CodecSoundUnMuteCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
-	Module_Status status = H07R8_OK;
-	static const int8_t *pcOKMessage=(int8_t* )"Ok\n\r";
-	static const int8_t *pcErrorsMessage =(int8_t* )"Error!\n\r";
-	const char *pMuteStr = NULL;
-	uint8_t mute = 0;
-	portBASE_TYPE muteStrLen = 0;
-
-		(void )xWriteBufferLen;
-		configASSERT(pcWriteBuffer);
-
-		pMuteStr = (const char *)FreeRTOS_CLIGetParameter(pcWriteBuffer, 2, &muteStrLen);
-
-		mute = atoi(pMuteStr);
-		status = MAX9867_SoundMute();
-
-	 if(status == H07R8_OK)
-	 {
-			 sprintf((char* )pcWriteBuffer,(char* )pcOKMessage);
-
-	 }
-
-	 else if(status == H07R8_ERROR)
-			strcpy((char* )pcWriteBuffer,(char* )pcErrorsMessage);
-
-
-	return pdFALSE;
-
-}
-
-portBASE_TYPE CLI_CodecShutdownCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
-	Module_Status status = H07R8_OK;
-	static const int8_t *pcOKMessage=(int8_t* )"Ok\n\r";
-	static const int8_t *pcErrorsMessage =(int8_t* )"Error!\n\r";
-	const char *pShutdownStr = NULL;
-	uint8_t shutdown = 0;
-	portBASE_TYPE shutdownStrLen = 0;
-
-		(void )xWriteBufferLen;
-		configASSERT(pcWriteBuffer);
-
-		pShutdownStr = (const char *)FreeRTOS_CLIGetParameter(pcWriteBuffer, 2, &shutdownStrLen);
-
-		shutdown = atoi(pShutdownStr);
-		status = MAX9867_Shutdown();
-	 if(status == H07R8_OK)
-	 {
-			 sprintf((char* )pcWriteBuffer,(char* )pcOKMessage);
-
-	 }
-
-	 else if(status == H07R8_ERROR)
-			strcpy((char* )pcWriteBuffer,(char* )pcErrorsMessage);
-
-
-	return pdFALSE;
-
-}
-
-portBASE_TYPE CLI_AmpInitCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
-	Module_Status status = H07R8_OK;
-	static const int8_t *pcOKMessage=(int8_t* )"Ok\n\r";
-	static const int8_t *pcErrorsMessage =(int8_t* )"Error!\n\r";
-	const char *pSwitchingModeStr = NULL;
-	const char *pAmpGainStr = NULL;
-	uint8_t switchingMode = 0,ampGain = 0;
-	portBASE_TYPE switchingModeStrLen = 0;
-	portBASE_TYPE ampGainStrLen = 0;
-
-		(void )xWriteBufferLen;
-		configASSERT(pcWriteBuffer);
-
-		pSwitchingModeStr = (const char *)FreeRTOS_CLIGetParameter(pcWriteBuffer, 2, &switchingModeStrLen);
-		pAmpGainStr = (const char *)FreeRTOS_CLIGetParameter(pcWriteBuffer, 3, &ampGainStrLen);
-
-		switchingMode = atoi(pSwitchingModeStr);
-		ampGain = atoi(pAmpGainStr);
-
-		 status = MAX9704_AmpInit();
 	 if(status == H07R8_OK)
 	 {
 			 sprintf((char* )pcWriteBuffer,(char* )pcOKMessage);
@@ -786,10 +823,13 @@ portBASE_TYPE CLI_AmpMuteCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen,
 		(void )xWriteBufferLen;
 		configASSERT(pcWriteBuffer);
 
-		pMuteStr = (const char *)FreeRTOS_CLIGetParameter(pcWriteBuffer, 2, &muteStrLen);
+		pMuteStr = (const char *)FreeRTOS_CLIGetParameter(pcCommandString, 1, &muteStrLen);
 
 		mute = atoi(pMuteStr);
-		status = MAX9704_AmpMute();
+		if(mute == 0)
+			status = AmpMute(MUTE_DISABLE);
+		else if(mute == 1)
+			status = AmpMute(MUTE_ENABLE);
 
 	 if(status == H07R8_OK)
 	 {
@@ -805,35 +845,6 @@ portBASE_TYPE CLI_AmpMuteCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen,
 
 }
 
-portBASE_TYPE CLI_AmpUnMuteCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
-	Module_Status status = H07R8_OK;
-	static const int8_t *pcOKMessage=(int8_t* )"Ok\n\r";
-	static const int8_t *pcErrorsMessage =(int8_t* )"Error!\n\r";
-	const char *pMuteStr = NULL;
-	uint8_t mute = 0;
-	portBASE_TYPE muteStrLen = 0;
-
-		(void )xWriteBufferLen;
-		configASSERT(pcWriteBuffer);
-
-		pMuteStr = (const char *)FreeRTOS_CLIGetParameter(pcWriteBuffer, 2, &muteStrLen);
-
-		mute = atoi(pMuteStr);
-
-
-	 if(status == H07R8_OK)
-	 {
-			 sprintf((char* )pcWriteBuffer,(char* )pcOKMessage);
-
-	 }
-
-	 else if(status == H07R8_ERROR)
-			strcpy((char* )pcWriteBuffer,(char* )pcErrorsMessage);
-
-
-	return pdFALSE;
-
-}
 
 portBASE_TYPE CLI_AmpShutdownCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
 	Module_Status status = H07R8_OK;
@@ -846,10 +857,13 @@ portBASE_TYPE CLI_AmpShutdownCommand( int8_t *pcWriteBuffer, size_t xWriteBuffer
 		(void )xWriteBufferLen;
 		configASSERT(pcWriteBuffer);
 
-		pShutdownStr = (const char *)FreeRTOS_CLIGetParameter(pcWriteBuffer, 2, &shutdownStrLen);
+		pShutdownStr = (const char *)FreeRTOS_CLIGetParameter(pcCommandString, 1, &shutdownStrLen);
 
 		shutdown = atoi(pShutdownStr);
-		status = MAX9704_AmpShutdown();
+		if(shutdown == 0)
+			status = AmpShutdown(SHUTDOWN_DISABLE);
+		else if(shutdown == 1)
+			status = AmpShutdown(SHUTDOWN_ENABLE);
 
 	 if(status == H07R8_OK)
 	 {
