@@ -195,7 +195,9 @@ void remoteBootloaderUpdate(uint8_t src,uint8_t dst,uint8_t inport,uint8_t outpo
 //extern Module_Status CodecSoundLevel();
 //extern Module_Status CodecSoundMute();
 //extern Module_Status CodecShutdown();
-
+Module_Status AmpGain(uint8_t gain);
+Module_Status AmpMute(bool mute);
+Module_Status AmpShutdown(bool mode);
 
 /* -----------------------------------------------------------------------
  ||								Commands							      ||

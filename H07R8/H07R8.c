@@ -19,9 +19,10 @@
 #include "H07R8_i2s.h"
 
 
-Module_Status AmpGain(Amp_Gain gain);
-Module_Status AmpMute(Mute_En_Dis mute);
-Module_Status AmpShutdown(Shutdown_Modes mode);
+
+//Module_Status AmpGain(Amp_Gain gain);
+//Module_Status AmpMute(Mute_En_Dis mute);
+//Module_Status AmpShutdown(Shutdown_Modes mode);
 /* Define UART variables */
 UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
@@ -549,7 +550,7 @@ static Module_Status AmpInit(void)
 	return Status;
 }
 
-Module_Status AmpGain(Amp_Gain gain)
+Module_Status AmpGain(uint8_t gain)
 {
 	Module_Status Status = H07R8_OK;
 	if(gain == GAIN_MODE_0db)
@@ -573,7 +574,7 @@ Module_Status AmpGain(Amp_Gain gain)
 	return Status;
 }
 
-Module_Status AmpMute(Mute_En_Dis mute)
+Module_Status AmpMute(bool mute)
 {
 	Module_Status Status = H07R8_OK;
 
@@ -583,7 +584,7 @@ Module_Status AmpMute(Mute_En_Dis mute)
 	return Status;
 }
 
-Module_Status AmpShutdown(Shutdown_Modes mode)
+Module_Status AmpShutdown(bool mode)
 {
 	Module_Status Status = H07R8_OK;
 
