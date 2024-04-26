@@ -540,6 +540,12 @@ void RegisterModuleCLICommands(void){
 //	return Status;
 //}
 
+/* Amplifier initialize */
+/*
+ * @brief  :Amplifier initialize.
+ * @retval :Status
+ */
+
 static Module_Status AmpInit(void)
 {
 	Module_Status Status = H07R8_OK;
@@ -550,6 +556,12 @@ static Module_Status AmpInit(void)
 	return Status;
 }
 
+/* Amplifier Gain Settings */
+/*
+ * @brief  :Amplifier Gain Settings.
+ * @param1 :there are 5 levels to set the gain start from 0 even 4
+ * @retval :Status
+ */
 Module_Status AmpGain(uint8_t gain)
 {
 	Module_Status Status = H07R8_OK;
@@ -574,6 +586,12 @@ Module_Status AmpGain(uint8_t gain)
 	return Status;
 }
 
+/* Amplifier Mute */
+/*
+ * @brief  :Amplifier Mute.
+ * @param1 :0 for mute disable, 1 for mute enable.
+ * @retval :Status
+ */
 Module_Status AmpMute(bool mute)
 {
 	Module_Status Status = H07R8_OK;
@@ -584,6 +602,12 @@ Module_Status AmpMute(bool mute)
 	return Status;
 }
 
+/* Amplifier Shutdown */
+/*
+ * @brief  :Amplifier Shutdown.
+ * @param1 :0 for Shutdown disable, 1 for Shutdown enable.
+ * @retval :Status
+ */
 Module_Status AmpShutdown(bool mode)
 {
 	Module_Status Status = H07R8_OK;

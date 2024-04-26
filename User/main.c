@@ -30,8 +30,7 @@ void UserTask(void *argument){
 	
 	// put your code here, to run repeatedly.
 	while(1){
-		AmpGain(0);
-		AmpMute(0);
+
 	}
 }
 
