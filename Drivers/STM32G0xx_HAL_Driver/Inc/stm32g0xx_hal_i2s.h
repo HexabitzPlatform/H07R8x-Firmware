@@ -92,7 +92,7 @@ typedef struct
 
   I2S_InitTypeDef            Init;         /*!< I2S communication parameters */
 
-  uint16_t                   *pTxBuffPtr;  /*!< Pointer to I2S Tx transfer buffer */
+  uint16_t                  *pTxBuffPtr;  /*!< Pointer to I2S Tx transfer buffer */
 
   __IO uint16_t              TxXferSize;   /*!< I2S Tx transfer size */
 

@@ -101,7 +101,7 @@ Status_TypeDef WriteI2S(I2S_HANDLE *xPort, uint16_t *pData, uint16_t Size)
 
   if (NULL!=xPort && NULL!=pData)
     {
-      if (HAL_OK == HAL_I2S_Transmit(xPort, pData, Size, TIM_OUT_1MS))
+      if (HAL_OK == HAL_I2S_Transmit(xPort, pData, Size, 10000))
     	  Status=STATUS_OK;
 
     }

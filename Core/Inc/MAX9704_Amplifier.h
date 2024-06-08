@@ -26,11 +26,19 @@ typedef enum{
 	SWITCHING_MODE_AROUND_670KHZ
 }Switching_Modes;
 
+//typedef enum{
+//	GAIN_MODE_0db = 0,
+//	GAIN_MODE_29dB,
+//	GAIN_MODE_19dB,
+//	GAIN_MODE_16dB,
+//	GAIN_MODE_13dB
+//}Amp_Gain;
 typedef enum{
-	GAIN_MODE_29dB = 0,
-	GAIN_MODE_19dB,
+	GAIN_MODE_0db = 0,
+	GAIN_MODE_13dB,
 	GAIN_MODE_16dB,
-	GAIN_MODE_13dB
+	GAIN_MODE_19dB,
+	GAIN_MODE_29dB
 }Amp_Gain;
 
 typedef enum{
