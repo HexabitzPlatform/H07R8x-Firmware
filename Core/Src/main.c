@@ -33,6 +33,8 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define BUFFER_FULL_SIZE	4096
+#define BUFFER_HALF_SIZE	2048
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -49,7 +51,7 @@ DMA_HandleTypeDef hdma_spi1_tx;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-uint8_t rx[4096]={0};
+uint8_t rx[BUFFER_FULL_SIZE]={0};
 uint8_t flag = 2;
 uint8_t once = 1;
 /* USER CODE END PV */
@@ -107,7 +109,7 @@ int main(void)
   MAX9704_AmpInit(SWITCHING_MODE_670KHZ, GAIN_MODE_29dB);
   MAX9867_CodecInit(DAC_LVL_GAIN_MINUS_15dB,PLAYBACK_VOLUME_GAIN_PLUS_1dB,PLAYBACK_VOLUME_GAIN_PLUS_1dB);
 
-  HAL_UART_Receive_IT(&huart2, &rx[0], 4096);
+  HAL_UART_Receive_IT(&huart2, &rx[0], BUFFER_FULL_SIZE);
   HAL_UART_Transmit(&huart2, &flag, 1, 2000);
   flag=1;
   /* USER CODE END 2 */
@@ -371,7 +373,7 @@ void HAL_I2S_TxHalfCpltCallback(I2S_HandleTypeDef *hi2s)
   {
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_8, SET);
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, SET);
-			HAL_UART_Receive_IT(&huart2, &rx[0], 2048);
+			HAL_UART_Receive_IT(&huart2, &rx[0], BUFFER_HALF_SIZE);
 			HAL_UART_Transmit(&huart2, &flag, 1, 1000);
   }
 }
@@ -383,11 +385,10 @@ void HAL_I2S_TxCpltCallback(I2S_HandleTypeDef *hi2s)
   {
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_8, SET);
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, SET);
-			HAL_UART_Receive_IT(&huart2, &rx[2048], 2048);
+			HAL_UART_Receive_IT(&huart2, &rx[BUFFER_HALF_SIZE], BUFFER_HALF_SIZE);
 			HAL_UART_Transmit(&huart2, &flag, 1, 1000);
   }
 }
-
 
 /* for receive audio data on uart */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
@@ -397,7 +398,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 	{
 		if(once == 1)
 		{
-			HAL_I2S_Transmit_DMA(&hi2s1, (uint16_t *)rx, 2048);
+			HAL_I2S_Transmit_DMA(&hi2s1, (uint16_t *)rx, BUFFER_HALF_SIZE);
 			once = 0;
 		}
 	}
