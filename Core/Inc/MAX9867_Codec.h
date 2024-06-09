@@ -187,8 +187,8 @@ typedef enum
 
 typedef enum
 {
-	MAX9867_MASTER_MODE,
-	MAX9867_SLAVE_MODE
+	MAX9867_SLAVE_MODE,
+	MAX9867_MASTER_MODE
 } MAX9867_Master_Slave_Mode;
 
 typedef enum
@@ -1122,32 +1122,9 @@ Status_TypeDef MAX9867_MicSidetoneSourceAndGain(Digital_Sidetone_Source_Mixer so
 /* Digital Audio Interface Unit Initialize */
 /*
  * @brief   :Digital Audio Interface Unit Initialize.
- * @param1  :master slave mode.
- * @param2  :choose L/R channel.
- * @Note    :0 = Left-channel data is input and output while LRCLK is low.
- * 			 1 = Right-channel data is input and output while LRCLK is low.
- * @Note    :WCI is ignored when TDM = 1.
- * @param3  :latching data on SDIN when rising or falling edge from BCLK and latching SDOUT
- * 			 after delay depend on param3.
- * @param4  :delay latching data on SDOUT after latching data on SDIN.
- * @param5  :latching data on SDOUT/SDIN when first BCLK edge or second BCLK edge.
- * @param6  :SDOUT High-Impedance Mode.
- * @param7  :TDM mode select.
- * @Note    :TDM mode stands for Time-Division Multiplexing mode.
- * 			 Time-Division Multiplexing is a method of transmitting multiple signals over a single communication channel
- * 			 by interleaving the data in time slots.
- * @param8  :BCLK Select prescaler.
- * @param9  :Mono Playback Mode.
- * @Note    :0 = Stereo data input on SDIN is processed separately.
- * 			 1 = Stereo data input on SDIN is mixed to a single channel and routed to both the left and right DAC.
- * @param10 :fix the line input playback volume.
  * @retval  :Status
  */
-Status_TypeDef MAX9867_DigitalAudioInterfaceInit(MAX9867_Master_Slave_Mode mode,
-	MAX9867_L_R_Clk_Invert lrclk, MAX9867_Bit_Clk_Invert bclkMode, MAX9867_SDOUT_Delay sdoutDelay,
-	MAX9867_Delay_Mode delayMode, MAX9867_SDOUT_Mode_High_Impedance_Mode sdoutMode,
-	MAX9867_TDM_Mode tdmMode, MAX9867_BCLK_Select bclkSelect, MAX9867_Mono_Playback_Mode monoMode,
-	MAX9867_Fix_Line_Input_Volume fixLineVol);
+Status_TypeDef MAX9867_DigitalAudioInterfaceInit(void);
 
 /* JackSens Enable Disable */
 /*

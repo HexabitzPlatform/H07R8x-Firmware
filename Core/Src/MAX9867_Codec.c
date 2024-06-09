@@ -42,22 +42,18 @@ static uint8_t tDataCodec[2];
 
 
 
-Status_TypeDef MAX9867_DigitalAudioInterfaceInit(MAX9867_Master_Slave_Mode mode,
-	MAX9867_L_R_Clk_Invert lrclk, MAX9867_Bit_Clk_Invert bclkMode, MAX9867_SDOUT_Delay sdoutDelay,
-	MAX9867_Delay_Mode delayMode, MAX9867_SDOUT_Mode_High_Impedance_Mode sdoutMode,
-	MAX9867_TDM_Mode tdmMode, MAX9867_BCLK_Select bclkSelect, MAX9867_Mono_Playback_Mode monoMode,
-	MAX9867_Fix_Line_Input_Volume fixLineVol)
+Status_TypeDef MAX9867_DigitalAudioInterfaceInit(void)
 {
-	digAudReg1.MAS = mode;
-	digAudReg1.WCI = lrclk;
-	digAudReg1.BCI = bclkMode;
-	digAudReg1.DLY = sdoutDelay;
-	digAudReg1.HIZOFF = sdoutMode;
-	digAudReg1.TDM = tdmMode;
+	digAudReg1.MAS = 0;
+	digAudReg1.WCI = 0;
+	digAudReg1.BCI = 1;
+	digAudReg1.DLY = 1;
+	digAudReg1.HIZOFF = 0;
+	digAudReg1.TDM = 0;
 
-	digAudReg2.BSEL = bclkSelect;
-	digAudReg2.DMONO = monoMode;
-	digAudReg2.LVOLFIX = fixLineVol;
+	digAudReg2.BSEL = 0;
+	digAudReg2.DMONO = 0;
+	digAudReg2.LVOLFIX = 0;
 
 	tDataCodec[0] = MAX9867_REG_INTERFACE_MODE1;
 	tDataCodec[1] = digAudReg1.digAudReg1;
@@ -88,7 +84,7 @@ Status_TypeDef MAX9867_ClockControlInit(MCLK_Prescaler mclkPresclr, Exact_Intege
 		PLL_Mode_En_Dis pllMode, uint32_t NI, PLL_Rapid_Lock_En_Dis pllRapidLock)
 {
 	sysClkReg.PSCLK = mclkPresclr;
-	sysClkReg.FREQ = 0x0f/*exactIntMode*/;
+	sysClkReg.FREQ = exactIntMode;
 
 	stereoAudClkRegH.PLL = pllMode;
 	stereoAudClkRegH.NI = NI >> 8;
@@ -806,11 +802,11 @@ Status_TypeDef ReadingDigitalAudioInit(Digital_Audio_Mode audioMode, L_R_Playbac
 Status_TypeDef DcMeasurementInit(uint16_t *calibrationFactor)
 {
 
-	if( STATUS_OK != MAX9867_DigitalAudioInterfaceInit(MAX9867_SLAVE_MODE,
+	if( STATUS_OK != MAX9867_DigitalAudioInterfaceInit(/*MAX9867_SLAVE_MODE,
 			LEFT_CHN_DATA_IN_OUT, SDIN_LATCHED_RISING_EDGE_BCLK, SDOUT_TRANS_AFTER_SDIN_LATCHED,
 			SDIN_SDOUT_LATCHED_FIRST_BCLK_EDGE, SDOUT_HIGH_IMPEDANCE_AFTER_DATA_TRANS,
 			LRCLK_INDICATE_L_R_AUDIO, OFF, SDIN_PROCESS_SEPARATELY,
-			TRACKS_VOLL_VOLR_BITS))
+			TRACKS_VOLL_VOLR_BITS*/))
 			return STATUS_ERR;
 	if( STATUS_OK != MAX9867_JackSensEnableDisable(JACKSNS_ENABLE))
 			return STATUS_ERR;
@@ -862,18 +858,14 @@ Status_TypeDef ReadingDcMeasurement(uint32_t *dcMeasurement, uint16_t calibratio
 
 Status_TypeDef MAX9867_CodecInit(DAC_Level_Ctrl dacGain,L_R_Playback_Volume rPlaybackVol,L_R_Playback_Volume lPlaybackVol)
 {
-	if( STATUS_OK != MAX9867_Shoutdown(SHOUTDOWN_DISABLE/*SHOUTDOWN_ENABLE*/))
+	if( STATUS_OK != MAX9867_Shoutdown(SHOUTDOWN_DISABLE))
 		return STATUS_ERR;
 	if( STATUS_OK != MAX9867_ClockControlInit(MCLK_BETWEEN_10_20_MHZ, NORMAL_OR_PLL_MODE,
-	  		PLL_DISABLE, 0xff/*0*/, 0))
+	  		PLL_DISABLE, 0x6000, 0))
 		return STATUS_ERR;
-	if( STATUS_OK != MAX9867_DigitalAudioInterfaceInit(MAX9867_SLAVE_MODE,
-			  LEFT_CHN_DATA_IN_OUT, SDIN_LATCHED_RISING_EDGE_BCLK, /*SDOUT_TRANS_WITH_SDIN_LATCHED*/SDOUT_TRANS_AFTER_SDIN_LATCHED,
-			  SDIN_SDOUT_LATCHED_SECOND_BCLK_EDGE, SDOUT_HIGH_IMPEDANCE_AFTER_DATA_TRANS,
-			  LRCLK_INDICATE_L_R_AUDIO, OFF, /*SDIN_MIXED_SINGLE_CHA_ROUT_L_R_DAC*/SDIN_PROCESS_SEPARATELY,
-			  TRACKS_VOLL_VOLR_BITS))
+	if( STATUS_OK != MAX9867_DigitalAudioInterfaceInit())
 		return STATUS_ERR;
-	if(STATUS_OK != ReadingDigitalAudioInit(AUDIO, /*LEFT_VOLUME_CHA*/LEFT_RIGHT_VOLUME_CHA, /*DAC_GAIN_18dB*/DAC_GAIN_0dB, dacGain,
+	if(STATUS_OK != ReadingDigitalAudioInit(AUDIO, LEFT_RIGHT_VOLUME_CHA, DAC_GAIN_0dB, dacGain,
 			TYPE1, rPlaybackVol, lPlaybackVol))
 		return STATUS_ERR;
 	if( STATUS_OK != MAX9867_HeadphoneAmpType(STEREO_DIFF_CLICKLESS))
