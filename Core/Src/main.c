@@ -404,59 +404,6 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 	}
 }
 
-
-//void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
-//{
-//    /* Check if a noise error occurred */
-//    if(huart->ErrorCode & HAL_UART_ERROR_NE)
-//    {
-//        /* Handle noise error */
-////        printf("UART noise error detected.\n");
-//    }
-//
-//    /* Check if a framing error occurred */
-//    if(huart->ErrorCode & HAL_UART_ERROR_FE)
-//    {
-//        /* Handle framing error */
-////        printf("UART framing error detected.\n");
-//    }
-//
-//    /* Check if an overrun error occurred */
-//    if(huart->ErrorCode & HAL_UART_ERROR_ORE)
-//    {
-//        /* Handle overrun error */
-////        printf("UART overrun error detected.\n");
-//    }
-//
-//    /* Check if a parity error occurred */
-//    if(huart->ErrorCode & HAL_UART_ERROR_PE)
-//    {
-//        /* Handle parity error */
-////        printf("UART parity error detected.\n");
-//    }
-//
-//    /* Check if a parity error occurred */
-//    if(huart->ErrorCode & HAL_UART_ERROR_DMA)
-//    {
-//        /* Handle parity error */
-////        printf("UART parity error detected.\n");
-//    }
-//
-//    /* Check if a parity error occurred */
-//    if(huart->ErrorCode & HAL_UART_ERROR_RTO)
-//    {
-//        /* Handle parity error */
-////        printf("UART parity error detected.\n");
-//    }
-//
-//    /* Clear the UART error flag */
-//    huart->ErrorCode = HAL_UART_ERROR_NONE;
-//}
-
-void HAL_I2S_ErrorCallback(I2S_HandleTypeDef *hi2s)
-{
-
-}
 /* USER CODE END 4 */
 
 /**
