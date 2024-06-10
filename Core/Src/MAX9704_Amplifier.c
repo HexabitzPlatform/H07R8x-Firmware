@@ -11,8 +11,17 @@
  *
  ******************************************************************************
  */
+
 #include "MAX9704_Amplifier.h"
 
+/******************************************************************PRIVATE APIs**********************************************************/
+
+/* Amplifier Switching Mode */
+/*
+ * @brief  :Audio switching frequency control.
+ * @param1 :Switching Modes
+ * @retval :Status
+ */
 
 Status_TypeDef MAX9704_AmpSwitchingMode(Switching_Modes mode)
 {
@@ -52,6 +61,15 @@ Status_TypeDef MAX9704_AmpSwitchingMode(Switching_Modes mode)
 	return STATUS_OK;
 }
 
+/****************************************************************************************************/
+
+/* Amplifier Gain */
+/*
+ * @brief  :Audio level control.
+ * @param1 :Gain Modes
+ * @retval :Status
+ */
+
 Status_TypeDef MAX9704_AmpGain(Amp_Gain gain)
 {
 	switch(gain)
@@ -89,6 +107,16 @@ Status_TypeDef MAX9704_AmpGain(Amp_Gain gain)
 	}
 	return STATUS_OK;
 }
+
+/****************************************************************************************************/
+
+/* Amplifier Shutdown */
+/*
+ * @brief  :Amplifier Shutdown.
+ * @param1 :Shutdown Modes
+ * @retval :Status
+ */
+
 Status_TypeDef MAX9704_AmpShutdown(Shutdown_Modes mode)
 {
 	switch(mode)
@@ -108,6 +136,15 @@ Status_TypeDef MAX9704_AmpShutdown(Shutdown_Modes mode)
 	}
 	return STATUS_OK;
 }
+
+/****************************************************************************************************/
+
+/* Amplifier Mute */
+/*
+ * @brief  :Aduio Mute.
+ * @param1 :Mute Modes
+ * @retval :Status
+ */
 
 Status_TypeDef MAX9704_AmpMute(Mute_En_Dis mute)
 {
@@ -130,6 +167,14 @@ Status_TypeDef MAX9704_AmpMute(Mute_En_Dis mute)
 }
 
 /******************************************************************USER APIs**********************************************************/
+
+/* Amplifier Initialize */
+/*
+ * @brief  :Amplifier Initialize.
+ * @param1 :switching mode.
+ * @param2 :amplifier gain.
+ * @retval :Status
+ */
 
 Status_TypeDef MAX9704_AmpInit(Switching_Modes switchMode, Amp_Gain gain)
 {

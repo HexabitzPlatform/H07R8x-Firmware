@@ -1,6 +1,6 @@
 /*
- * MAX9704_Amplifier.c
- * Description: MAX9704_Codec source file
+ * MAX9704_Codec.h
+ * Description: MAX9704_Codec header file
  *  Created on: Mar 11, 2024
  *      Author: Abdulrahman Battikh @ Hexabitz
  ******************************************************************************
@@ -15,13 +15,13 @@
 #ifndef INC_MAX9867_CODEC_H_
 #define INC_MAX9867_CODEC_H_
 
-#include "main.h"
+/******************************************************************INCLUDES**********************************************************/
 #include "Porting.h"
 #include <stdbool.h>
 
+/******************************************************************MACROS**********************************************************/
 #define MAX9867_SLAVE_ADDRESS_W            	0x30
 #define MAX9867_SLAVE_ADDRESS_R				0x31
-
 #define _DELAY_MS(TimeOut)       HAL_Delay(TimeOut)
 /* MAX9867 registers addresses */
 #define MAX9867_REG_STATUS					0x00
@@ -49,6 +49,7 @@
 #define MAX9867_REG_MODE					0x16
 #define MAX9867_REG_SYS_SHUTDOWN			0x17
 
+/******************************************************************ENUMS**********************************************************/
 typedef enum
 {
 	AUDIO_MUTE_DISABLE,
@@ -545,20 +546,10 @@ typedef enum
 	SIDETONE_GAIN_DIFF_CAP_S_ENDED_MINUS_65dB
 } Sidetone_Gain_Capacitorless_Single_Ended_Headphone;
 
-
-/* 0x00 */
+/******************************************************************REGISTERS**********************************************************/
+/* Status (Read Only) (0x00) */
 typedef union{
 	struct {
-        // Bit fields within the register
-    uint8_t AUX: 8;
-	};
-	uint8_t auxRegH;
-    // Add more bit fields as needed
-} Aux_H;
-/* 0x01 */
-typedef union{
-	struct {
-        // Bit fields within the register
 	uint8_t reserved1: 1;
     uint8_t JDET     : 1;
     uint8_t reserved2: 1;
@@ -569,12 +560,11 @@ typedef union{
     uint8_t CLD      : 1;
 	};
 	uint8_t auxRegH;
-    // Add more bit fields as needed
 } Status_Reg;
-/* 0x02 */
+/*********************************************************/
+/* Jack Sense (Read Only) (0x01) */
 typedef union{
 	struct {
-        // Bit fields within the register
 	uint8_t reserved1: 1;
     uint8_t reserved2: 1;
     uint8_t reserved3: 1;
@@ -585,23 +575,27 @@ typedef union{
     uint8_t LSNS     : 1;
 	};
 	uint8_t auxRegH;
-    // Add more bit fields as needed
 } Jack_Sense_Reg;
-
-/* 0x03 */
+/*********************************************************/
+/* AUX High (Read Only) Register (0x02) */
 typedef union{
 	struct {
-        // Bit fields within the register
+    uint8_t AUX: 8;
+	};
+	uint8_t auxRegH;
+} Aux_H;
+/*********************************************************/
+/* AUX Low (Read Only) Register (0x03) */
+typedef union{
+	struct {
     uint8_t AUX: 8;
 	};
 	uint8_t auxRegL;
-    // Add more bit fields as needed
 } Aux_L;
-
-/* 0x04 */
+/*********************************************************/
+/* Interrupt Enable Register (0x04) */
 typedef union{
 	struct {
-        // Bit fields within the register
     uint8_t reserved1: 1;
     uint8_t IJDET    : 1;
     uint8_t SDODLY   : 1;
@@ -612,48 +606,40 @@ typedef union{
     uint8_t ICLD     : 1;
 	};
 	uint8_t interruptEnReg;
-    // Add more bit fields as needed
 } Interrupt_Reg;
-
-/* 0x05 */
+/*********************************************************/
+/* System Clock Register (0x05) */
 typedef union{
 	struct {
-        // Bit fields within the register
     uint8_t FREQ     : 4;
     uint8_t PSCLK    : 2;
     uint8_t reserved1: 1;
     uint8_t reserved2: 1;
 	};
 	uint8_t sysClkReg;
-    // Add more bit fields as needed
 } System_Clock_Reg;
-
-/* 0x06 */
+/*********************************************************/
+/* Stereo Audio Clock Control High Register (0x06) */
 typedef union{
 	struct {
-        // Bit fields within the register
     uint8_t NI       : 7;
     uint8_t PLL      : 1;
 	};
 	uint8_t stereoAudClkRegH;
-    // Add more bit fields as needed
 } Stereo_Audio_Clock_Control_High_Reg;
-
-/* 0x07 */
+/*********************************************************/
+/* Stereo Audio Clock Control Low Register (0x07) */
 typedef union{
 	struct {
-        // Bit fields within the register
     uint8_t NI0      : 1;
     uint8_t NI       : 7;
 	};
 	uint8_t stereoAudClkRegL;
-    // Add more bit fields as needed
 } Stereo_Audio_Clock_Control_Low_Reg;
-
-/* 0x08 */
+/*********************************************************/
+/* DIGITAL AUDIO INTERFACE Register1 (0x08) */
 typedef union{
 	struct {
-        // Bit fields within the register
     uint8_t reserved1: 1;
     uint8_t reserved2: 1;
     uint8_t TDM 	 : 1;
@@ -664,13 +650,11 @@ typedef union{
     uint8_t MAS      : 1;
 	};
 	uint8_t digAudReg1;
-    // Add more bit fields as needed
 } Digital_Audio_Interface_Reg_1;
-
-/* 0x09 */
+/*********************************************************/
+/* DIGITAL AUDIO INTERFACE Register2 (0x09) */
 typedef union{
 	struct {
-        // Bit fields within the register
     uint8_t BSEL     : 3;
     uint8_t DMONO    : 1;
     uint8_t LVOLFIX  : 1;
@@ -679,62 +663,52 @@ typedef union{
     uint8_t reserved3: 1;
 	};
 	uint8_t digAudReg2;
-    // Add more bit fields as needed
 } Digital_Audio_Interface_Reg_2;
-
-/* 0x0a */
+/*********************************************************/
+/* Codec Filters Register (0x0a) */
 typedef union{
 	struct {
-        // Bit fields within the register
     uint8_t DVFLT	 : 3;
     uint8_t reserved : 1;
     uint8_t AVFLT    : 3;
     uint8_t MODE     : 1;
 	};
 	uint8_t digtlFltrReg;
-    // Add more bit fields as needed
 } Digital_Filtering_Reg;
-
-/* 0x0b */
+/*********************************************************/
+/* Sidetone Register (0x0b) */
 typedef union{
 	struct {
-        // Bit fields within the register
     uint8_t DVST	 : 5;
     uint8_t reserved : 1;
     uint8_t DSTS     : 2;
 	};
 	uint8_t sidetoneReg;
-    // Add more bit fields as needed
 } Sidetone_Reg;
-
-/* 0x0c */
+/*********************************************************/
+/* DAC Level Register (0x0c) */
 typedef union{
 	struct {
-        // Bit fields within the register
     uint8_t DACA	 : 4;
     uint8_t DACG 	 : 2;
     uint8_t DACM 	 : 1;
     uint8_t reserved : 1;
 	};
 	uint8_t DACLvlReg;
-    // Add more bit fields as needed
 } DAC_Level_Ctrl_Reg;
-
-/* 0x0d */
+/*********************************************************/
+/* ADC Level Register (0x0d) */
 typedef union{
 	struct {
-        // Bit fields within the register
     uint8_t AVR	     : 4;
     uint8_t AVL 	 : 4;
 	};
 	uint8_t ADCLvlReg;
-    // Add more bit fields as needed
 } ADC_Level_Ctrl_Reg;
-
-/* 0x0e */
+/*********************************************************/
+/* Left-Line Input Level Register (0x0e) */
 typedef union{
 	struct {
-        // Bit fields within the register
     uint8_t LIGL	 : 4;
     uint8_t reserved1: 1;
     uint8_t reserved2: 1;
@@ -742,13 +716,11 @@ typedef union{
     uint8_t reserved3: 1;
 	};
 	uint8_t lLineInReg;
-    // Add more bit fields as needed
 } Left_Line_input_Level_Reg;
-
-/* 0x0f */
+/*********************************************************/
+/* Right-Line Input Level Register (0x0f) */
 typedef union{
 	struct {
-        // Bit fields within the register
     uint8_t LIGR	 : 4;
     uint8_t reserved1: 1;
     uint8_t reserved2: 1;
@@ -756,61 +728,51 @@ typedef union{
     uint8_t reserved3: 1;
 	};
 	uint8_t rLineInReg;
-    // Add more bit fields as needed
 } Right_Line_input_Level_Reg;
-
-/* 0x10 */
+/*********************************************************/
+/* Left Volume Control Register (0x10) */
 typedef union{
 	struct {
-        // Bit fields within the register
     uint8_t VOLL	 : 6;
     uint8_t VOLLM 	 : 1;
     uint8_t reserved : 1;
 	};
 	uint8_t LVolCtrlReg;
-    // Add more bit fields as needed
 } Left_Volume_Ctrl_Reg;
-
-/* 0x11 */
+/*********************************************************/
+/* Right Volume Control Register (0x11) */
 typedef union{
 	struct {
-        // Bit fields within the register
     uint8_t VOLR	 : 6;
     uint8_t VOLRM 	 : 1;
     uint8_t reserved : 1;
 	};
 	uint8_t RVolCtrlReg;
-    // Add more bit fields as needed
 } Right_Volume_Ctrl_Reg;
-
-/* 0x12 */
+/*********************************************************/
+/* Left Microphone Gain Register (0x12) */
 typedef union{
 	struct {
-        // Bit fields within the register
     uint8_t PGAML	 : 5;
     uint8_t PALEN    : 2;
     uint8_t reserved : 1;
 	};
 	uint8_t lMicGainReg;
-    // Add more bit fields as needed
 } Left_Mic_Gain_Reg;
-
-/* 0x13 */
+/*********************************************************/
+/* Right Microphone Gain Register (0x13) */
 typedef union{
 	struct {
-        // Bit fields within the register
     uint8_t PGAMR	 : 5;
     uint8_t PAREN    : 2;
     uint8_t reserved : 1;
 	};
 	uint8_t rMicGainReg;
-    // Add more bit fields as needed
 } Right_Mic_Gain_Reg;
-
-/* 0x14 */
+/*********************************************************/
+/* ADC Input Register (0x14) */
 typedef union{
 	struct {
-        // Bit fields within the register
     uint8_t AUXEN	 : 1;
     uint8_t AUXCAL   : 1;
     uint8_t AUXGAIN  : 1;
@@ -819,13 +781,11 @@ typedef union{
     uint8_t MXINL    : 2;
 	};
 	uint8_t adcInputReg;
-    // Add more bit fields as needed
 } ADC_Input_Reg;
-
-/* 0x15 */
+/*********************************************************/
+/* Microphone Register (0x15) */
 typedef union{
 	struct {
-        // Bit fields within the register
     uint8_t reserved1 : 1;
     uint8_t reserved2 : 1;
     uint8_t reserved3 : 1;
@@ -835,13 +795,11 @@ typedef union{
     uint8_t MICCLK    : 2;
 	};
 	uint8_t digMicClkReg;
-    // Add more bit fields as needed
 } Digital_Microphone_Input_Reg;
-
-/* 0x16 */
+/*********************************************************/
+/* Mode Register (0x16) */
 typedef union{
 	struct {
-        // Bit fields within the register
     uint8_t HPMODE	 : 3;
     uint8_t JDETEN   : 1;
     uint8_t reserved : 1;
@@ -850,13 +808,11 @@ typedef union{
     uint8_t DSLEW    : 1;
 	};
 	uint8_t configModeReg;
-    // Add more bit fields as needed
 } Mode_Configuration_Reg;
-
-/* 0x17 */
+/*********************************************************/
+/* POWER MANAGEMENT Register (0x17) */
 typedef union{
 	struct {
-			// Bit fields within the register
 		uint8_t ADREN	 : 1;
 		uint8_t ADLEN    : 1;
 		uint8_t DAREN    : 1;
@@ -865,346 +821,43 @@ typedef union{
 		uint8_t LNREN    : 1;
 		uint8_t LNLEN    : 1;
 		uint8_t SHDN     : 1;
-		// Add more bit fields as needed
 	};
 	uint8_t pwrManagReg;
 }Power_Management_Reg;
 
-Status_TypeDef WriteI2C(I2C_HANDLE *xPort, uint16_t sAddress, uint8_t *pData, uint16_t Size);
-Status_TypeDef ReadI2C(I2C_HANDLE *xPort, uint16_t sAddress, uint8_t *rBuffer, uint16_t Size);
-Status_TypeDef WriteI2S(I2S_HANDLE *xPort, uint16_t *pData, uint16_t Size);
-Status_TypeDef ReadI2S(I2S_HANDLE *xPort, uint16_t *rBuffer, uint16_t Size);
+/********************************************************************************PRIVATE APIs*****************************************************************************************************************************/
 
-/* Clock Control Init */
-/*
- * @brief  :ClockControlInit.
- * @param1 :Master clock Prescaler on MCLK pin.
- * @param2 :Exact integer modes.
- * @Note   :In both master and slave mode, common MCLK frequencies (12MHz, 13MHz, 16MHz,
- *          and 19.2MHz) can be programmed to operate in exact integer mode
- *          for both 8kHz and 16kHz sample rates. In these modes, the MCLK and LRCLK rates
- *          are selected by using the FREQ bits instead of the NI and PLL control bits.
- * @param3 :PLL mode enable.
- * @Note   :When operating in slave mode, a PLL can be
- *			enabled to lock onto externally generated LRCLK
- *			signals that are not integer related to PCLK.
- * @param4 :ratio PCLK/LRCLK to set LRCLK.
- * @Note   :when enable PLL mode program NI to the nearest desired ratio.
- * @param5 :PLL rapid lock mode enable.
- * @Note   :when enable PLL mode set the NI[0] = 1
- *          to enable the PLL’s rapid lock mode. If NI[0] = 0, then NI is ignored and
- *          PLL lock time is slower.
- * @retval :Status
- */
 Status_TypeDef MAX9867_ClockControlInit(MCLK_Prescaler mclkPresclr, Exact_Integer_Modes exactIntMode,
 		PLL_Mode_En_Dis pllMode, uint32_t NI, PLL_Rapid_Lock_En_Dis pllRapidLock);
-
-/* Interrupt Enable */
-/*
- * @brief  :Interrupt Enable.
- * @param1 :Clip Detect Flag (Indicates that a signal has reached or exceeded full scale in the ADC or DAC).
- * @param2 :Slew Level Detect Flag.
- * @param3 :Digital PLL Unlock Flag.
- * @param4 :Headset Configuration Change Flag.
- * @retval :Status
- */
 Status_TypeDef MAX9867_InterruptEnable(bool clipDetect,bool slewDetect,bool pllUnlock,bool headsetChange);
-
-/* Shoutdown Enable-Disable */
-/*
- * @brief  :Shoutdown Enable-Disable.
- * @param1 :Shoutdown Enable-Disable.
- * @retval :Status
- */
 Status_TypeDef MAX9867_Shoutdown(Shoutdown shutdown);
-
-/* Headphone Amplifier type */
-/*
- * @brief  :Headphone has three types(differential,capacitorless,single-indedd)
- * 		    and these types either to be mono or stereo.
- * @param1 :Headphone Amplifier type.
- * @retval :Status
- */
 Status_TypeDef MAX9867_HeadphoneAmpType(Headphone_Amp_Type ampType);
-
-/* DAC Enable-Disable */
-/*
- * @brief  :DAC Enable-Disable to convert digital audio data to analog signal.
- * @param1 :DAC Enable-Disable.
- * @retval :Status
- */
 Status_TypeDef MAX9867_DAC_EnableDisable(DAC_En_Dis dac);
-
-/* Set DAC Gain */
-/*
- * @brief  :Set DAC Gain.
- * @Note   : MAX9867 has two amplifiers(DACG,DACA) to set the DAC gain
- * 			 we set DACG amplifier just in status voice stream,in status audio stream we set it (DAC_GAIN_0dB)
- * 			 DACA amplifier we set it in status voice or audio stream.
- * @param1 :preamplifier gain(just voice stream).
- * @param2 :programmable amplifier gain(voice and audio stream).
- * @retval :Status
- */
 Status_TypeDef MAX9867_DAC_Gain(DAC_Gain firstAmp, DAC_Level_Ctrl progAmp);
-
-/* DAC Mute */
-/*
- * @brief  :DAC Mute.
- * @param1 :DAC Mute Enable-Disable.
- * @retval :Status
- */
 Status_TypeDef MAX9867_DAC_Mute(DAC_Mute_En_Dis dacMute);
-
-/* ADC Enable-Disable */
-/*
- * @brief  :ADC Enable-Disable to convert analog audio or voice signals to digital data stream.
- * @param1 :ADC Enable-Disable
- * @retval :Status
- */
 Status_TypeDef MAX9867_ADC_EnableDisable(ADC_En_Dis adc);
-
-/* Set ADC Gain */
-/*
- * @brief  :Set ADC Gain.
- * @param1 :choose left/right ADC channels or both of them.
- * @param2 :Set ADC Gain.
- * @retval :Status
- */
 Status_TypeDef MAX9867_ADC_Gain(ADC_L_R adc, L_R_ADC_Level_Ctrl adcGain);
-
-/* LineInput  Enable-Disable */
-/*
- * @brief  :LineInput  Enable-Disable(input for analog audio stream).
- * @Note   :MAX9867 has two line inputs(L/R).
- * @param1 :LineInput  Enable-Disable.
- * @param2 :choose line input(L/R/both of them).
- * @retval :Status
- */
 Status_TypeDef MAX9867_LineInputEnableDisable(L_R_Line_Input_En_Dis lineInput, L_R_Line_Input lrLineInput);
-
-/* Line-Input Gain */
-/*
- * @brief  :Line-Input Gain.
- * @param1 :choose line input(L/R/both of them).
-*  @param2  :Line-Input Gain.
- * @retval :Status
- */
 Status_TypeDef MAX9867_LineInputGain(L_R_Line_Input lineInput, L_R_Line_Input_Gain lineInputGain);
-
-/* Line-Input Mute Enable-Disable */
-/*
- * @brief  :Line-Input Mute Enable-Disable.
- * @param1 :mute line-input(L/R/both of them).
- * @param2 :mute line-input Enable-Disable.
- * @retval :Status
- */
 Status_TypeDef MAX9867_LineInputMute(L_R_Line_Input lineInput, Line_Input_Mute_En_Dis mute);
-
-/* Set Audio Volume Level */
-/*
- * @brief  :Set Audio Volume Level.
- * @param1 :choose (L/R/both of them) channels
- * @param2 :left channel audio volume level.
- * @param3 :right channel audio volume level.
- * @retval :Status
- */
-Status_TypeDef MAX9867_AudioLevel(L_R_Playback_Volume_Channel channel, L_R_Playback_Volume rPlaybackVol, L_R_Playback_Volume lPlaybackVol);
-
-/* Audio Mute Enable-Disable */
-/*
- * @brief  :Audio Mute Enable-Disable.
- * @param1 :Audio Mute Enable-Disable.
- * @retval :Status
- */
 Status_TypeDef MAX9867_AudioMute(Audio_Mute audioMute);
-
-/* Microphone Amplifier Gain */
-/*
- * @brief  :Set Microphone Amplifier Gain.
- * @Note   :MAX867 has two amplifiers to set the microphone gain where:
- * 			PALEN(pre-amplifier),PGAML(programmable amplifier).
- * @param1 :choose microphone(L/R/both of them).
- * @param2 :pre-amplifier gain (PALEN).
- * @param3 :programmable gain (PGAML).
- * @retval :Status
- */
 Status_TypeDef MAX9867_MicAmpGain(L_R_Mic mic, L_R_Mic_Preamp_Gain preAmpGain, L_R_Mic_Programble_Gain_Amp progGain);
-
-/* Set Digital Microphone Clock */
-/*
- * @brief  :Set Digital Microphone Clock.
- * @param1 :Set Digital Microphone Clock.
- * @retval :Status
- */
 Status_TypeDef MAX9867_MicDigitalClock(Digital_Mic_Clk_Pre clock);
-
-/* Digital Microphone Enable-Disable */
-/*
- * @brief  :Digital Microphone Enable-Disable.
- * @Note   : this table describe how enable digital microphone
- 	 	 	 ________________________________________________________________________
- 			|DIGMICL | DIGMICR | Left ADC Input  		  | Right ADC Input          |
- 			|________|_________|__________________________|__________________________|
-			|   0    |    0    | ADC input mixer 		  | ADC input mixer			 |
-			|________|_________|__________________________|__________________________|
-            |        |         | Line input (left analog  | Right digital microphone |
-            |   0    |    1    | microphone unavailable)  |							 |
-            |________|_________|__________________________|__________________________|
-            |   1    |    0    | Left digital microphone  | ADC input mixer			 |
-            |________|_________|__________________________|__________________________|
-            |   1    |    1    | Left digital microphone  | Right digital microphone |
-            |________|_________|__________________________|__________________________|
-
- * @Note   :The left analog microphone input is never available when DIGMICL or DIGMICR = 1.
- * @param1 :Digital Microphone Enable-Disable.
- * @retval :Status
- */
 Status_TypeDef MAX9867_MicDigitalLeftRightEnableDisable(Digital_Mic_Clk_Mode mode);
-
-/* Auxiliary Input Capture */
-/*
- * @brief  :Update AUX register on MAX9867 JACKSNS/AUX pin with the DC voltage
- * 			or holding AUX register for reading.
- * @param1 :Update or holding AUX register
- * @retval :Status
- */
 Status_TypeDef MAX9867_AuxiliaryInputCapture(Auxiliary_Input_Capture auxCapture);
-
-/* Auxiliary Input Gain Calibration */
-/*
- * @brief  :Auxiliary Input Gain Calibration.
- * @Note   :When set this bit The input buffer (AUX register) is disconnected from JACKSNS/AUX and connected to an internal voltage reference.
-			While in this mode, read the AUX register and store the value. Use the stored value as a gain
-			calibration factor, K, on subsequent readings.
- * @param1 :Auxiliary Input Gain Calibration.
- * @retval :Status
- */
 Status_TypeDef MAX9867_AuxiliaryInputGainCalibration(Auxiliary_Input_Gain_Calibration auxGain);
-
-/* Auxiliary Input Offset Calibration */
-/*
- * @brief  :Auxiliary Input Offset Calibration.
- * @Note   :When set this bit JACKSNS/AUX pin is disconnected from the input
- * 		    and the ADC automatically calibrates out any internal offsets.
- * @param1 :Auxiliary Input Offset Calibration.
- * @retval :Status
- */
 Status_TypeDef MAX9867_AuxiliaryInputOffsetCalibration(Auxiliary_Input_Offset_Calibration auxOffset);
-
-/* Auxiliary Input Type */
-/*
- * @brief  :Auxiliary Input Type.
- * @Note   :When set this bit:
- * 			0 = Use JACKSNS/AUX for jack detection.
- * 			1 = Use JACKSNS/AUX for DC measurements.
- * @param1 :Auxiliary Input Type.
- * @retval :Status
- */
 Status_TypeDef MAX9867_AuxiliaryInputType(Auxiliary_Input_Type auxType);
-
-/* Set Microphone Sidetone Source And Gain */
-/*
- * @brief  :Set Microphone Sidetone Source And Gain.
- * @Note   :Sidetone is the sound of your own voice that you hear in a telephone receiver or headset
- * 			while speaking on the phone. It allows you to hear yourself speaking, which can help
- * 			regulate your voice volume and pitch during a conversation.
- * @param1 :Sidtone source is from (L/R/Both of them) ADC.
- * @param2 :Sidtone Gain.
- * @Note   :Sidtone Gain depend on type of headphone amplifier where:
- * 			- differential amplifier has gain.
- * 			- capacitorless and single-endded amplifier has gain.
- * @param3 :Amplifier type.
- * @retval :Status
- */
 Status_TypeDef MAX9867_MicSidetoneSourceAndGain(Digital_Sidetone_Source_Mixer sourceMixer, Sidetone_Gain_Diff_Headphone sidGainDiff,
     Sidetone_Gain_Capacitorless_Single_Ended_Headphone sidGainCapSinEnd, Amp_Type ampType);
-
-/* Digital Audio Interface Unit Initialize */
-/*
- * @brief   :Digital Audio Interface Unit Initialize.
- * @retval  :Status
- */
 Status_TypeDef MAX9867_DigitalAudioInterfaceInit(void);
-
-/* JackSens Enable Disable */
-/*
- * @brief  :JackSens Enable Disable.
- * @param1 :JackSens Enable Disable.
- * @Note   :0 = Enables pullups on LOUTP and JACKSNS/AUX to detect jack insertion.
- * 			1 = Enables the comparator circuitry on JACKSNS/AUX to detect voltage changes.
- * @retval :Status
- */
 Status_TypeDef MAX9867_JackSensEnableDisable(Jack_Sense_En_Dis jackSens);
 
-/* Audio Amplify Recording */
-/*
- * @brief   :Amplify/recording the audio which comes on line-inputs pins(LINL,LINR).
- * @Note    :some of parameters used in (Amplify mode) and other in (Recording mode) and other (Amplify and Recording modes).
- * @Note    :in status Amplify mode ignore Recording mode parameters,vice versa.
- * @param1  :line-input mode(Amplify/recording/both of them).
- * @param2  :line-input channel(L/R/both of them) (Amplify and Recording).
- * @param3  :line-input gain (Amplify and recording).
- * @param4  :choose Audio channel(L/R/both of them) (Amplify mode).
- * @param5  :right Audio amplifier level control (Amplify mode).
- * @param6  :left Audio amplifier level control (Amplify mode).
- * @param7  :choose ADC channel(L/R/both of them) (Recording).
- * @param8  :Set ADC gain (Recording).
- * @param9  :choose Audio ADC filter type (Recording).
- * @Note1   :MAX9867 uses (FIR filter) for Audio, so use configure in @Note2.
- * @Note2   :0 = DC-blocking filter is disabled.
- * 			 Any other setting = DC-blocking filter is enabled.
- * @retval  :Status
- */
 /********************************************************************************USER APIs*****************************************************************************************************************************/
 
 Status_TypeDef AudioAmplifyRecordingInit(Line_Input_Mode lineInputMode, L_R_Line_Input lrLineInput,L_R_Line_Input_Gain gain, L_R_Playback_Volume_Channel channel, L_R_Playback_Volume rPlaybackVol,
 		L_R_Playback_Volume lPlaybackVol, ADC_L_R adc, L_R_ADC_Level_Ctrl adcGain,
 		ADC_DAC_Digital_Audio_Filter_Sٍpecifications ADC_Specifications);
-
-/* Voice Amplify Recording */
-/*
- * @brief   :Amplify/recording the voice which comes on microphones inputs pins(MICLP,MICLN,MICRP,MICRN).
- * @Note    :some of parameters used in (Amplify mode) and other in (Recording mode) and other (Amplify and Recording modes).
- * @Note    :in status Amplify mode ignore Recording mode parameters,vice versa.
- * @param1  :microphones mode(Amplify/recording/both of them).
- * @param2  :microphones channel(L/R/both of them) (Amplify and Recording modes)
- * @param3  :Preamplifier gain (Amplify and Recording modes).
- * @param4  :programmable gain (Amplify and Recording modes).
- * @param5  :choose Voice ADC filter type (Amplify and Recording modes).
- * @Note    :choose the Voice ADC filter type from the table below.
- * @param6  :choose Voice DAC filter type (Amplify mode).
- * @Note    :choose the Voice DAC filter type from the table below.
- * @Note    :MAX9867 uses (IIR filter) for voice, so use configure in the table below.
-  	     _________________________________________________________________________________________________________
-  		|	  CODE  |	 FILTER TYPE  |	INTENDED SAMPLE RATE | (kHz) HIGHPASS CORNER FREQUENCY (Hz) | 217Hz NOTCH |
-  		|___________|_________________|______________________|______________________________________|_____________|
-        |     0x0   |                                     Disabled												  |
-        |___________|_____________________________________________________________________________________________|
-        |     0x1  	|    Elliptical   |       	  16         |                  256                 |     Yes     |
-        |___________|_________________|______________________|______________________________________|_____________|
-		|     0x2  	|    Butterworth  |       	  16         |                  500                 |     No      |
-		|___________|_________________|______________________|______________________________________|_____________|
-        |     0x3  	|    Elliptical   |            8         |                  256                 |     Yes     |
-        |___________|_________________|______________________|______________________________________|_____________|
-        |     0x4  	|    Butterworth  |            8         |                  500                 |     No      |
-        |___________|_________________|______________________|______________________________________|_____________|
-        |     0x5  	|    Butterworth  |          8 to 24     |                 fS/240               |     No      |
-        |___________|_________________|______________________|______________________________________|_____________|
-        | 0x6 to 0x7|                 |                   Reserved                                                |
-        |___________|_________________|___________________________________________________________________________|
- * @param7  :choose ADC channel (L/R/both of them) (Amplify and Recording modes).
- * @param8  :Set ADC gain (Amplify and Recording).
- * @param9  :choose voice source (L/R/both of them) ADC channel (Amplify mode).
- * @param10 :sidetone gain in status differential headphone type (Amplify mode).
- * @Note    :ignore it in status capacitorless or single-endded headphone type
- * @param11 :sidetone gain in status capacitorless or single-endded headphone type (Amplify mode).
- * @Note    :ignore it in status differential headphone type
- * @param12 :amplifier type (differential/capacitorless/single-endded) (Amplify mode).
- * @param13 :choose Audio channel(L/R/both of them) (Amplify mode).
- * @param14 :right Audio amplifier level control (Amplify mode).
- * @param15 :left Audio amplifier level control (Amplify mode).
- * @retval  :Status
- */
 Status_TypeDef VoiceAmplifyRecordingInit(Mic_Mode micMode, L_R_Mic mic,
 		L_R_Mic_Preamp_Gain preAmpGain, L_R_Mic_Programble_Gain_Amp progGain,
 		ADC_DAC_Digital_Audio_Filter_Sٍpecifications ADC_Specifications,
@@ -1213,88 +866,17 @@ Status_TypeDef VoiceAmplifyRecordingInit(Mic_Mode micMode, L_R_Mic mic,
 		Digital_Sidetone_Source_Mixer sourceMixer, Sidetone_Gain_Diff_Headphone sidGainDiff,
 		Sidetone_Gain_Capacitorless_Single_Ended_Headphone sidGainCapSinEnd, Amp_Type ampType,
 		L_R_Playback_Volume_Channel channel, L_R_Playback_Volume rPlaybackVol, L_R_Playback_Volume lPlaybackVol);
-
-/* Reading Digital Audio */
-/*
- * @brief  :Reading Digital Audio from (RAM/SDcard/...etc).
- * @param1 :choose digital audio mode (Audio,Voice).
- * @Note   :Audio like(song/speech/...etc from line-input) Voice like (sound produced by vocal cords from microphone).
- * @param2 :choose Audio channel(L/R/both of them).
- * @param3 :preamplifier gain(just voice stream).
- * @param4 :programmable amplifier gain(voice and audio stream).
- * @Note   :MAX9867 has two amplifiers(DACG,DACA) to set the DAC gain
- * 			 we set DACG amplifier (preamplifier) just in status voice stream,in status audio stream we set it (DAC_GAIN_0dB)
- * 			 DACA amplifier (programmable amplifier) we set it in status voice or audio stream.
- * @param5 :choose DAC filter type.
- * @Note   :in status digital voice data (we use IIR filter) set DAC filter type from the table below:
-  		 _________________________________________________________________________________________________________
-  		|	  CODE  |	 FILTER TYPE  |	INTENDED SAMPLE RATE | (kHz) HIGHPASS CORNER FREQUENCY (Hz) | 217Hz NOTCH |
-  		|___________|_________________|______________________|______________________________________|_____________|
-        |     0x0   |                                     Disabled												  |
-        |___________|_____________________________________________________________________________________________|
-        |     0x1  	|    Elliptical   |       	  16         |                  256                 |     Yes     |
-        |___________|_________________|______________________|______________________________________|_____________|
-		|     0x2  	|    Butterworth  |       	  16         |                  500                 |     No      |
-		|___________|_________________|______________________|______________________________________|_____________|
-        |     0x3  	|    Elliptical   |            8         |                  256                 |     Yes     |
-        |___________|_________________|______________________|______________________________________|_____________|
-        |     0x4  	|    Butterworth  |            8         |                  500                 |     No      |
-        |___________|_________________|______________________|______________________________________|_____________|
-        |     0x5  	|    Butterworth  |          8 to 24     |                 fS/240               |     No      |
-        |___________|_________________|______________________|______________________________________|_____________|
-        | 0x6 to 0x7|                 |                   Reserved                                                |
-        |___________|_________________|___________________________________________________________________________|
- * @Note   :in status digital audio data (we use FIR filter) set DAC filter type from the configure below:
- * 		    0 = DC-blocking filter is disabled.
- * 			Any other setting = DC-blocking filter is enabled.
- * @param6 :right Audio amplifier level control.
- * @param7 :left Audio amplifier level control.
- * @retval :Status
- */
 Status_TypeDef ReadingDigitalAudioInit(Digital_Audio_Mode audioMode, L_R_Playback_Volume_Channel channel, DAC_Gain firstAmp,
 		DAC_Level_Ctrl progAmp, ADC_DAC_Digital_Audio_Filter_Sٍpecifications DAC_Specifications, L_R_Playback_Volume rPlaybackVol,
 		L_R_Playback_Volume lPlaybackVol);
-
-/* DC measurement Initialize */
-/*
- * @brief  :DC Measurement Initialize.
- * @param1 :pointer to calibration factor.
- * @Note   :use this factor to calculate DC measurement.
- * @retval :Status
- */
 Status_TypeDef DcMeasurementInit(uint16_t *calibrationFactor);
-
-/* Reading DC measurement */
-/*
- * @brief  :reading DC Measurement on JACKSNS/AUX pin.
- * @param1 :DC Measurement value.
- * @param2 :calibration factor value.
- * @retval :Status
- */
 Status_TypeDef ReadingDcMeasurement(uint32_t *dcMeasurement, uint16_t calibrationFactor);
 
-/*********************************************************************FOR H07R8 MODULE****************************************************************/
+/*********************************************************************FOR H07R8 MODULE AND USER****************************************************************/
 
-/* MAX9867 Init Application */
-/*
- * @brief  :this API contain:
- * 		    - initializing digital audio interface unit.
- * 		    - initializing Reading Digital Audio.
- * 		    - choosing headphone amplifier type.
- * @param1 :control DAC gain.
- * @param2 :right Audio amplifier level control.
- * @param3 :left Audio amplifier level control.
- * @retval :Status
- */
 Status_TypeDef MAX9867_CodecInit(DAC_Level_Ctrl dacGain,L_R_Playback_Volume rPlaybackVol,L_R_Playback_Volume lPlaybackVol);
+Status_TypeDef MAX9867_AudioLevel(L_R_Playback_Volume_Channel channel, L_R_Playback_Volume rPlaybackVol, L_R_Playback_Volume lPlaybackVol);
 
-/* Sending Digital Audio */
-/* @brief  :Sending Digital Audio to MAX9867 IC by i2s protocol
- * @param1 :digital data which we want to send.
- * @param2 :size of these data.
- * @retval :Status
- */
-Status_TypeDef SendingDigitalAudio(uint16_t *data,size_t size);
 #endif /* INC_MAX9867_CODEC_H_ */
 
 /************************ (C) COPYRIGHT Hexabitz *****END OF FILE****/
