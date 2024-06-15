@@ -876,6 +876,7 @@ Status_TypeDef ReadingDcMeasurement(uint32_t *dcMeasurement, uint16_t calibratio
 
 Status_TypeDef MAX9867_CodecInit(DAC_Level_Ctrl dacGain,L_R_Playback_Volume rPlaybackVol,L_R_Playback_Volume lPlaybackVol);
 Status_TypeDef MAX9867_AudioLevel(L_R_Playback_Volume_Channel channel, L_R_Playback_Volume rPlaybackVol, L_R_Playback_Volume lPlaybackVol);
+Status_TypeDef Codec_DAC_Gain(DAC_Level_Ctrl progAmp);
 
 #endif /* INC_MAX9867_CODEC_H_ */
 

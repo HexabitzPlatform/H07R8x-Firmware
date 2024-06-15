@@ -1338,4 +1338,11 @@ Status_TypeDef MAX9867_AudioLevel(L_R_Playback_Volume_Channel channel, L_R_Playb
 	return STATUS_OK;
 }
 
+Status_TypeDef Codec_DAC_Gain(DAC_Level_Ctrl progAmp)
+{
+	if( STATUS_OK != MAX9867_DAC_Gain(DAC_GAIN_0dB, progAmp))
+			return STATUS_ERR;
+}
+
+
 /************************ (C) COPYRIGHT Hexabitz *****END OF FILE****/
