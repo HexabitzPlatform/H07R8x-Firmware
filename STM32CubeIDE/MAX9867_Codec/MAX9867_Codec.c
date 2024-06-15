@@ -168,32 +168,6 @@ Status_TypeDef MAX9867_ClockControlInit(MCLK_Prescaler mclkPresclr, Exact_Intege
 
 /****************************************************************************************************/
 
-/* Interrupt Enable */
-/*
- * @brief  :Interrupt Enable.
- * @param1 :Clip Detect Flag (Indicates that a signal has reached or exceeded full scale in the ADC or DAC).
- * @param2 :Slew Level Detect Flag.
- * @param3 :Digital PLL Unlock Flag.
- * @param4 :Headset Configuration Change Flag.
- * @retval :Status
- */
-
-Status_TypeDef MAX9867_InterruptEnable(bool clipDetect,bool slewDetect,bool pllUnlock,bool headsetChange)
-{
-	interruptEnReg.ICLD = clipDetect;
-	interruptEnReg.ISLD = slewDetect;
-	interruptEnReg.IULK = pllUnlock;
-	interruptEnReg.IJDET = headsetChange;
-
-	tDataCodec[0] = MAX9867_REG_INT_ENA;
-	tDataCodec[1] = interruptEnReg.interruptEnReg;
-	if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-			return STATUS_ERR;
-	return STATUS_OK;
-}
-
-/****************************************************************************************************/
-
 /* Shoutdown Enable-Disable */
 /*
  * @brief  :Shoutdown Enable-Disable.
@@ -295,659 +269,6 @@ Status_TypeDef MAX9867_DAC_Mute(DAC_Mute_En_Dis dacMute)
 }
 
 /****************************************************************************************************/
-
-/* ADC Enable-Disable */
-/*
- * @brief  :ADC Enable-Disable to convert analog audio or voice signals to digital data stream.
- * @param1 :ADC Enable-Disable
- * @retval :Status
- */
-
-Status_TypeDef MAX9867_ADC_EnableDisable(ADC_En_Dis adc)
-{
-	powerMangReg.ADLEN = adc;
-	powerMangReg.ADREN = adc;
-	tDataCodec[0] = MAX9867_REG_CODEC_FILTERS;
-	tDataCodec[1] = powerMangReg.pwrManagReg;
-	if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-			return STATUS_ERR;
-	return STATUS_OK;
-}
-
-/****************************************************************************************************/
-
-/* Set ADC Gain */
-/*
- * @brief  :Set ADC Gain.
- * @param1 :choose left/right ADC channels or both of them.
- * @param2 :Set ADC Gain.
- * @retval :Status
- */
-
-Status_TypeDef MAX9867_ADC_Gain(ADC_L_R adc, L_R_ADC_Level_Ctrl adcGain)
-{
-	if(adc == ADC_LEFT)
-	{
-		ADCLvlReg.AVL = adcGain;
-		tDataCodec[0] = MAX9867_REG_DAC_LVL;
-		tDataCodec[1] = ADCLvlReg.ADCLvlReg;
-		if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-				return STATUS_ERR;
-	}
-	else if(adc == ADC_RIGHT)
-	{
-		ADCLvlReg.AVR = adcGain;
-		tDataCodec[0] = MAX9867_REG_DAC_LVL;
-		tDataCodec[1] = ADCLvlReg.ADCLvlReg;
-		if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-				return STATUS_ERR;
-	}
-
-	else if(adc == ADC_LEFT_RIGHT)
-	{
-		ADCLvlReg.AVL = adcGain;
-		tDataCodec[0] = MAX9867_REG_DAC_LVL;
-		tDataCodec[1] = ADCLvlReg.ADCLvlReg;
-		if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-				return STATUS_ERR;
-
-		ADCLvlReg.AVR = adcGain;
-		tDataCodec[0] = MAX9867_REG_DAC_LVL;
-		tDataCodec[1] = ADCLvlReg.ADCLvlReg;
-		if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-				return STATUS_ERR;
-	}
-	return STATUS_OK;
-}
-
-/****************************************************************************************************/
-
-Status_TypeDef MAX9867_ADC_AduioInputMixer(ADC_L_R lrAdcInput, L_R_ADC_Audio_Input_Mixer mixer)
-{
-	if(lrAdcInput == ADC_LEFT)
-	{
-		adcInputReg.MXINL = mixer;
-		tDataCodec[0] = MAX9867_REG_ADC_IN;
-		tDataCodec[1] = adcInputReg.adcInputReg;
-		if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-				return STATUS_ERR;
-	}
-
-	else if(lrAdcInput == ADC_RIGHT)
-	{
-	adcInputReg.MXINR = mixer;
-	tDataCodec[0] = MAX9867_REG_ADC_IN;
-	tDataCodec[1] = adcInputReg.adcInputReg;
-	if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-			return STATUS_ERR;
-	}
-
-	else if(lrAdcInput == ADC_LEFT_RIGHT)
-	{
-		adcInputReg.MXINL = mixer;
-		tDataCodec[0] = MAX9867_REG_ADC_IN;
-		tDataCodec[1] = adcInputReg.adcInputReg;
-		if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-				return STATUS_ERR;
-
-		adcInputReg.MXINR = mixer;
-		tDataCodec[0] = MAX9867_REG_ADC_IN;
-		tDataCodec[1] = adcInputReg.adcInputReg;
-		if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-				return STATUS_ERR;
-	}
-	return STATUS_OK;
-}
-
-/****************************************************************************************************/
-
-/* LineInput Enable-Disable */
-/*
- * @brief  :LineInput  Enable-Disable(input for analog audio stream).
- * @Note   :MAX9867 has two line inputs(L/R).
- * @param1 :LineInput  Enable-Disable.
- * @param2 :choose line input(L/R/both of them).
- * @retval :Status
- */
-
-Status_TypeDef MAX9867_LineInputEnableDisable(L_R_Line_Input_En_Dis lineInput, L_R_Line_Input lrLineInput)
-{
-	if(lrLineInput == LEFT_LINE_INPUT)
-	{
-		if(lineInput == LINE_INPUT_EN)
-		{
-			powerMangReg.LNLEN = LINE_INPUT_EN;
-			tDataCodec[0] = MAX9867_REG_SYS_SHUTDOWN;
-			tDataCodec[1] = powerMangReg.pwrManagReg;
-			if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-					return STATUS_ERR;
-		}
-		else if(lineInput == LINE_INPUT_DIS)
-		{
-			powerMangReg.LNLEN = LINE_INPUT_DIS;
-			tDataCodec[0] = MAX9867_REG_SYS_SHUTDOWN;
-			tDataCodec[1] = powerMangReg.pwrManagReg;
-			if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-					return STATUS_ERR;
-		}
-	}
-	else if(lrLineInput == RIGHT_LINE_INPUT)
-	{
-		if(lineInput == LINE_INPUT_EN)
-		{
-			powerMangReg.LNREN = LINE_INPUT_EN;
-			tDataCodec[0] = MAX9867_REG_SYS_SHUTDOWN;
-			tDataCodec[1] = powerMangReg.pwrManagReg;
-			if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-					return STATUS_ERR;
-		}
-		else if(lineInput == LINE_INPUT_DIS)
-		{
-			powerMangReg.LNREN = LINE_INPUT_DIS;
-			tDataCodec[0] = MAX9867_REG_SYS_SHUTDOWN;
-			tDataCodec[1] = powerMangReg.pwrManagReg;
-			if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-					return STATUS_ERR;
-		}
-	}
-	else if(lrLineInput == LEFT_RIGHT_LINE_INPUT)
-	{
-		if(lineInput == LINE_INPUT_EN)
-		{
-			powerMangReg.LNLEN = LINE_INPUT_EN;
-			tDataCodec[0] = MAX9867_REG_SYS_SHUTDOWN;
-			tDataCodec[1] = powerMangReg.pwrManagReg;
-			if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-					return STATUS_ERR;
-
-			powerMangReg.LNREN = LINE_INPUT_DIS;
-			tDataCodec[0] = MAX9867_REG_SYS_SHUTDOWN;
-			tDataCodec[1] = powerMangReg.pwrManagReg;
-			if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-					return STATUS_ERR;
-		}
-		else if(lineInput == LINE_INPUT_DIS)
-		{
-			powerMangReg.LNLEN = LINE_INPUT_DIS;
-			tDataCodec[0] = MAX9867_REG_SYS_SHUTDOWN;
-			tDataCodec[1] = powerMangReg.pwrManagReg;
-			if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-					return STATUS_ERR;
-
-			powerMangReg.LNREN = LINE_INPUT_DIS;
-			tDataCodec[0] = MAX9867_REG_SYS_SHUTDOWN;
-			tDataCodec[1] = powerMangReg.pwrManagReg;
-			if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-					return STATUS_ERR;
-		}
-	}
-	return STATUS_OK;
-}
-
-/****************************************************************************************************/
-
-/* Line-Input Gain */
-/*
- * @brief  :Line-Input Gain.
- * @param1 :choose line input(L/R/both of them).
-*  @param2  :Line-Input Gain.
- * @retval :Status
- */
-
-Status_TypeDef MAX9867_LineInputGain(L_R_Line_Input lineInput, L_R_Line_Input_Gain lineInputGain)
-{
-	if(lineInput == LEFT_LINE_INPUT)
-	{
-		lLineInReg.LIGL = lineInputGain;
-		tDataCodec[0] = MAX9867_REG_L_LINE_INPUT_LVL;
-		tDataCodec[1] = lLineInReg.lLineInReg;
-		if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-				return STATUS_ERR;
-	}
-	else if(lineInput == RIGHT_LINE_INPUT)
-	{
-		rLineInReg.LIGR = lineInputGain;
-		tDataCodec[0] = MAX9867_REG_R_LINE_INPUT_LVL;
-		tDataCodec[1] = rLineInReg.rLineInReg;
-		if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-				return STATUS_ERR;
-	}
-	else if(lineInput == LEFT_RIGHT_LINE_INPUT)
-	{
-		lLineInReg.LIGL = lineInputGain;
-		rLineInReg.LIGR = lineInputGain;
-		tDataCodec[0] = MAX9867_REG_L_LINE_INPUT_LVL;
-		tDataCodec[1] = lLineInReg.lLineInReg;
-		if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-				return STATUS_ERR;
-		tDataCodec[0] = MAX9867_REG_R_LINE_INPUT_LVL;
-		tDataCodec[1] = rLineInReg.rLineInReg;
-		if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-				return STATUS_ERR;
-	}
-	return STATUS_OK;
-}
-
-/****************************************************************************************************/
-
-/* Line-Input Mute Enable-Disable */
-/*
- * @brief  :Line-Input Mute Enable-Disable.
- * @param1 :mute line-input(L/R/both of them).
- * @param2 :mute line-input Enable-Disable.
- * @retval :Status
- */
-
-Status_TypeDef MAX9867_LineInputMute(L_R_Line_Input lineInput, Line_Input_Mute_En_Dis mute)
-{
-	if(lineInput == LEFT_LINE_INPUT)
-	{
-		if(mute == LINE_INPUT_MUTE)
-		{
-			lLineInReg.LILM = LINE_INPUT_MUTE_EN;
-			tDataCodec[0] = MAX9867_REG_L_LINE_INPUT_LVL;
-			tDataCodec[1] = lLineInReg.lLineInReg;
-			if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-					return STATUS_ERR;
-		}
-		else if(mute == LINE_INPUT_UNMUTE)
-		{
-			lLineInReg.LILM = LINE_INPUT_MUTE_DIS;
-			tDataCodec[0] = MAX9867_REG_L_LINE_INPUT_LVL;
-			tDataCodec[1] = lLineInReg.lLineInReg;
-			if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-					return STATUS_ERR;
-		}
-	}
-	else if(lineInput == RIGHT_LINE_INPUT)
-	{
-		if(mute == LINE_INPUT_MUTE)
-		{
-			rLineInReg.LIGR = LINE_INPUT_MUTE_EN;
-			tDataCodec[0] = MAX9867_REG_R_LINE_INPUT_LVL;
-			tDataCodec[1] = rLineInReg.rLineInReg;
-			if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-					return STATUS_ERR;
-		}
-		else if(mute == LINE_INPUT_UNMUTE)
-		{
-			rLineInReg.LIGR = LINE_INPUT_MUTE_DIS;
-			tDataCodec[0] = MAX9867_REG_R_LINE_INPUT_LVL;
-			tDataCodec[1] = rLineInReg.rLineInReg;
-			if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-					return STATUS_ERR;
-		}
-	}
-	else if(lineInput == LEFT_RIGHT_LINE_INPUT)
-	{
-		if(mute == LINE_INPUT_MUTE)
-		{
-			lLineInReg.LILM = LINE_INPUT_MUTE_EN;
-			tDataCodec[0] = MAX9867_REG_L_LINE_INPUT_LVL;
-			tDataCodec[1] = lLineInReg.lLineInReg;
-			if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-					return STATUS_ERR;
-
-			rLineInReg.LIGR = LINE_INPUT_MUTE_EN;
-			tDataCodec[0] = MAX9867_REG_R_LINE_INPUT_LVL;
-			tDataCodec[1] = rLineInReg.rLineInReg;
-			if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-					return STATUS_ERR;
-		}
-		else if(mute == LINE_INPUT_UNMUTE)
-		{
-			lLineInReg.LILM = LINE_INPUT_MUTE_DIS;
-			tDataCodec[0] = MAX9867_REG_L_LINE_INPUT_LVL;
-			tDataCodec[1] = lLineInReg.lLineInReg;
-			if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-					return STATUS_ERR;
-
-			rLineInReg.LIGR = LINE_INPUT_MUTE_DIS;
-			tDataCodec[0] = MAX9867_REG_R_LINE_INPUT_LVL;
-			tDataCodec[1] = rLineInReg.rLineInReg;
-			if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-					return STATUS_ERR;
-		}
-	}
-	return STATUS_OK;
-}
-
-/****************************************************************************************************/
-
-/* Audio Mute Enable-Disable */
-/*
- * @brief  :Audio Mute Enable-Disable.
- * @param1 :Audio Mute Enable-Disable.
- * @retval :Status
- */
-
-Status_TypeDef MAX9867_AudioMute(Audio_Mute audioMute)
-{
-	if(audioMute == AUDIO_MUTE_ENABLE)
-	{
-		rVolumeCtrlReg.VOLRM = AUDIO_MUTE_ENABLE;
-		lVolumeCtrlReg.VOLLM = AUDIO_MUTE_ENABLE;
-		tDataCodec[0] = MAX9867_REG_L_VOL_CTRL;
-		tDataCodec[1] = rVolumeCtrlReg.RVolCtrlReg;
-		if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-				return STATUS_ERR;
-		tDataCodec[0] = MAX9867_REG_R_VOL_CTRL;
-		tDataCodec[1] = lVolumeCtrlReg.LVolCtrlReg;
-		if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-				return STATUS_ERR;
-	}
-	else if(audioMute == AUDIO_MUTE_DISABLE)
-	{
-		rVolumeCtrlReg.VOLRM = AUDIO_MUTE_DISABLE;
-		lVolumeCtrlReg.VOLLM = AUDIO_MUTE_DISABLE;
-		tDataCodec[0] = MAX9867_REG_L_VOL_CTRL;
-		tDataCodec[1] = rVolumeCtrlReg.RVolCtrlReg;
-		if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-				return STATUS_ERR;
-		tDataCodec[0] = MAX9867_REG_R_VOL_CTRL;
-		tDataCodec[1] = lVolumeCtrlReg.LVolCtrlReg;
-		if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-				return STATUS_ERR;
-	}
-	return STATUS_OK;
-}
-
-/****************************************************************************************************/
-
-/* Microphone Amplifier Gain */
-/*
- * @brief  :Set Microphone Amplifier Gain.
- * @Note   :MAX867 has two amplifiers to set the microphone gain where:
- * 			PALEN(pre-amplifier),PGAML(programmable amplifier).
- * @param1 :choose microphone(L/R/both of them).
- * @param2 :pre-amplifier gain (PALEN).
- * @param3 :programmable gain (PGAML).
- * @retval :Status
- */
-
-Status_TypeDef MAX9867_MicAmpGain(L_R_Mic mic, L_R_Mic_Preamp_Gain preAmpGain, L_R_Mic_Programble_Gain_Amp progGain)
-{
-	if(mic == MIC_LEFT)
-	{
-		lMicGainReg.PALEN = preAmpGain;
-		lMicGainReg.PGAML = progGain;
-		tDataCodec[0] = MAX9867_REG_L_MIC_GAIN;
-		tDataCodec[1] = lMicGainReg.lMicGainReg;
-		if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-				return STATUS_ERR;
-	}
-
-	else if(mic == MIC_RIGHT)
-	{
-		rMicGainReg.PAREN = preAmpGain;
-		rMicGainReg.PGAMR = progGain;
-		tDataCodec[0] = MAX9867_REG_R_MIN_GAIN;
-		tDataCodec[1] = rMicGainReg.rMicGainReg;
-		if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-				return STATUS_ERR;
-	}
-	else if(mic == MIC_LEFT_RIGHT)
-	{
-		lMicGainReg.PALEN = preAmpGain;
-		lMicGainReg.PGAML = progGain;
-		tDataCodec[0] = MAX9867_REG_L_MIC_GAIN;
-		tDataCodec[1] = lMicGainReg.lMicGainReg;
-		if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-				return STATUS_ERR;
-
-		rMicGainReg.PAREN = preAmpGain;
-		rMicGainReg.PGAMR = progGain;
-		tDataCodec[0] = MAX9867_REG_R_MIN_GAIN;
-		tDataCodec[1] = rMicGainReg.rMicGainReg;
-		if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-				return STATUS_ERR;
-	}
-	return STATUS_OK;
-}
-
-/****************************************************************************************************/
-
-/* Set Microphone Sidetone Source And Gain */
-/*
- * @brief  :Set Microphone Sidetone Source And Gain.
- * @Note   :Sidetone is the sound of your own voice that you hear in a telephone receiver or headset
- * 			while speaking on the phone. It allows you to hear yourself speaking, which can help
- * 			regulate your voice volume and pitch during a conversation.
- * @param1 :Sidtone source is from (L/R/Both of them) ADC.
- * @param2 :Sidtone Gain.
- * @Note   :Sidtone Gain depend on type of headphone amplifier where:
- * 			- differential amplifier has gain.
- * 			- capacitorless and single-endded amplifier has gain.
- * @param3 :Amplifier type.
- * @retval :Status
- */
-
-Status_TypeDef MAX9867_MicSidetoneSourceAndGain(Digital_Sidetone_Source_Mixer sourceMixer, Sidetone_Gain_Diff_Headphone sidGainDiff
-		, Sidetone_Gain_Capacitorless_Single_Ended_Headphone sidGainCapSinEnd, Amp_Type ampType)
-{
-	sidetoneReg.DSTS = sourceMixer;
-	tDataCodec[0] = MAX9867_REG_SIDETONE;
-	tDataCodec[1] = sidetoneReg.sidetoneReg;
-	if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-			return STATUS_ERR;
-	if(ampType == DIFFERENTIAL_AMP)
-	{
-		sidetoneReg.DVST = sidGainDiff;
-		tDataCodec[0] = MAX9867_REG_SIDETONE;
-		tDataCodec[1] = sidetoneReg.sidetoneReg;
-		if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-				return STATUS_ERR;
-	}
-	else if(ampType == CAPACITORLESS_AMP || ampType == SINGLE_ENDED_AMP)
-	{
-		sidetoneReg.DVST = sidGainCapSinEnd;
-		tDataCodec[0] = MAX9867_REG_SIDETONE;
-		tDataCodec[1] = sidetoneReg.sidetoneReg;
-		if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-				return STATUS_ERR;
-	}
-	return STATUS_OK;
-}
-
-/****************************************************************************************************/
-
-/* Set Digital Microphone Clock */
-/*
- * @brief  :Set Digital Microphone Clock.
- * @param1 :Set Digital Microphone Clock.
- * @retval :Status
- */
-
-Status_TypeDef MAX9867_MicDigitalClock(Digital_Mic_Clk_Pre clock)
-{
-    digMicClkReg.MICCLK = clock;
-	tDataCodec[0] = MAX9867_REG_MIC;
-	tDataCodec[1] = digMicClkReg.digMicClkReg;
-	if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-			return STATUS_ERR;
-	return STATUS_OK;
-}
-
-/****************************************************************************************************/
-
-/* Digital Microphone Enable-Disable */
-/*
- * @brief  :Digital Microphone Enable-Disable.
- * @Note   : this table describe how enable digital microphone
- 	 	 	 ________________________________________________________________________
- 			|DIGMICL | DIGMICR | Left ADC Input  		  | Right ADC Input          |
- 			|________|_________|__________________________|__________________________|
-			|   0    |    0    | ADC input mixer 		  | ADC input mixer			 |
-			|________|_________|__________________________|__________________________|
-            |        |         | Line input (left analog  | Right digital microphone |
-            |   0    |    1    | microphone unavailable)  |							 |
-            |________|_________|__________________________|__________________________|
-            |   1    |    0    | Left digital microphone  | ADC input mixer			 |
-            |________|_________|__________________________|__________________________|
-            |   1    |    1    | Left digital microphone  | Right digital microphone |
-            |________|_________|__________________________|__________________________|
-
- * @Note   :The left analog microphone input is never available when DIGMICL or DIGMICR = 1.
- * @param1 :Digital Microphone Enable-Disable.
- * @retval :Status
- */
-
-Status_TypeDef MAX9867_MicDigitalLeftRightEnableDisable(Digital_Mic_Clk_Mode mode)
-{
-	switch(mode)
-	{
-		case 0:
-			digMicClkReg.DIGMICL = 0;
-			digMicClkReg.DIGMICR = 0;
-			break;
-		case 1:
-			digMicClkReg.DIGMICL = 0;
-			digMicClkReg.DIGMICR = 1;
-			break;
-		case 2:
-			digMicClkReg.DIGMICL = 1;
-			digMicClkReg.DIGMICR = 0;
-			break;
-		case 3:
-			digMicClkReg.DIGMICL = 1;
-			digMicClkReg.DIGMICR = 1;
-			break;
-		default:
-			digMicClkReg.DIGMICL = 0;
-			digMicClkReg.DIGMICR = 0;
-	}
-	tDataCodec[0] = MAX9867_REG_MIC;
-	tDataCodec[1] = digMicClkReg.digMicClkReg;
-	if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-			return STATUS_ERR;
-	return STATUS_OK;
-}
-
-/****************************************************************************************************/
-
-/* Auxiliary Input Capture */
-/*
- * @brief  :Update AUX register on MAX9867 JACKSNS/AUX pin with the DC voltage
- * 			or holding AUX register for reading.
- * @param1 :Update or holding AUX register
- * @retval :Status
- */
-
-Status_TypeDef MAX9867_AuxiliaryInputCapture(Auxiliary_Input_Capture auxCapture)
-{
-	adcInputReg.AUXCAP = auxCapture;
-	tDataCodec[0] = MAX9867_REG_ADC_IN;
-	tDataCodec[1] = adcInputReg.adcInputReg;
-	if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-			return STATUS_ERR;
-	return STATUS_OK;
-}
-
-/****************************************************************************************************/
-
-/* Auxiliary Input Gain Calibration */
-/*
- * @brief  :Auxiliary Input Gain Calibration.
- * @Note   :When set this bit The input buffer (AUX register) is disconnected from JACKSNS/AUX and connected to an internal voltage reference.
-			While in this mode, read the AUX register and store the value. Use the stored value as a gain
-			calibration factor, K, on subsequent readings.
- * @param1 :Auxiliary Input Gain Calibration.
- * @retval :Status
- */
-
-Status_TypeDef MAX9867_AuxiliaryInputGainCalibration(Auxiliary_Input_Gain_Calibration auxGain)
-{
-	adcInputReg.AUXGAIN = auxGain;
-	tDataCodec[0] = MAX9867_REG_ADC_IN;
-	tDataCodec[1] = adcInputReg.adcInputReg;
-	if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-			return STATUS_ERR;
-	return STATUS_OK;
-}
-
-/****************************************************************************************************/
-
-/* Auxiliary Input Offset Calibration */
-/*
- * @brief  :Auxiliary Input Offset Calibration.
- * @Note   :When set this bit JACKSNS/AUX pin is disconnected from the input
- * 		    and the ADC automatically calibrates out any internal offsets.
- * @param1 :Auxiliary Input Offset Calibration.
- * @retval :Status
- */
-
-Status_TypeDef MAX9867_AuxiliaryInputOffsetCalibration(Auxiliary_Input_Offset_Calibration auxOffset)
-{
-	adcInputReg.AUXCAL = auxOffset;
-	tDataCodec[0] = MAX9867_REG_ADC_IN;
-	tDataCodec[1] = adcInputReg.adcInputReg;
-	if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-			return STATUS_ERR;
-	return STATUS_OK;
-}
-
-/****************************************************************************************************/
-
-/* Auxiliary Input Type */
-/*
- * @brief  :Auxiliary Input Type.
- * @Note   :When set this bit:
- * 			0 = Use JACKSNS/AUX for jack detection.
- * 			1 = Use JACKSNS/AUX for DC measurements.
- * @param1 :Auxiliary Input Type.
- * @retval :Status
- */
-
-Status_TypeDef MAX9867_AuxiliaryInputType(Auxiliary_Input_Type auxType)
-{
-	adcInputReg.AUXEN = auxType;
-	tDataCodec[0] = MAX9867_REG_ADC_IN;
-	tDataCodec[1] = adcInputReg.adcInputReg;
-	if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-			return STATUS_ERR;
-	return STATUS_OK;
-}
-
-/****************************************************************************************************/
-
-Status_TypeDef MAX9867_AuxiliaryRegRead(uint16_t *aux)
-{
-	tDataCodec[0] = MAX9867_REG_AUX_L;
-	if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 1) )
-			return STATUS_ERR;
-	if( STATUS_OK != ReadI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_R, &auxRegL.auxRegL, 1) )
-			return STATUS_ERR;
-
-	tDataCodec[0] = MAX9867_REG_AUX_H;
-	if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 1) )
-			return STATUS_ERR;
-	if( STATUS_OK != ReadI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_R, &auxRegH.auxRegH, 1) )
-			return STATUS_ERR;
-
-	*aux = ((auxRegH.auxRegH << 8) | auxRegL.auxRegL);
-	return STATUS_OK;
-}
-
-/****************************************************************************************************/
-
-/* JackSens Enable Disable */
-/*
- * @brief  :JackSens Enable Disable.
- * @param1 :JackSens Enable Disable.
- * @Note   :0 = Enables pullups on LOUTP and JACKSNS/AUX to detect jack insertion.
- * 			1 = Enables the comparator circuitry on JACKSNS/AUX to detect voltage changes.
- * @retval :Status
- */
-
-Status_TypeDef MAX9867_JackSensEnableDisable(Jack_Sense_En_Dis jackSens)
-{
-	configModeReg.JDETEN = jackSens;
-	tDataCodec[0] = MAX9867_REG_MODE;
-	tDataCodec[1] = configModeReg.configModeReg;
-	if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-			return STATUS_ERR;
-	return STATUS_OK;
-}
 
 /* Reading Digital Audio */
 /*
@@ -1081,6 +402,24 @@ Status_TypeDef MAX9867_CodecInit(DAC_Level_Ctrl dacGain,L_R_Playback_Volume rPla
  * @retval :Status
  */
 
+Status_TypeDef Codec_DAC_Gain(DAC_Level_Ctrl progAmp)
+{
+	if( STATUS_OK != MAX9867_DAC_Gain(DAC_GAIN_0dB, progAmp))
+			return STATUS_ERR;
+	return STATUS_OK;
+}
+
+/****************************************************************************************************/
+
+/* Set Audio Volume Level */
+/*
+ * @brief  :Set Audio Volume Level.
+ * @param1 :choose (L/R/both of them) channels
+ * @param2 :left channel audio volume level.
+ * @param3 :right channel audio volume level.
+ * @retval :Status
+ */
+
 Status_TypeDef MAX9867_AudioLevel(L_R_Playback_Volume_Channel channel, L_R_Playback_Volume rPlaybackVol, L_R_Playback_Volume lPlaybackVol)
 {
 	if(channel == LEFT_VOLUME_CHA)
@@ -1117,21 +456,42 @@ Status_TypeDef MAX9867_AudioLevel(L_R_Playback_Volume_Channel channel, L_R_Playb
 
 /****************************************************************************************************/
 
-/* Set Audio Volume Level */
+/* Audio Mute Enable-Disable */
 /*
- * @brief  :Set Audio Volume Level.
- * @param1 :choose (L/R/both of them) channels
- * @param2 :left channel audio volume level.
- * @param3 :right channel audio volume level.
+ * @brief  :Audio Mute Enable-Disable.
+ * @param1 :Audio Mute Enable-Disable.
  * @retval :Status
  */
 
-Status_TypeDef Codec_DAC_Gain(DAC_Level_Ctrl progAmp)
+Status_TypeDef MAX9867_AudioMute(Audio_Mute audioMute)
 {
-	if( STATUS_OK != MAX9867_DAC_Gain(DAC_GAIN_0dB, progAmp))
-			return STATUS_ERR;
+	if(audioMute == AUDIO_MUTE_ENABLE)
+	{
+		rVolumeCtrlReg.VOLRM = AUDIO_MUTE_ENABLE;
+		lVolumeCtrlReg.VOLLM = AUDIO_MUTE_ENABLE;
+		tDataCodec[0] = MAX9867_REG_L_VOL_CTRL;
+		tDataCodec[1] = rVolumeCtrlReg.RVolCtrlReg;
+		if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+				return STATUS_ERR;
+		tDataCodec[0] = MAX9867_REG_R_VOL_CTRL;
+		tDataCodec[1] = lVolumeCtrlReg.LVolCtrlReg;
+		if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+				return STATUS_ERR;
+	}
+	else if(audioMute == AUDIO_MUTE_DISABLE)
+	{
+		rVolumeCtrlReg.VOLRM = AUDIO_MUTE_DISABLE;
+		lVolumeCtrlReg.VOLLM = AUDIO_MUTE_DISABLE;
+		tDataCodec[0] = MAX9867_REG_L_VOL_CTRL;
+		tDataCodec[1] = rVolumeCtrlReg.RVolCtrlReg;
+		if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+				return STATUS_ERR;
+		tDataCodec[0] = MAX9867_REG_R_VOL_CTRL;
+		tDataCodec[1] = lVolumeCtrlReg.LVolCtrlReg;
+		if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+				return STATUS_ERR;
+	}
 	return STATUS_OK;
 }
-
 
 /************************ (C) COPYRIGHT Hexabitz *****END OF FILE****/

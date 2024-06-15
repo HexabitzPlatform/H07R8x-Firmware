@@ -506,39 +506,39 @@ void RegisterModuleCLICommands(void){
  -----------------------------------------------------------------------
  */
 /*       */
-//Module_Status CodecInit()
-//{
-//	Module_Status Status = H07R8_OK;
-//	return Status;
-//}
-//
-//Module_Status CodecStreamingDigitalAudio(uint16_t *data,size_t size)
-//{
-//	Module_Status Status = H07R8_OK;
-//    for(int i=0; i<size; i++) {
-//    	if( H07R8_OK != WriteI2S(I2S_PORT, &data[i], 1))
-//    		return H07R8_ERROR;
-//    }
-//	return Status;
-//}
-//
-//Module_Status CodecSoundLevel()
-//{
-//	Module_Status Status = H07R8_OK;
-//	return Status;
-//}
-//
-//Module_Status CodecSoundMute()
-//{
-//	Module_Status Status = H07R8_OK;
-//	return Status;
-//}
-//
-//Module_Status CodecShutdown()
-//{
-//	Module_Status Status = H07R8_OK;
-//	return Status;
-//}
+Module_Status CodecInit()
+{
+	Module_Status Status = H07R8_OK;
+	return Status;
+}
+
+Module_Status CodecStreamingDigitalAudio(uint16_t *data,size_t size)
+{
+	Module_Status Status = H07R8_OK;
+    for(int i=0; i<size; i++) {
+    	if( H07R8_OK != WriteI2S(I2S_PORT, &data[i], 1))
+    		return H07R8_ERROR;
+    }
+	return Status;
+}
+
+Module_Status CodecSoundLevel()
+{
+	Module_Status Status = H07R8_OK;
+	return Status;
+}
+
+Module_Status CodecSoundMute()
+{
+	Module_Status Status = H07R8_OK;
+	return Status;
+}
+
+Module_Status CodecShutdown()
+{
+	Module_Status Status = H07R8_OK;
+	return Status;
+}
 
 /* Amplifier initialize */
 /*
