@@ -13,6 +13,8 @@
 
  */
 
+
+
 /* H07R8 Module_Status Type Definition */
 typedef enum {
 	H07R8_OK =0,
@@ -40,6 +42,12 @@ typedef enum {
 #include "MAX9704_Amplifier.h"
 #include "MAX9867_Codec.h"
 
+/* Macros ----------------------------------------------------------------------*/
+#define BUFFER_FULL_SIZE	4096
+#define BUFFER_HALF_SIZE	2048
+/* Extern ----------------------------------------------------------------------*/
+extern uint8_t rx[BUFFER_FULL_SIZE];
+extern uint8_t dataFlag;
 /* Enums ----------------------------------------------------------------------*/
 typedef enum
 {
@@ -292,6 +300,7 @@ extern void ExecuteMonitor(void);
 void SetupPortForRemoteBootloaderUpdate(uint8_t port);
 void remoteBootloaderUpdate(uint8_t src,uint8_t dst,uint8_t inport,uint8_t outport);
 Module_Status CodecInit(Codec_DAC_Gain dacGain,Left_Right_AUDIO_GAIN rPlaybackVol, Left_Right_AUDIO_GAIN lPlaybackVol);
+Module_Status CodecStreamDataStart(void);
 Module_Status CodecDAC_Gain(Codec_DAC_Gain gain);
 Module_Status CodecAudioLevel(Left_Right_Channel channel, Left_Right_AUDIO_GAIN rPlaybackVol, Left_Right_AUDIO_GAIN lPlaybackVol);
 Module_Status CodecAudioMute(Codec_Audio_Mute audioMute);

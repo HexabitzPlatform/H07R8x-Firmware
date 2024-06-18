@@ -31,11 +31,13 @@ extern uint8_t numOfRecordedSnippets;
 module_param_t modParam[NUM_MODULE_PARAMS] ={{.paramPtr = NULL, .paramFormat =FMT_FLOAT, .paramName =""}};
 #define MIN_PERIOD_MS				100
 
+
 /* exported functions */
 
 /* Private variables ---------------------------------------------------------*/
 bool muteFlag;
-
+uint8_t rx[BUFFER_FULL_SIZE]={0};
+uint8_t dataFlag = 2;
 /* Private function prototypes -----------------------------------------------*/
 void ExecuteMonitor(void);
 static Module_Status AmpInit(void);
@@ -387,7 +389,7 @@ void Module_Peripheral_Init(void){
 	MX_USART6_UART_Init();
 	MX_I2C2_Init();
 	MX_I2S1_Init();
-	AmpInit();
+
 	 //Circulating DMA Channels ON All Module
 	for (int i = 1; i <= NumOfPorts; i++) {
 		if (GetUart(i) == &huart1) {
@@ -526,6 +528,20 @@ Module_Status CodecInit(Codec_DAC_Gain dacGain, Left_Right_AUDIO_GAIN rPlaybackV
 	return Status;
 }
 
+/* Codec Stream Data Start */
+/*
+ * @brief  :when call this API the digital audio data will be requested from SD Card module or another module has audio data.
+ * @retval :Status
+ */
+
+Module_Status CodecStreamDataStart(void)
+{
+	if(HAL_OK != HAL_UART_Receive_IT(&huart1, &rx[0], BUFFER_FULL_SIZE))
+		return H07R8_ERROR;
+	if(HAL_OK != HAL_UART_Transmit(&huart1, &dataFlag, 1, 2000))
+		return H07R8_ERROR;
+	dataFlag=1;
+}
 /**********************************************************************************************/
 
 /* DAC gain */
