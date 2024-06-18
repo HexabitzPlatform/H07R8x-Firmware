@@ -18,6 +18,7 @@
 
 #include "H07R8_gpio.h"
 
+/*********************************************************MACROS***********************************************************/
 #define AMP_MUTE_Pin GPIO_PIN_1
 #define AMP_MUTE_GPIO_Port GPIOD
 #define AMP_FS2_Pin GPIO_PIN_3
@@ -31,14 +32,16 @@
 #define AMP_SHUTDOWN_Pin GPIO_PIN_7
 #define AMP_SHUTDOWN_GPIO_Port GPIOB
 
+/*********************************************************ENUMS***********************************************************/
+
 typedef enum{
-	STATUS_OK = 0,
-	STATUS_INV,
-	STATUS_TMOUT,
-	STATUS_BUSY,
-	STC3117_WRONG_ADDRESS,
-	STATUS_ERR=255
-}Status_TypeDef;
+	AMP_OK = 0,
+	AMP_INV,
+	AMP_TMOUT,
+	AMP_BUSY,
+	AMP_WRONG_ADDRESS,
+	AMP_ERR=255
+}Amp_Status;
 
 typedef enum{
 	SWITCHING_MODE_670KHZ = 0,
@@ -65,48 +68,16 @@ typedef enum{
 	MUTE_DISABLE
 }Mute_En_Dis;
 
-/* Amplifier Switching Mode */
-/*
- * @brief  :Audio switching frequency control.
- * @param1 :Switching Modes
- * @retval :Status
- */
-Status_TypeDef MAX9704_AmpSwitchingMode(Switching_Modes mode);
+/*********************************************************PRIVATE APIS***********************************************************/
 
-/* Amplifier Gain */
-/*
- * @brief  :Audio level control.
- * @param1 :Gain Modes
- * @retval :Status
- */
-Status_TypeDef MAX9704_AmpGain(Amp_Gain mode);
-
-/* Amplifier Shutdown */
-/*
- * @brief  :Amplifier Shutdown.
- * @param1 :Shutdown Modes
- * @retval :Status
- */
-Status_TypeDef MAX9704_AmpShutdown(Shutdown_Modes mode);
-
-/* Amplifier Mute */
-/*
- * @brief  :Aduio Mute.
- * @param1 :Mute Modes
- * @retval :Status
- */
-Status_TypeDef MAX9704_AmpMute(Mute_En_Dis mute);
+Amp_Status MAX9704_AmpSwitchingMode(Switching_Modes mode);
+Amp_Status MAX9704_AmpGain(Amp_Gain mode);
+Amp_Status MAX9704_AmpShutdown(Shutdown_Modes mode);
+Amp_Status MAX9704_AmpMute(Mute_En_Dis mute);
 
 /******************************************************************USER APIs**********************************************************/
 
-/* Amplifier Initialize */
-/*
- * @brief  :Amplifier Initialize.
- * @param1 :switching mode.
- * @param2 :amplifier gain.
- * @retval :Status
- */
-Status_TypeDef MAX9704_AmpInit(Switching_Modes switchMode, Amp_Gain gain);
+Amp_Status MAX9704_AmpInit(Switching_Modes switchMode, Amp_Gain gain);
 #endif /* INC_MAX9704_AMPLIFIER_H_ */
 
 /************************ (C) COPYRIGHT Hexabitz *****END OF FILE****/
