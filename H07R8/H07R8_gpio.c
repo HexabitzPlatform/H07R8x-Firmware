@@ -11,9 +11,7 @@
 #include "BOS.h"
 
 /*  */
-BOS_Status GetPortGPIOs(uint8_t port,uint32_t *TX_Port,uint16_t *TX_Pin,uint32_t *RX_Port,uint16_t *RX_Pin);
-Module_Status SetGPIOsPin(GPIO_HANDLE *GPIOx, uint16_t Pin);
-Module_Status ResetGPIOsPin(GPIO_HANDLE *GPIOx, uint16_t Pin);
+
 /*----------------------------------------------------------------------------*/
 /* Configure GPIO                                                             */
 /*----------------------------------------------------------------------------*/
