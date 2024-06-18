@@ -13,12 +13,20 @@
 
  */
 
+/* H07R8 Module_Status Type Definition */
+typedef enum {
+	H07R8_OK =0,
+	H07R8_ERR_UnknownMessage,
+	H07R8_ERR_WrongParams,
+	H07R8_ERROR =255
+} Module_Status;
+
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef H07R8_H
 #define H07R8_H
 
 /* Includes ------------------------------------------------------------------*/
-//#include "BOS.h"
+
 #include "H07R8_MemoryMap.h"
 #include "H07R8_uart.h"
 #include "H07R8_gpio.h"
@@ -27,7 +35,101 @@
 #include "H07R8_timers.h"
 #include "H07R8_inputs.h"
 #include "H07R8_eeprom.h"
+#include "H07R8_i2c.h"
+#include "H07R8_i2s.h"
 #include "MAX9704_Amplifier.h"
+#include "MAX9867_Codec.h"
+
+/* Enums ----------------------------------------------------------------------*/
+typedef enum
+{
+	CODEC_DAC_GAIN_0dB,
+	DAC_GAIN_MINUS_1dB,
+	DAC_GAIN_MINUS_2dB,
+	DAC_GAIN_MINUS_3dB,
+	DAC_GAIN_MINUS_4dB,
+	DAC_GAIN_MINUS_5dB,
+	DAC_GAIN_MINUS_6dB,
+	DAC_GAIN_MINUS_7dB,
+	DAC_GAIN_MINUS_8dB,
+	DAC_GAIN_MINUS_9dB,
+	DAC_GAIN_MINUS_10dB,
+	DAC_GAIN_MINUS_11dB,
+	DAC_GAIN_MINUS_12dB,
+	DAC_GAIN_MINUS_13dB,
+	DAC_GAIN_MINUS_14dB,
+	DAC_GAIN_MINUS_15dB
+} Codec_DAC_Gain;
+
+typedef enum
+{
+	AUDIO_GAIN_PLUS_6dB,
+	AUDIO_GAIN_PLUS_5d5B,
+	AUDIO_GAIN_PLUS_5dB,
+	AUDIO_GAIN_PLUS_4d5B,
+	AUDIO_GAIN_PLUS_4dB,
+	AUDIO_GAIN_PLUS_3d5B,
+	AUDIO_GAIN_PLUS_3dB,
+	AUDIO_GAIN_PLUS_2dB,
+	AUDIO_GAIN_PLUS_1dB,
+	AUDIO_GAIN_0dB,
+	AUDIO_GAIN_MINUS_1dB,
+	AUDIO_GAIN_MINUS_2dB,
+	AUDIO_GAIN_MINUS_3dB,
+	AUDIO_GAIN_MINUS_4dB,
+	AUDIO_GAIN_MINUS_5dB,
+	AUDIO_GAIN_MINUS_6dB,
+	AUDIO_GAIN_MINUS_8dB,
+	AUDIO_GAIN_MINUS_10dB,
+	AUDIO_GAIN_MINUS_12dB,
+	AUDIO_GAIN_MINUS_14dB,
+	AUDIO_GAIN_MINUS_16dB,
+	AUDIO_GAIN_MINUS_18dB,
+	AUDIO_GAIN_MINUS_20dB,
+	AUDIO_GAIN_MINUS_22dB,
+	AUDIO_GAIN_MINUS_24dB,
+	AUDIO_GAIN_MINUS_26dB,
+	AUDIO_GAIN_MINUS_30dB,
+	AUDIO_GAIN_MINUS_34dB,
+	AUDIO_GAIN_MINUS_38dB,
+} Left_Right_AUDIO_GAIN;
+
+typedef enum
+{
+	LEFT_CHA,
+	RIGHT_CHA,
+	LEFT_RIGHT_CHA
+} Left_Right_Channel;
+
+typedef enum
+{
+	CODEC_SHUTDOWN_ENABLE,
+	CODEC_SHUTDOWN_DISABLE
+} Codec_Shutdown;
+
+typedef enum
+{
+	CODDEC_AUDIO_MUTE_DISABLE,
+	CODEC_AUDIO_MUTE_ENABLE
+} Codec_Audio_Mute;
+
+typedef enum{
+	AMP_GAIN_MODE_0db = 0,
+	AMP_GAIN_MODE_13dB,
+	AMP_GAIN_MODE_16dB,
+	AMP_GAIN_MODE_19dB,
+	AMP_GAIN_MODE_29dB
+}Amplifier_Gain;
+
+typedef enum{
+	AMP_MUTE_ENABLE = 0,
+	AMP_MUTE_DISABLE
+}Amplifier_Mute;
+
+typedef enum{
+	AMP_SHUTDOWN_ENABLE = 0,
+	AMP_SHUTDOWN_DISABLE
+}Amplifier_Shutdown;
 /* Exported definitions -------------------------------------------------------*/
 
 #define	modulePN		_H07R8
@@ -152,13 +254,13 @@
 // Module Addressing Space 500 - 599
 #define _EE_MODULE							500		
 
-/* H07R8 Module_Status Type Definition */
-typedef enum {
-	H07R8_OK =0,
-	H07R8_ERR_UnknownMessage,
-	H07R8_ERR_WrongParams,
-	H07R8_ERROR =255
-} Module_Status;
+///* H07R8 Module_Status Type Definition */
+//typedef enum {
+//	H07R8_OK =0,
+//	H07R8_ERR_UnknownMessage,
+//	H07R8_ERR_WrongParams,
+//	H07R8_ERROR =255
+//} Module_Status;
 
 
 
@@ -189,15 +291,14 @@ extern void ExecuteMonitor(void);
 
 void SetupPortForRemoteBootloaderUpdate(uint8_t port);
 void remoteBootloaderUpdate(uint8_t src,uint8_t dst,uint8_t inport,uint8_t outport);
-
-//extern Module_Status CodecInit();
-//extern Module_Status CodecStreamingDigitalAudio(uint16_t *data,size_t size);
-//extern Module_Status CodecSoundLevel();
-//extern Module_Status CodecSoundMute();
-//extern Module_Status CodecShutdown();
-Module_Status AmpGain(uint8_t gain);
-Module_Status AmpMute(bool mute);
-Module_Status AmpShutdown(bool mode);
+Module_Status CodecInit(Codec_DAC_Gain dacGain,Left_Right_AUDIO_GAIN rPlaybackVol, Left_Right_AUDIO_GAIN lPlaybackVol);
+Module_Status CodecDAC_Gain(Codec_DAC_Gain gain);
+Module_Status CodecAudioLevel(Left_Right_Channel channel, Left_Right_AUDIO_GAIN rPlaybackVol, Left_Right_AUDIO_GAIN lPlaybackVol);
+Module_Status CodecAudioMute(Codec_Audio_Mute audioMute);
+Module_Status CodecShutdown(Codec_Shutdown shtdown);
+Module_Status AmpGain(Amplifier_Gain gain);
+Module_Status AmpMute(Amplifier_Mute mute);
+Module_Status AmpShutdown(Amplifier_Shutdown mode);
 
 /* -----------------------------------------------------------------------
  ||								Commands							      ||
