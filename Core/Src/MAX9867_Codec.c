@@ -194,25 +194,6 @@ Status_TypeDef MAX9867_InterruptEnable(bool clipDetect,bool slewDetect,bool pllU
 
 /****************************************************************************************************/
 
-/* Shoutdown Enable-Disable */
-/*
- * @brief  :Shoutdown Enable-Disable.
- * @param1 :Shoutdown Enable-Disable.
- * @retval :Status
- */
-
-Status_TypeDef MAX9867_Shoutdown(Shoutdown shtdown)
-{
-	powerMangReg.SHDN = shtdown;
-	tDataCodec[0] = MAX9867_REG_SYS_SHUTDOWN;
-	tDataCodec[1] = powerMangReg.pwrManagReg;
-	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-			return STATUS_ERR;
-	return STATUS_OK;
-}
-
-/****************************************************************************************************/
-
 /* Headphone Amplifier type */
 /*
  * @brief  :Headphone has three types(differential,capacitorless,single-indedd)
@@ -608,46 +589,6 @@ Status_TypeDef MAX9867_LineInputMute(L_R_Line_Input lineInput, Line_Input_Mute_E
 			if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
 					return STATUS_ERR;
 		}
-	}
-	return STATUS_OK;
-}
-
-/****************************************************************************************************/
-
-/* Audio Mute Enable-Disable */
-/*
- * @brief  :Audio Mute Enable-Disable.
- * @param1 :Audio Mute Enable-Disable.
- * @retval :Status
- */
-
-Status_TypeDef MAX9867_AudioMute(Audio_Mute audioMute)
-{
-	if(audioMute == AUDIO_MUTE_ENABLE)
-	{
-		rVolumeCtrlReg.VOLRM = AUDIO_MUTE_ENABLE;
-		lVolumeCtrlReg.VOLLM = AUDIO_MUTE_ENABLE;
-		tDataCodec[0] = MAX9867_REG_L_VOL_CTRL;
-		tDataCodec[1] = rVolumeCtrlReg.RVolCtrlReg;
-		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-				return STATUS_ERR;
-		tDataCodec[0] = MAX9867_REG_R_VOL_CTRL;
-		tDataCodec[1] = lVolumeCtrlReg.LVolCtrlReg;
-		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-				return STATUS_ERR;
-	}
-	else if(audioMute == AUDIO_MUTE_DISABLE)
-	{
-		rVolumeCtrlReg.VOLRM = AUDIO_MUTE_DISABLE;
-		lVolumeCtrlReg.VOLLM = AUDIO_MUTE_DISABLE;
-		tDataCodec[0] = MAX9867_REG_L_VOL_CTRL;
-		tDataCodec[1] = rVolumeCtrlReg.RVolCtrlReg;
-		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-				return STATUS_ERR;
-		tDataCodec[0] = MAX9867_REG_R_VOL_CTRL;
-		tDataCodec[1] = lVolumeCtrlReg.LVolCtrlReg;
-		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-				return STATUS_ERR;
 	}
 	return STATUS_OK;
 }
@@ -1338,11 +1279,79 @@ Status_TypeDef MAX9867_AudioLevel(L_R_Playback_Volume_Channel channel, L_R_Playb
 	return STATUS_OK;
 }
 
+/****************************************************************************************************/
+
+/* Set DAC Gain for play digital audio */
+/*
+ * @brief  :Set DAC Gain for play digital audio.
+ * @param2 :programmable amplifier gain(voice and audio stream).
+ * @retval :Status
+ */
+
 Status_TypeDef Codec_DAC_Gain(DAC_Level_Ctrl progAmp)
 {
 	if( STATUS_OK != MAX9867_DAC_Gain(DAC_GAIN_0dB, progAmp))
 			return STATUS_ERR;
+	return STATUS_OK;
 }
 
+/****************************************************************************************************/
+
+/* Audio Mute Enable-Disable */
+/*
+ * @brief  :Audio Mute Enable-Disable.
+ * @param1 :Audio Mute Enable-Disable.
+ * @retval :Status
+ */
+
+Status_TypeDef MAX9867_AudioMute(Audio_Mute audioMute)
+{
+	if(audioMute == AUDIO_MUTE_ENABLE)
+	{
+		rVolumeCtrlReg.VOLRM = AUDIO_MUTE_ENABLE;
+		lVolumeCtrlReg.VOLLM = AUDIO_MUTE_ENABLE;
+		tDataCodec[0] = MAX9867_REG_L_VOL_CTRL;
+		tDataCodec[1] = rVolumeCtrlReg.RVolCtrlReg;
+		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+				return STATUS_ERR;
+		tDataCodec[0] = MAX9867_REG_R_VOL_CTRL;
+		tDataCodec[1] = lVolumeCtrlReg.LVolCtrlReg;
+		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+				return STATUS_ERR;
+	}
+	else if(audioMute == AUDIO_MUTE_DISABLE)
+	{
+		rVolumeCtrlReg.VOLRM = AUDIO_MUTE_DISABLE;
+		lVolumeCtrlReg.VOLLM = AUDIO_MUTE_DISABLE;
+		tDataCodec[0] = MAX9867_REG_L_VOL_CTRL;
+		tDataCodec[1] = rVolumeCtrlReg.RVolCtrlReg;
+		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+				return STATUS_ERR;
+		tDataCodec[0] = MAX9867_REG_R_VOL_CTRL;
+		tDataCodec[1] = lVolumeCtrlReg.LVolCtrlReg;
+		if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+				return STATUS_ERR;
+	}
+	return STATUS_OK;
+}
+
+/****************************************************************************************************/
+
+/* Shoutdown Enable-Disable */
+/*
+ * @brief  :Shoutdown Enable-Disable.
+ * @param1 :Shoutdown Enable-Disable.
+ * @retval :Status
+ */
+
+Status_TypeDef MAX9867_Shoutdown(Shoutdown shtdown)
+{
+	powerMangReg.SHDN = shtdown;
+	tDataCodec[0] = MAX9867_REG_SYS_SHUTDOWN;
+	tDataCodec[1] = powerMangReg.pwrManagReg;
+	if( STATUS_OK != WriteI2C(MAX9867_I2C_HANDLE, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+			return STATUS_ERR;
+	return STATUS_OK;
+}
 
 /************************ (C) COPYRIGHT Hexabitz *****END OF FILE****/
