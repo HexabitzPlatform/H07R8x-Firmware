@@ -72,7 +72,7 @@ static uint8_t tDataCodec[2];
  * @retval  :Status
  */
 
-Status_TypeDef MAX9867_DigitalAudioInterfaceInit(void)
+Codec_Status MAX9867_DigitalAudioInterfaceInit(void)
 {
 	digAudReg1.MAS = 0;
 	digAudReg1.WCI = 0;
@@ -87,19 +87,19 @@ Status_TypeDef MAX9867_DigitalAudioInterfaceInit(void)
 
 	tDataCodec[0] = MAX9867_REG_INTERFACE_MODE1;
 	tDataCodec[1] = digAudReg1.digAudReg1;
-	if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-			return STATUS_ERR;
+	if( CODEC_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+			return CODEC_ERR;
 
 	tDataCodec[0] = MAX9867_REG_INTERFACE_MODE2;
 	tDataCodec[1] = digAudReg2.digAudReg2;
-	if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-			return STATUS_ERR;
-	return STATUS_OK;
+	if( CODEC_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+			return CODEC_ERR;
+	return CODEC_OK;
 }
 
 /****************************************************************************************************/
 
-Status_TypeDef MAX9867_DigitalFilterInit(Digital_Audio_Filter_Mode mode, ADC_DAC_Digital_Audio_Filter_Sٍpecifications ADC_Specifications,ADC_DAC_Digital_Audio_Filter_Sٍpecifications DAC_Specifications)
+Codec_Status MAX9867_DigitalFilterInit(Digital_Audio_Filter_Mode mode, ADC_DAC_Digital_Audio_Filter_Sٍpecifications ADC_Specifications,ADC_DAC_Digital_Audio_Filter_Sٍpecifications DAC_Specifications)
 {
 
 	codecFilterReg.MODE = mode;
@@ -107,9 +107,9 @@ Status_TypeDef MAX9867_DigitalFilterInit(Digital_Audio_Filter_Mode mode, ADC_DAC
 	codecFilterReg.DVFLT = DAC_Specifications;
 	tDataCodec[0] = MAX9867_REG_CODEC_FILTERS;
 	tDataCodec[1] = codecFilterReg.digtlFltrReg;
-	if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-			return STATUS_ERR;
-	return STATUS_OK;
+	if( CODEC_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+			return CODEC_ERR;
+	return CODEC_OK;
 }
 
 /****************************************************************************************************/
@@ -136,7 +136,7 @@ Status_TypeDef MAX9867_DigitalFilterInit(Digital_Audio_Filter_Mode mode, ADC_DAC
  * @retval :Status
  */
 
-Status_TypeDef MAX9867_ClockControlInit(MCLK_Prescaler mclkPresclr, Exact_Integer_Modes exactIntMode,
+Codec_Status MAX9867_ClockControlInit(MCLK_Prescaler mclkPresclr, Exact_Integer_Modes exactIntMode,
 		PLL_Mode_En_Dis pllMode, uint32_t NI, PLL_Rapid_Lock_En_Dis pllRapidLock)
 {
 	sysClkReg.PSCLK = mclkPresclr;
@@ -150,20 +150,20 @@ Status_TypeDef MAX9867_ClockControlInit(MCLK_Prescaler mclkPresclr, Exact_Intege
 
 	tDataCodec[0] = MAX9867_REG_SYSTEM_CLK;
 	tDataCodec[1] = sysClkReg.sysClkReg;
-	if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-			return STATUS_ERR;
+	if( CODEC_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+			return CODEC_ERR;
 
 	tDataCodec[0] = MAX9867_REG_STEREO_AUD_CLK_CTRL_H;
 	tDataCodec[1] = stereoAudClkRegH.stereoAudClkRegH;
-	if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-			return STATUS_ERR;
+	if( CODEC_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+			return CODEC_ERR;
 
 	tDataCodec[0] = MAX9867_REG_STEREO_AUD_CLK_CTRL_L;
 	tDataCodec[1] = stereoAudClkRegL.stereoAudClkRegL;
-	if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-			return STATUS_ERR;
+	if( CODEC_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+			return CODEC_ERR;
 
-	return STATUS_OK;
+	return CODEC_OK;
 }
 
 /****************************************************************************************************/
@@ -175,14 +175,14 @@ Status_TypeDef MAX9867_ClockControlInit(MCLK_Prescaler mclkPresclr, Exact_Intege
  * @retval :Status
  */
 
-Status_TypeDef MAX9867_Shoutdown(Shoutdown shtdown)
+Codec_Status MAX9867_Shoutdown(Shoutdown shtdown)
 {
 	powerMangReg.SHDN = shtdown;
 	tDataCodec[0] = MAX9867_REG_SYS_SHUTDOWN;
 	tDataCodec[1] = powerMangReg.pwrManagReg;
-	if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-			return STATUS_ERR;
-	return STATUS_OK;
+	if( CODEC_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+			return CODEC_ERR;
+	return CODEC_OK;
 }
 
 /****************************************************************************************************/
@@ -195,14 +195,14 @@ Status_TypeDef MAX9867_Shoutdown(Shoutdown shtdown)
  * @retval :Status
  */
 
-Status_TypeDef MAX9867_HeadphoneAmpType(Headphone_Amp_Type ampMode)
+Codec_Status MAX9867_HeadphoneAmpType(Headphone_Amp_Type ampMode)
 {
 	configModeReg.HPMODE = ampMode;
 	tDataCodec[0] = MAX9867_REG_MODE;
 	tDataCodec[1] = configModeReg.configModeReg;
-	if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-			return STATUS_ERR;
-	return STATUS_OK;
+	if( CODEC_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+			return CODEC_ERR;
+	return CODEC_OK;
 }
 
 /****************************************************************************************************/
@@ -214,15 +214,15 @@ Status_TypeDef MAX9867_HeadphoneAmpType(Headphone_Amp_Type ampMode)
  * @retval :Status
  */
 
-Status_TypeDef MAX9867_DAC_EnableDisable(DAC_En_Dis dac)
+Codec_Status MAX9867_DAC_EnableDisable(DAC_En_Dis dac)
 {
 		powerMangReg.DALEN = dac;
 		powerMangReg.DAREN = dac;
 		tDataCodec[0] = MAX9867_REG_CODEC_FILTERS;
 		tDataCodec[1] = powerMangReg.pwrManagReg;
-		if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-				return STATUS_ERR;
-	return STATUS_OK;
+		if( CODEC_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+				return CODEC_ERR;
+	return CODEC_OK;
 }
 
 /****************************************************************************************************/
@@ -238,15 +238,15 @@ Status_TypeDef MAX9867_DAC_EnableDisable(DAC_En_Dis dac)
  * @retval :Status
  */
 
-Status_TypeDef MAX9867_DAC_Gain(DAC_Gain firstAmp, DAC_Level_Ctrl progAmp)
+Codec_Status MAX9867_DAC_Gain(DAC_Gain firstAmp, DAC_Level_Ctrl progAmp)
 {
 	DAC_LevelReg.DACG = firstAmp;
 	DAC_LevelReg.DACA = progAmp;
 	tDataCodec[0] = MAX9867_REG_DAC_LVL;
 	tDataCodec[1] = DAC_LevelReg.DACLvlReg;
-	if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-			return STATUS_ERR;
-	return STATUS_OK;
+	if( CODEC_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+			return CODEC_ERR;
+	return CODEC_OK;
 }
 
 /****************************************************************************************************/
@@ -258,14 +258,14 @@ Status_TypeDef MAX9867_DAC_Gain(DAC_Gain firstAmp, DAC_Level_Ctrl progAmp)
  * @retval :Status
  */
 
-Status_TypeDef MAX9867_DAC_Mute(DAC_Mute_En_Dis dacMute)
+Codec_Status MAX9867_DAC_Mute(DAC_Mute_En_Dis dacMute)
 {
 	DAC_LevelReg.DACM = dacMute;
 	tDataCodec[0] = MAX9867_REG_CODEC_FILTERS;
 	tDataCodec[1] = DAC_LevelReg.DACLvlReg;
-	if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-			return STATUS_ERR;
-	return STATUS_OK;
+	if( CODEC_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+			return CODEC_ERR;
+	return CODEC_OK;
 }
 
 /****************************************************************************************************/
@@ -308,37 +308,37 @@ Status_TypeDef MAX9867_DAC_Mute(DAC_Mute_En_Dis dacMute)
  * @retval :Status
  */
 
-Status_TypeDef ReadingDigitalAudioInit(Digital_Audio_Mode audioMode, L_R_Playback_Volume_Channel channel, DAC_Gain firstAmp, DAC_Level_Ctrl progAmp,
+Codec_Status ReadingDigitalAudioInit(Digital_Audio_Mode audioMode, L_R_Playback_Volume_Channel channel, DAC_Gain firstAmp, DAC_Level_Ctrl progAmp,
 		ADC_DAC_Digital_Audio_Filter_Sٍpecifications DAC_Specifications, L_R_Playback_Volume rPlaybackVol, L_R_Playback_Volume lPlaybackVol)
 {
 	if(audioMode == AUDIO)
 	{
 		/* in audio application we must set only programmable amplifier, and set preamplifier to 0 because it
 		 * especial with microphone voice gain */
-		if( STATUS_OK != MAX9867_DAC_Gain(DAC_GAIN_0dB, progAmp))
-				return STATUS_ERR;
+		if( CODEC_OK != MAX9867_DAC_Gain(DAC_GAIN_0dB, progAmp))
+				return CODEC_ERR;
 		/* Enable DC-blocking just in Audio mode */
 		/* Note : we can enable DC-blocking by set AVFLT and DVFLT with any value */
-		if( STATUS_OK != MAX9867_DigitalFilterInit(FIR_AUDIO_FILTER,DISABLED,DAC_Specifications))
-				return STATUS_ERR;
+		if( CODEC_OK != MAX9867_DigitalFilterInit(FIR_AUDIO_FILTER,DISABLED,DAC_Specifications))
+				return CODEC_ERR;
 	}
 	else if(audioMode == VOICE)
 	{
 
-		if( STATUS_OK != MAX9867_DAC_Gain(firstAmp, progAmp))
-				return STATUS_ERR;
+		if( CODEC_OK != MAX9867_DAC_Gain(firstAmp, progAmp))
+				return CODEC_ERR;
 		/* Enable DC-blocking just in Audio mode */
 		/* Note : we can enable DC-blocking by set AVFLT and DVFLT with any value */
-		if( STATUS_OK != MAX9867_DigitalFilterInit(IIR_VOICE_FILTER,DISABLED,DAC_Specifications))
-				return STATUS_ERR;
+		if( CODEC_OK != MAX9867_DigitalFilterInit(IIR_VOICE_FILTER,DISABLED,DAC_Specifications))
+				return CODEC_ERR;
 	}
 	/* Audio level control */
-	if( STATUS_OK != MAX9867_AudioLevel(channel, rPlaybackVol, lPlaybackVol))
-			return STATUS_ERR;
+	if( CODEC_OK != MAX9867_AudioLevel(channel, rPlaybackVol, lPlaybackVol))
+			return CODEC_ERR;
 	/* Enable DAC */
-	if( STATUS_OK != MAX9867_DAC_EnableDisable(DAC_ENABLE))
-			return STATUS_ERR;
-	return STATUS_OK;
+	if( CODEC_OK != MAX9867_DAC_EnableDisable(DAC_ENABLE))
+			return CODEC_ERR;
+	return CODEC_OK;
 }
 
 /********************************************************************************USER APIs*****************************************************************************************************************************/
@@ -355,11 +355,11 @@ Status_TypeDef ReadingDigitalAudioInit(Digital_Audio_Mode audioMode, L_R_Playbac
  * @retval :Status
  */
 
-Status_TypeDef MAX9867_CodecInit(DAC_Level_Ctrl dacGain,L_R_Playback_Volume rPlaybackVol,L_R_Playback_Volume lPlaybackVol)
+Codec_Status MAX9867_CodecInit(DAC_Level_Ctrl dacGain,L_R_Playback_Volume rPlaybackVol,L_R_Playback_Volume lPlaybackVol)
 {
 	/* ENABLE Codec */
-	if( STATUS_OK != MAX9867_Shoutdown(SHOUTDOWN_DISABLE))
-		return STATUS_ERR;
+	if( CODEC_OK != MAX9867_Shoutdown(SHOUTDOWN_DISABLE))
+		return CODEC_ERR;
 	/* Setting the clock signals for Codec where:
 	 * - MCLK_BETWEEN_10_20_MHZ : determine the master clock frequency coming from processor to codec.
 	 * - NORMAL_OR_PLL_MODE : Normal mode.
@@ -367,12 +367,12 @@ Status_TypeDef MAX9867_CodecInit(DAC_Level_Ctrl dacGain,L_R_Playback_Volume rPla
 	 * - 0x6000 : determine the LRCLK frequency coming from processor to codec
 	 * - 0 : disable rapid lock mode because of PLL is disable
 	 * */
-	if( STATUS_OK != MAX9867_ClockControlInit(MCLK_BETWEEN_10_20_MHZ, NORMAL_OR_PLL_MODE,
+	if( CODEC_OK != MAX9867_ClockControlInit(MCLK_BETWEEN_10_20_MHZ, NORMAL_OR_PLL_MODE,
 	  		PLL_DISABLE, 0x6000, 0))
-		return STATUS_ERR;
+		return CODEC_ERR;
 	/* Setting the Digital Audio Interface which responsible for manage the codec */
-	if( STATUS_OK != MAX9867_DigitalAudioInterfaceInit())
-		return STATUS_ERR;
+	if( CODEC_OK != MAX9867_DigitalAudioInterfaceInit())
+		return CODEC_ERR;
 	/* setting the digital audio path in the codec where :
 	 * - AUDIO : determine the sound is audio not voice.
 	 * - LEFT_RIGHT_VOLUME_CHA : Enable left/right audio channel.
@@ -382,31 +382,29 @@ Status_TypeDef MAX9867_CodecInit(DAC_Level_Ctrl dacGain,L_R_Playback_Volume rPla
 	 * - rPlaybackVol : setting the level sound for the right channel by the user.
 	 * - lPlaybackVol : setting the level sound for the left channel by the user.
 	 * */
-	if(STATUS_OK != ReadingDigitalAudioInit(AUDIO, LEFT_RIGHT_VOLUME_CHA, DAC_GAIN_0dB, dacGain,
+	if(CODEC_OK != ReadingDigitalAudioInit(AUDIO, LEFT_RIGHT_VOLUME_CHA, DAC_GAIN_0dB, dacGain,
 			TYPE1, rPlaybackVol, lPlaybackVol))
-		return STATUS_ERR;
+		return CODEC_ERR;
 	/* determine the headphone amplifier type in our status it is differential */
-	if( STATUS_OK != MAX9867_HeadphoneAmpType(STEREO_DIFF_CLICKLESS))
-		return STATUS_ERR;
-	 return STATUS_OK;
+	if( CODEC_OK != MAX9867_HeadphoneAmpType(STEREO_DIFF_CLICKLESS))
+		return CODEC_ERR;
+	 return CODEC_OK;
 }
 
 /****************************************************************************************************/
 
-/* Set Audio Volume Level */
+/* Set DAC Gain for play digital audio */
 /*
- * @brief  :Set Audio Volume Level.
- * @param1 :choose (L/R/both of them) channels
- * @param2 :left channel audio volume level.
- * @param3 :right channel audio volume level.
+ * @brief  :Set DAC Gain for play digital audio.
+ * @param2 :programmable amplifier gain(voice and audio stream).
  * @retval :Status
  */
 
-Status_TypeDef Codec_DAC_Gain(DAC_Level_Ctrl progAmp)
+Codec_Status MAX9867_Codec_DAC_Gain(DAC_Level_Ctrl progAmp)
 {
-	if( STATUS_OK != MAX9867_DAC_Gain(DAC_GAIN_0dB, progAmp))
-			return STATUS_ERR;
-	return STATUS_OK;
+	if( CODEC_OK != MAX9867_DAC_Gain(DAC_GAIN_0dB, progAmp))
+			return CODEC_ERR;
+	return CODEC_OK;
 }
 
 /****************************************************************************************************/
@@ -420,23 +418,23 @@ Status_TypeDef Codec_DAC_Gain(DAC_Level_Ctrl progAmp)
  * @retval :Status
  */
 
-Status_TypeDef MAX9867_AudioLevel(L_R_Playback_Volume_Channel channel, L_R_Playback_Volume rPlaybackVol, L_R_Playback_Volume lPlaybackVol)
+Codec_Status MAX9867_AudioLevel(L_R_Playback_Volume_Channel channel, L_R_Playback_Volume rPlaybackVol, L_R_Playback_Volume lPlaybackVol)
 {
 	if(channel == LEFT_VOLUME_CHA)
 	{
 		lVolumeCtrlReg.VOLL = rPlaybackVol;
 		tDataCodec[0] = MAX9867_REG_R_VOL_CTRL;
 		tDataCodec[1] = lVolumeCtrlReg.LVolCtrlReg;
-		if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-				return STATUS_ERR;
+		if( CODEC_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+				return CODEC_ERR;
 	}
 	else if(channel == RIGHT_VOLUME_CHA)
 	{
 		rVolumeCtrlReg.VOLR = rPlaybackVol;
 		tDataCodec[0] = MAX9867_REG_L_VOL_CTRL;
 		tDataCodec[1] = rVolumeCtrlReg.RVolCtrlReg;
-		if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-				return STATUS_ERR;
+		if( CODEC_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+				return CODEC_ERR;
 	}
 	else if(channel == LEFT_RIGHT_VOLUME_CHA)
 	{
@@ -444,14 +442,14 @@ Status_TypeDef MAX9867_AudioLevel(L_R_Playback_Volume_Channel channel, L_R_Playb
 		lVolumeCtrlReg.VOLL = rPlaybackVol;
 		tDataCodec[0] = MAX9867_REG_L_VOL_CTRL;
 		tDataCodec[1] = rVolumeCtrlReg.RVolCtrlReg;
-		if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-				return STATUS_ERR;
+		if( CODEC_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+				return CODEC_ERR;
 		tDataCodec[0] = MAX9867_REG_R_VOL_CTRL;
 		tDataCodec[1] = lVolumeCtrlReg.LVolCtrlReg;
-		if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-				return STATUS_ERR;
+		if( CODEC_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+				return CODEC_ERR;
 	}
-	return STATUS_OK;
+	return CODEC_OK;
 }
 
 /****************************************************************************************************/
@@ -463,7 +461,7 @@ Status_TypeDef MAX9867_AudioLevel(L_R_Playback_Volume_Channel channel, L_R_Playb
  * @retval :Status
  */
 
-Status_TypeDef MAX9867_AudioMute(Audio_Mute audioMute)
+Codec_Status MAX9867_AudioMute(Audio_Mute audioMute)
 {
 	if(audioMute == AUDIO_MUTE_ENABLE)
 	{
@@ -471,12 +469,12 @@ Status_TypeDef MAX9867_AudioMute(Audio_Mute audioMute)
 		lVolumeCtrlReg.VOLLM = AUDIO_MUTE_ENABLE;
 		tDataCodec[0] = MAX9867_REG_L_VOL_CTRL;
 		tDataCodec[1] = rVolumeCtrlReg.RVolCtrlReg;
-		if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-				return STATUS_ERR;
+		if( CODEC_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+				return CODEC_ERR;
 		tDataCodec[0] = MAX9867_REG_R_VOL_CTRL;
 		tDataCodec[1] = lVolumeCtrlReg.LVolCtrlReg;
-		if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-				return STATUS_ERR;
+		if( CODEC_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+				return CODEC_ERR;
 	}
 	else if(audioMute == AUDIO_MUTE_DISABLE)
 	{
@@ -484,14 +482,14 @@ Status_TypeDef MAX9867_AudioMute(Audio_Mute audioMute)
 		lVolumeCtrlReg.VOLLM = AUDIO_MUTE_DISABLE;
 		tDataCodec[0] = MAX9867_REG_L_VOL_CTRL;
 		tDataCodec[1] = rVolumeCtrlReg.RVolCtrlReg;
-		if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-				return STATUS_ERR;
+		if( CODEC_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+				return CODEC_ERR;
 		tDataCodec[0] = MAX9867_REG_R_VOL_CTRL;
 		tDataCodec[1] = lVolumeCtrlReg.LVolCtrlReg;
-		if( STATUS_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
-				return STATUS_ERR;
+		if( CODEC_OK != WriteI2C(I2C_PORT, MAX9867_SLAVE_ADDRESS_W, tDataCodec, 2) )
+				return CODEC_ERR;
 	}
-	return STATUS_OK;
+	return CODEC_OK;
 }
 
 /************************ (C) COPYRIGHT Hexabitz *****END OF FILE****/

@@ -12,14 +12,15 @@
  ******************************************************************************
  */
 
-#ifndef INC_MAX9867_CODEC_H_
-#define INC_MAX9867_CODEC_H_
+#ifndef MAX9867_CODEC_H_
+#define MAX9867_CODEC_H_
 
 /******************************************************************INCLUDES**********************************************************/
-//#include "Porting.h"
+
 #include "H07R8_i2c.h"
 #include <stdbool.h>
 
+//#endif /* INC_MAX9867_CODEC_H_ */
 /******************************************************************MACROS**********************************************************/
 #define MAX9867_SLAVE_ADDRESS_W            	0x30
 #define MAX9867_SLAVE_ADDRESS_R				0x31
@@ -51,6 +52,16 @@
 #define MAX9867_REG_SYS_SHUTDOWN			0x17
 
 /******************************************************************ENUMS**********************************************************/
+
+typedef enum{
+	CODEC_OK = 0,
+	CODEC_INV,
+	CODEC_TMOUT,
+	CODEC_BUSY,
+	CODEC_WRONG_ADDRESS,
+	CODEC_ERR=255
+}Codec_Status;
+
 typedef enum
 {
 	AUDIO_MUTE_DISABLE,
@@ -828,38 +839,23 @@ typedef union{
 
 /********************************************************************************PRIVATE APIs*****************************************************************************************************************************/
 
-Status_TypeDef MAX9867_ClockControlInit(MCLK_Prescaler mclkPresclr, Exact_Integer_Modes exactIntMode,
+Codec_Status MAX9867_ClockControlInit(MCLK_Prescaler mclkPresclr, Exact_Integer_Modes exactIntMode,
 		PLL_Mode_En_Dis pllMode, uint32_t NI, PLL_Rapid_Lock_En_Dis pllRapidLock);
-Status_TypeDef MAX9867_InterruptEnable(bool clipDetect,bool slewDetect,bool pllUnlock,bool headsetChange);
-Status_TypeDef MAX9867_Shoutdown(Shoutdown shutdown);
-Status_TypeDef MAX9867_HeadphoneAmpType(Headphone_Amp_Type ampType);
-Status_TypeDef MAX9867_DAC_EnableDisable(DAC_En_Dis dac);
-Status_TypeDef MAX9867_DAC_Gain(DAC_Gain firstAmp, DAC_Level_Ctrl progAmp);
-Status_TypeDef MAX9867_DAC_Mute(DAC_Mute_En_Dis dacMute);
-Status_TypeDef MAX9867_ADC_EnableDisable(ADC_En_Dis adc);
-Status_TypeDef MAX9867_ADC_Gain(ADC_L_R adc, L_R_ADC_Level_Ctrl adcGain);
-Status_TypeDef MAX9867_LineInputEnableDisable(L_R_Line_Input_En_Dis lineInput, L_R_Line_Input lrLineInput);
-Status_TypeDef MAX9867_LineInputGain(L_R_Line_Input lineInput, L_R_Line_Input_Gain lineInputGain);
-Status_TypeDef MAX9867_LineInputMute(L_R_Line_Input lineInput, Line_Input_Mute_En_Dis mute);
-Status_TypeDef MAX9867_AudioMute(Audio_Mute audioMute);
-Status_TypeDef MAX9867_MicAmpGain(L_R_Mic mic, L_R_Mic_Preamp_Gain preAmpGain, L_R_Mic_Programble_Gain_Amp progGain);
-Status_TypeDef MAX9867_MicDigitalClock(Digital_Mic_Clk_Pre clock);
-Status_TypeDef MAX9867_MicDigitalLeftRightEnableDisable(Digital_Mic_Clk_Mode mode);
-Status_TypeDef MAX9867_AuxiliaryInputCapture(Auxiliary_Input_Capture auxCapture);
-Status_TypeDef MAX9867_AuxiliaryInputGainCalibration(Auxiliary_Input_Gain_Calibration auxGain);
-Status_TypeDef MAX9867_AuxiliaryInputOffsetCalibration(Auxiliary_Input_Offset_Calibration auxOffset);
-Status_TypeDef MAX9867_AuxiliaryInputType(Auxiliary_Input_Type auxType);
-Status_TypeDef MAX9867_MicSidetoneSourceAndGain(Digital_Sidetone_Source_Mixer sourceMixer, Sidetone_Gain_Diff_Headphone sidGainDiff,
-    Sidetone_Gain_Capacitorless_Single_Ended_Headphone sidGainCapSinEnd, Amp_Type ampType);
-Status_TypeDef MAX9867_DigitalAudioInterfaceInit(void);
-Status_TypeDef MAX9867_JackSensEnableDisable(Jack_Sense_En_Dis jackSens);
-Status_TypeDef ReadingDigitalAudioInit(Digital_Audio_Mode audioMode, L_R_Playback_Volume_Channel channel, DAC_Gain firstAmp, DAC_Level_Ctrl progAmp,
+Codec_Status MAX9867_InterruptEnable(bool clipDetect,bool slewDetect,bool pllUnlock,bool headsetChange);
+Codec_Status MAX9867_Shoutdown(Shoutdown shutdown);
+Codec_Status MAX9867_HeadphoneAmpType(Headphone_Amp_Type ampType);
+Codec_Status MAX9867_DAC_EnableDisable(DAC_En_Dis dac);
+Codec_Status MAX9867_DAC_Gain(DAC_Gain firstAmp, DAC_Level_Ctrl progAmp);
+Codec_Status MAX9867_DAC_Mute(DAC_Mute_En_Dis dacMute);
+Codec_Status MAX9867_DigitalAudioInterfaceInit(void);
+Codec_Status ReadingDigitalAudioInit(Digital_Audio_Mode audioMode, L_R_Playback_Volume_Channel channel, DAC_Gain firstAmp, DAC_Level_Ctrl progAmp,
 		ADC_DAC_Digital_Audio_Filter_Sٍpecifications DAC_Specifications, L_R_Playback_Volume rPlaybackVol, L_R_Playback_Volume lPlaybackVol);
 /********************************************************************************USER APIs*****************************************************************************************************************************/
 
-Status_TypeDef MAX9867_CodecInit(DAC_Level_Ctrl dacGain,L_R_Playback_Volume rPlaybackVol,L_R_Playback_Volume lPlaybackVol);
-Status_TypeDef MAX9867_AudioLevel(L_R_Playback_Volume_Channel channel, L_R_Playback_Volume rPlaybackVol, L_R_Playback_Volume lPlaybackVol);
-Status_TypeDef Codec_DAC_Gain(DAC_Level_Ctrl progAmp);
+Codec_Status MAX9867_CodecInit(DAC_Level_Ctrl dacGain,L_R_Playback_Volume rPlaybackVol,L_R_Playback_Volume lPlaybackVol);
+Codec_Status MAX9867_Codec_DAC_Gain(DAC_Level_Ctrl progAmp);
+Codec_Status MAX9867_AudioLevel(L_R_Playback_Volume_Channel channel, L_R_Playback_Volume rPlaybackVol, L_R_Playback_Volume lPlaybackVol);
+Codec_Status MAX9867_AudioMute(Audio_Mute audioMute);
 
 #endif /* INC_MAX9867_CODEC_H_ */
 
