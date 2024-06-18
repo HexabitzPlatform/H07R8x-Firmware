@@ -136,12 +136,12 @@
 		<link>
 			<name>H07R8/H07R8_adc.c</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/H07R8/H07R8_adc.c</locationURI>
+			<location>C:/Users/Abdulrhman_Battikh/Desktop/codec module/H07R8/H07R8_adc.c</location>
 		</link>
 		<link>
 			<name>H07R8/H07R8_adc.h</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/H07R8/H07R8_adc.h</locationURI>
+			<location>C:/Users/Abdulrhman_Battikh/Desktop/codec module/H07R8/H07R8_adc.h</location>
 		</link>
 		<link>
 			<name>H07R8/H07R8_dma.c</name>
