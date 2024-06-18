@@ -10,6 +10,10 @@
 /* Includes ------------------------------------------------------------------*/
 #include "BOS.h"
 
+/* for i2s */
+
+uint8_t oneTime = 1;
+/* end variable for i2s */
 uint8_t temp_length[NumOfPorts] = {0};
 uint8_t temp_index[NumOfPorts] = {0};
 uint8_t* error_restart_message = "Restarting...\r\n";
@@ -25,6 +29,8 @@ extern TaskHandle_t xCommandConsoleTaskHandle; // CLI Task handler.
 
  TIM_HandleTypeDef htim2;
  extern DMA_HandleTypeDef hdma_adc1;
+
+ extern DMA_HandleTypeDef hdma_spi1_tx;
 /******************************************************************************/
 /*            Cortex-M0 Processor Interruption and Exception Handlers         */
 /******************************************************************************/
@@ -234,81 +240,45 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart){
 /*-----------------------------------------------------------*/
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
-//	uint8_t port_number = GetPort(huart);
-//	uint8_t port_index = port_number - 1;
-//	if(Rx_Data[port_index] == 0x0D && portStatus[port_number] == FREE)
-//	{
-//		for(int i=0;i<=NumOfPorts;i++) // Free previous CLI port
-//		{
-//			if(portStatus[i] == CLI)
-//			{
-//				portStatus[i] = FREE;
-//			}
-//		}
-//		portStatus[port_number] =CLI; // Continue the CLI session on this port
-//		PcPort = port_number;
-//		xTaskNotifyGive(xCommandConsoleTaskHandle);
-//
-//		if(Activate_CLI_For_First_Time_Flag == 1) Read_In_CLI_Task_Flag = 1;
-//		Activate_CLI_For_First_Time_Flag = 1;
-//
-//	}
-//	else if(portStatus[port_number] == CLI)
-//	{
-//		Read_In_CLI_Task_Flag = 1;
-//	}
-//
-//	else if(Rx_Data[port_index] == 'H' && portStatus[port_number] == FREE)
-//	{
-//		portStatus[port_number] =H_Status; // H  Character was received, waiting for Z character.
-//	}
-//
-//	else if(Rx_Data[port_index] == 'Z' && portStatus[port_number] == H_Status)
-//	{
-//		portStatus[port_number] =Z_Status; // Z  Character was received, waiting for length byte.
-//	}
-//
-//	else if(Rx_Data[port_index] != 'Z' && portStatus[port_number] == H_Status)
-//	{
-//		portStatus[port_number] =FREE; // Z  Character was not received, so there is no message to receive.
-//	}
-//
-//	else if(portStatus[port_number] == Z_Status)
-//	{
-//		portStatus[port_number] =MSG; // Receive length byte.
-//		MSG_Buffer[port_index][MSG_Buffer_Index_End[port_index]][2] = Rx_Data[port_index];
-//		temp_index[port_index] = 3;
-//		temp_length[port_index] = Rx_Data[port_index] + 1;
-//	}
-//
-//	else if(portStatus[port_number] == MSG)
-//	{
-//		if(temp_length[port_index] > 1)
-//		{
-//			MSG_Buffer[port_index][MSG_Buffer_Index_End[port_index]][temp_index[port_index]] = Rx_Data[port_index];
-//			temp_index[port_index]++;
-//			temp_length[port_index]--;
-//		}
-//		else
-//		{
-//			MSG_Buffer[port_index][MSG_Buffer_Index_End[port_index]][temp_index[port_index]] = Rx_Data[port_index];
-//			temp_index[port_index]++;
-//			temp_length[port_index]--;
-//			MSG_Buffer_Index_End[port_index]++;
-//			if(MSG_Buffer_Index_End[port_index] == MSG_COUNT) MSG_Buffer_Index_End[port_index] = 0;
-//
-//
-//			Process_Message_Buffer[Process_Message_Buffer_Index_End] = port_number;
-//			Process_Message_Buffer_Index_End++;
-//			if(Process_Message_Buffer_Index_End == MSG_COUNT) Process_Message_Buffer_Index_End = 0;
-//			portStatus[port_number] =FREE; // End of receiving message.
-//		}
-//	}
-//
-////		HAL_UART_Receive_DMA(huart,(uint8_t* )&Rx_Data[GetPort(huart) - 1] , 1);
-//	HAL_UART_Receive_IT(huart,(uint8_t* )&Rx_Data[GetPort(huart) - 1] , 1);
+
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, RESET);
+	if(huart->Instance == USART1)
+	{
+		if(oneTime == 1)
+		{
+			HAL_I2S_Transmit_DMA(&hi2s1, (uint16_t *)rx, BUFFER_HALF_SIZE);
+			oneTime = 0;
+		}
+	}
 }
 
+/**
+  * @brief  Tx Half Transfer completed callbacks.
+  * @param  hi2s: I2S handle
+  */
+void HAL_I2S_TxHalfCpltCallback(I2S_HandleTypeDef *hi2s)
+{
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_8, RESET);
+  if(hi2s->Instance == SPI1)
+  {
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_8, SET);
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, SET);
+			HAL_UART_Receive_IT(&huart1, &rx[0], BUFFER_HALF_SIZE);
+			HAL_UART_Transmit(&huart1, &dataFlag, 1, 1000);
+  }
+}
+
+void HAL_I2S_TxCpltCallback(I2S_HandleTypeDef *hi2s)
+{
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_8, RESET);
+  if(hi2s->Instance == SPI1)
+  {
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_8, SET);
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, SET);
+			HAL_UART_Receive_IT(&huart1, &rx[BUFFER_HALF_SIZE], BUFFER_HALF_SIZE);
+			HAL_UART_Transmit(&huart1, &dataFlag, 1, 1000);
+  }
+}
 /*-----------------------------------------------------------*/
 
 /*-----------------------------------------------------------*/
@@ -348,18 +318,32 @@ void vApplicationMallocFailedHook(void){
 }
 /*-----------------------------------------------------------*/
 
+///**
+//  * @brief This function handles DMA1 channel 1 interrupt.
+//  */
+//void DMA1_Channel1_IRQHandler(void)
+//{
+//  /* USER CODE BEGIN DMA1_Channel1_IRQn 0 */
+//
+//  /* USER CODE END DMA1_Channel1_IRQn 0 */
+//  HAL_DMA_IRQHandler(&hdma_adc1);
+//  /* USER CODE BEGIN DMA1_Channel1_IRQn 1 */
+//
+//  /* USER CODE END DMA1_Channel1_IRQn 1 */
+//}
+
 /**
-  * @brief This function handles DMA1 channel 1 interrupt.
+  * @brief This function handles USART2 + LPUART2 Interrupt.
   */
-void DMA1_Channel1_IRQHandler(void)
+void USART1_LPUART1_IRQHandler(void)
 {
-  /* USER CODE BEGIN DMA1_Channel1_IRQn 0 */
+  /* USER CODE BEGIN USART2_LPUART2_IRQn 0 */
 
-  /* USER CODE END DMA1_Channel1_IRQn 0 */
-  HAL_DMA_IRQHandler(&hdma_adc1);
-  /* USER CODE BEGIN DMA1_Channel1_IRQn 1 */
+  /* USER CODE END USART2_LPUART2_IRQn 0 */
+  HAL_UART_IRQHandler(&huart1);
+  /* USER CODE BEGIN USART2_LPUART2_IRQn 1 */
 
-  /* USER CODE END DMA1_Channel1_IRQn 1 */
+  /* USER CODE END USART2_LPUART2_IRQn 1 */
 }
 
 /**
@@ -376,4 +360,31 @@ void TIM2_IRQHandler(void)
   /* USER CODE END TIM2_IRQn 1 */
 }
 
+/**
+  * @brief This function handles DMA1 channel 1 interrupt.
+  */
+void DMA1_Channel1_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA1_Channel1_IRQn 0 */
+
+  /* USER CODE END DMA1_Channel1_IRQn 0 */
+  HAL_DMA_IRQHandler(&hdma_spi1_tx);
+  /* USER CODE BEGIN DMA1_Channel1_IRQn 1 */
+
+  /* USER CODE END DMA1_Channel1_IRQn 1 */
+}
+
+/**
+  * @brief This function handles SPI1/I2S1 Interrupt.
+  */
+void SPI1_IRQHandler(void)
+{
+  /* USER CODE BEGIN SPI1_IRQn 0 */
+
+  /* USER CODE END SPI1_IRQn 0 */
+  HAL_I2S_IRQHandler(&hi2s1);
+  /* USER CODE BEGIN SPI1_IRQn 1 */
+
+  /* USER CODE END SPI1_IRQn 1 */
+}
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
