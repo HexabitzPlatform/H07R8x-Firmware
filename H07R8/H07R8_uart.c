@@ -138,7 +138,7 @@ void MX_USART5_UART_Init(void){
 #ifdef _Usart6
 void MX_USART6_UART_Init(void){
 	huart6.Instance = USART6;
-	huart6.Init.BaudRate = DEF_ARRAY_BAUDRATE;
+	huart6.Init.BaudRate = 2812000;
 	huart6.Init.WordLength = UART_WORDLENGTH_8B;
 	huart6.Init.StopBits = UART_STOPBITS_1;
 	huart6.Init.Parity = UART_PARITY_NONE;
@@ -419,21 +419,6 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart){
 		GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
 		GPIO_InitStruct.Alternate = USART6_AF;
 		HAL_GPIO_Init(USART6_RX_PORT,&GPIO_InitStruct);
-
-//	    /* USART6 DMA Init */
-//	    /* USART6_RX Init */
-//	    hdma_usart6_rx.Instance = DMA1_Channel6;
-//	    hdma_usart6_rx.Init.Request = DMA_REQUEST_USART6_RX;
-//	    hdma_usart6_rx.Init.Direction = DMA_PERIPH_TO_MEMORY;
-//	    hdma_usart6_rx.Init.PeriphInc = DMA_PINC_DISABLE;
-//	    hdma_usart6_rx.Init.MemInc = DMA_MINC_ENABLE;
-//	    hdma_usart6_rx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
-//	    hdma_usart6_rx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
-//	    hdma_usart6_rx.Init.Mode = DMA_CIRCULAR;
-//	    hdma_usart6_rx.Init.Priority = DMA_PRIORITY_LOW;
-//	    HAL_DMA_Init(&hdma_usart6_rx);
-//
-//	    __HAL_LINKDMA(huart,hdmarx,hdma_usart6_rx);
 
 	    /* USART6 interrupt Init */
 	    HAL_NVIC_SetPriority(USART3_4_5_6_LPUART1_IRQn, 0, 0);

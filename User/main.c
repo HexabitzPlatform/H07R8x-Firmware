@@ -16,6 +16,9 @@
 int main(void){
 
 	Module_Init();		//Initialize Module &  BitzOS
+	  AmpInit(AMP_SWITCHING_MODE_670KHZ, AMP_GAIN_MODE_29dB);
+	  CodecInit(DAC_LVL_GAIN_MINUS_15dB, PLAYBACK_VOLUME_GAIN_PLUS_1dB, PLAYBACK_VOLUME_GAIN_PLUS_1dB);
+	  CodecStreamDataStart();
 	//Don't place your code here.
 	for(;;){}
 }

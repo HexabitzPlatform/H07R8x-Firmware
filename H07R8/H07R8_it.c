@@ -242,7 +242,7 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart){
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
 
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, RESET);
-	if(huart->Instance == USART1)
+	if(huart->Instance == USART6)
 	{
 		if(oneTime == 1)
 		{
@@ -263,8 +263,8 @@ void HAL_I2S_TxHalfCpltCallback(I2S_HandleTypeDef *hi2s)
   {
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_8, SET);
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, SET);
-			HAL_UART_Receive_IT(&huart1, &rx[0], BUFFER_HALF_SIZE);
-			HAL_UART_Transmit(&huart1, &dataFlag, 1, 1000);
+			HAL_UART_Receive_IT(&huart6, &rx[0], BUFFER_HALF_SIZE);
+			HAL_UART_Transmit(&huart6, &dataFlag, 1, 1000);
   }
 }
 
@@ -275,8 +275,8 @@ void HAL_I2S_TxCpltCallback(I2S_HandleTypeDef *hi2s)
   {
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_8, SET);
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, SET);
-			HAL_UART_Receive_IT(&huart1, &rx[BUFFER_HALF_SIZE], BUFFER_HALF_SIZE);
-			HAL_UART_Transmit(&huart1, &dataFlag, 1, 1000);
+			HAL_UART_Receive_IT(&huart6, &rx[BUFFER_HALF_SIZE], BUFFER_HALF_SIZE);
+			HAL_UART_Transmit(&huart6, &dataFlag, 1, 1000);
   }
 }
 /*-----------------------------------------------------------*/
@@ -331,16 +331,16 @@ void vApplicationMallocFailedHook(void){
 //
 //  /* USER CODE END DMA1_Channel1_IRQn 1 */
 //}
-
-/**
-  * @brief This function handles USART2 + LPUART2 Interrupt.
-  */
-void USART1_LPUART1_IRQHandler(void)
+//
+///**
+//  * @brief This function handles USART2 + LPUART2 Interrupt.
+//  */
+void USART6_LPUART6_IRQHandler(void)
 {
   /* USER CODE BEGIN USART2_LPUART2_IRQn 0 */
 
   /* USER CODE END USART2_LPUART2_IRQn 0 */
-  HAL_UART_IRQHandler(&huart1);
+  HAL_UART_IRQHandler(&huart6);
   /* USER CODE BEGIN USART2_LPUART2_IRQn 1 */
 
   /* USER CODE END USART2_LPUART2_IRQn 1 */
@@ -360,19 +360,21 @@ void TIM2_IRQHandler(void)
   /* USER CODE END TIM2_IRQn 1 */
 }
 
+
 /**
-  * @brief This function handles DMA1 channel 1 interrupt.
+  * @brief This function handles DMA1 Ch4 to Ch7, DMA2 Ch1 to Ch5 and DMAMUX1 Overrun Interrupts.
   */
-void DMA1_Channel1_IRQHandler(void)
+void DMA1_Ch4_7_DMA2_Ch1_5_DMAMUX1_OVR_IRQHandler(void)
 {
-  /* USER CODE BEGIN DMA1_Channel1_IRQn 0 */
+  /* USER CODE BEGIN DMA1_Ch4_7_DMA2_Ch1_5_DMAMUX1_OVR_IRQn 0 */
 
-  /* USER CODE END DMA1_Channel1_IRQn 0 */
+  /* USER CODE END DMA1_Ch4_7_DMA2_Ch1_5_DMAMUX1_OVR_IRQn 0 */
   HAL_DMA_IRQHandler(&hdma_spi1_tx);
-  /* USER CODE BEGIN DMA1_Channel1_IRQn 1 */
+  /* USER CODE BEGIN DMA1_Ch4_7_DMA2_Ch1_5_DMAMUX1_OVR_IRQn 1 */
 
-  /* USER CODE END DMA1_Channel1_IRQn 1 */
+  /* USER CODE END DMA1_Ch4_7_DMA2_Ch1_5_DMAMUX1_OVR_IRQn 1 */
 }
+
 
 /**
   * @brief This function handles SPI1/I2S1 Interrupt.

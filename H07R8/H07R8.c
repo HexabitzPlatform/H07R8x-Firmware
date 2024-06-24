@@ -255,6 +255,7 @@ void SystemClock_Config(void)
   }
 }
 
+
 /*-----------------------------------------------------------*/
 
 
@@ -443,31 +444,31 @@ void SetupPortForRemoteBootloaderUpdate(uint8_t port){
  */
 void Module_Peripheral_Init(void){
 
-	 MX_GPIO_Init();
+//	 MX_GPIO_Init();
 	/* Array ports */
-	MX_USART1_UART_Init();
-	MX_USART2_UART_Init();
-	MX_USART3_UART_Init();
-	MX_USART4_UART_Init();
-	MX_USART5_UART_Init();
+//	MX_USART1_UART_Init();
+//	MX_USART2_UART_Init();
+//	MX_USART3_UART_Init();
+//	MX_USART4_UART_Init();
+//	MX_USART5_UART_Init();
 	MX_USART6_UART_Init();
-	MX_I2C2_Init();
-	MX_I2S1_Init();
+//	MX_I2C2_Init();
+//	MX_I2S1_Init();
 	 //Circulating DMA Channels ON All Module
-	for (int i = 1; i <= NumOfPorts; i++) {
-		if (GetUart(i) == &huart1) {
-			index_dma[i - 1] = &(DMA1_Channel1->CNDTR);}
-		else if (GetUart(i) == &huart2) {
-			index_dma[i - 1] = &(DMA1_Channel2->CNDTR);}
-		else if (GetUart(i) == &huart3) {
-			index_dma[i - 1] = &(DMA1_Channel3->CNDTR);}
-		else if (GetUart(i) == &huart4) {
-			index_dma[i - 1] = &(DMA1_Channel4->CNDTR);}
-		else if (GetUart(i) == &huart5) {
-			index_dma[i - 1] = &(DMA1_Channel5->CNDTR);}
-		else if (GetUart(i) == &huart6) {
-			index_dma[i - 1] = &(DMA1_Channel6->CNDTR);}
-	}
+//	for (int i = 1; i <= NumOfPorts; i++) {
+//		if (GetUart(i) == &huart1) {
+//			index_dma[i - 1] = &(DMA1_Channel1->CNDTR);}
+//		else if (GetUart(i) == &huart2) {
+//			index_dma[i - 1] = &(DMA1_Channel2->CNDTR);}
+//		else if (GetUart(i) == &huart3) {
+//			index_dma[i - 1] = &(DMA1_Channel3->CNDTR);}
+//		else if (GetUart(i) == &huart4) {
+//			index_dma[i - 1] = &(DMA1_Channel4->CNDTR);}
+//		else if (GetUart(i) == &huart5) {
+//			index_dma[i - 1] = &(DMA1_Channel5->CNDTR);}
+//		else if (GetUart(i) == &huart6) {
+//			index_dma[i - 1] = &(DMA1_Channel6->CNDTR);}
+//	}
 
 
 }
@@ -542,8 +543,8 @@ uint8_t GetPort(UART_HandleTypeDef *huart){
 		return P4;
 	else if(huart->Instance == USART5)
 		return P5;
-	else if(huart->Instance == USART6)
-		return P6;
+//	else if(huart->Instance == USART6)
+//		return P6;
 	return 0;
 }
 
@@ -611,9 +612,9 @@ Module_Status CodecInit(Codec_DAC_Gain dacGain, Left_Right_AUDIO_GAIN rPlaybackV
 
 Module_Status CodecStreamDataStart(void)
 {
-	if(HAL_OK != HAL_UART_Receive_IT(&huart1, &rx[0], BUFFER_FULL_SIZE))
+	if(HAL_OK != HAL_UART_Receive_IT(&huart6, &rx[0], BUFFER_FULL_SIZE))
 		return H07R8_ERROR;
-	if(HAL_OK != HAL_UART_Transmit(&huart1, &dataFlag, 1, 2000))
+	if(HAL_OK != HAL_UART_Transmit(&huart6, &dataFlag, 1, 2000))
 		return H07R8_ERROR;
 	dataFlag=1;
 }
@@ -630,7 +631,7 @@ Module_Status CodecStreamDataStop(void)
 	oneTime = 1;
 	if(HAL_OK != HAL_I2S_DMAStop(&hi2s1))
 		return H07R8_ERROR;
-	if(HAL_OK != HAL_UART_AbortReceive(&huart1))
+	if(HAL_OK != HAL_UART_AbortReceive(&huart6))
 		return H07R8_ERROR;
 }
 /**********************************************************************************************/
