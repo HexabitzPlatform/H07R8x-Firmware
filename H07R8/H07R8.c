@@ -22,7 +22,7 @@ UART_HandleTypeDef huart2;
 UART_HandleTypeDef huart3;
 UART_HandleTypeDef huart4;
 UART_HandleTypeDef huart5;
-//UART_HandleTypeDef huart6;
+UART_HandleTypeDef huart6;
 
 /* Exported variables */
 extern FLASH_ProcessTypeDef pFlash;
@@ -450,20 +450,25 @@ void Module_Peripheral_Init(void){
 	MX_USART3_UART_Init();
 	MX_USART4_UART_Init();
 	MX_USART5_UART_Init();
+	MX_USART6_UART_Init();
 	MX_I2C2_Init();
 	MX_I2S1_Init();
 	 //Circulating DMA Channels ON All Module
-	for (int i = 2; i <= NumOfPorts; i++) {
-		if (GetUart(i) == &huart2) {
-			index_dma[i - 1] = &(DMA1_Channel2->CNDTR);
-		} else if (GetUart(i) == &huart3) {
-			index_dma[i - 1] = &(DMA1_Channel3->CNDTR);
-		} else if (GetUart(i) == &huart4) {
-			index_dma[i - 1] = &(DMA1_Channel5->CNDTR);
-		} else if (GetUart(i) == &huart5) {
-			index_dma[i - 1] = &(DMA1_Channel4->CNDTR);
-		}
+	for (int i = 1; i <= NumOfPorts; i++) {
+		if (GetUart(i) == &huart1) {
+			index_dma[i - 1] = &(DMA1_Channel1->CNDTR);}
+		else if (GetUart(i) == &huart2) {
+			index_dma[i - 1] = &(DMA1_Channel2->CNDTR);}
+		else if (GetUart(i) == &huart3) {
+			index_dma[i - 1] = &(DMA1_Channel3->CNDTR);}
+		else if (GetUart(i) == &huart4) {
+			index_dma[i - 1] = &(DMA1_Channel4->CNDTR);}
+		else if (GetUart(i) == &huart5) {
+			index_dma[i - 1] = &(DMA1_Channel5->CNDTR);}
+		else if (GetUart(i) == &huart6) {
+			index_dma[i - 1] = &(DMA1_Channel6->CNDTR);}
 	}
+
 
 }
 
@@ -478,12 +483,12 @@ Module_Status Module_MessagingTask(uint16_t code,uint8_t port,uint8_t src,uint8_
 		case(CODE_H07R8_CODEC_INIT):
 				CodecInit(cMessage[port-1][shift],cMessage[port-1][shift+1],cMessage[port-1][shift+2]);
 				break;
-		case(CODE_H07R8_CODEC_STREAM_START):
-				CodecStreamDataStart();
-				break;
-		case(CODE_H07R8_CODEC_STREAM_STOP):
-				CodecStreamDataStop();
-				break;
+//		case(CODE_H07R8_CODEC_STREAM_START):
+//				CodecStreamDataStart();
+//				break;
+//		case(CODE_H07R8_CODEC_STREAM_STOP):
+//				CodecStreamDataStop();
+//				break;
 		case(CODE_H07R8_CODEC_DAC_GAIN):
 				CodecDAC_Gain(cMessage[port-1][shift]);
 				break;
@@ -527,8 +532,9 @@ Module_Status Module_MessagingTask(uint16_t code,uint8_t port,uint8_t src,uint8_
 /* --- Get the port for a given UART. 
  */
 uint8_t GetPort(UART_HandleTypeDef *huart){
-
-	if(huart->Instance == USART2)
+	if(huart->Instance == USART1)
+		return P1;
+	else if(huart->Instance == USART2)
 		return P2;
 	else if(huart->Instance == USART3)
 		return P3;
@@ -536,7 +542,8 @@ uint8_t GetPort(UART_HandleTypeDef *huart){
 		return P4;
 	else if(huart->Instance == USART5)
 		return P5;
-	
+	else if(huart->Instance == USART6)
+		return P6;
 	return 0;
 }
 

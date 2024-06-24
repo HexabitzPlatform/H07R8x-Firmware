@@ -151,24 +151,24 @@ typedef enum{
 
 
 /* Port-related definitions */
-#define	NumOfPorts			4
+#define	NumOfPorts			6
 
 #define P_PROG 				P2						/* ST factory bootloader UART */
 
 /* Define available ports */
-//#define _P1
+#define _P1
 #define _P2 
 #define _P3 
 #define _P4 
 #define _P5 
-
+#define _P6
 /* Define available USARTs */
 #define _Usart1 1
 #define _Usart2 1
 #define _Usart3 1
 #define _Usart4 1
 #define _Usart5 1
-//#define _Usart6	1
+#define _Usart6	1
 
 
 /* Port-UART mapping */
@@ -177,8 +177,8 @@ typedef enum{
 #define P3uart &huart3
 #define P4uart &huart4
 #define P5uart &huart5
-
-
+#define P5uart &huart5
+#define P6uart &huart6
 
 /* Port Definitions */
 #define	USART1_TX_PIN		GPIO_PIN_9
@@ -296,7 +296,7 @@ extern UART_HandleTypeDef huart2;
 extern UART_HandleTypeDef huart3;
 extern UART_HandleTypeDef huart4;
 extern UART_HandleTypeDef huart5;
-
+extern UART_HandleTypeDef huart6;
 extern uint8_t oneTime;
 //extern UART_HandleTypeDef huart6;
 

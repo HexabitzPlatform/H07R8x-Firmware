@@ -224,7 +224,7 @@ void MX_GPIO_Init(void)
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, AMP_FS2_Pin|AMP_FS1_Pin|AMP_GAIN2_Pin|AMP_GAIN1_Pin
-                          |AMP_SHUTDOWN_Pin|GPIO_PIN_8|GPIO_PIN_9, GPIO_PIN_RESET);
+                          |AMP_SHUTDOWN_Pin/*|GPIO_PIN_8|GPIO_PIN_9*/, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : CODEC_IRQN_OUT_Pin */
   GPIO_InitStruct.Pin = CODEC_IRQN_OUT_Pin;
@@ -242,7 +242,7 @@ void MX_GPIO_Init(void)
   /*Configure GPIO pins : AMP_FS2_Pin AMP_FS1_Pin AMP_GAIN2_Pin AMP_GAIN1_Pin
                            AMP_SHUTDOWN_Pin PB8 PB9 */
   GPIO_InitStruct.Pin = AMP_FS2_Pin|AMP_FS1_Pin|AMP_GAIN2_Pin|AMP_GAIN1_Pin
-                          |AMP_SHUTDOWN_Pin|GPIO_PIN_8|GPIO_PIN_9;
+                          |AMP_SHUTDOWN_Pin/*|GPIO_PIN_8|GPIO_PIN_9*/;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
