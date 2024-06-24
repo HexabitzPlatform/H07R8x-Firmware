@@ -147,22 +147,22 @@ void MX_USART6_UART_Init(void){
 	huart6.Init.OverSampling = UART_OVERSAMPLING_16;
 	huart6.Init.OneBitSampling = UART_ONEBIT_SAMPLING_DISABLED;
 	huart6.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
-//	  if (HAL_UART_Init(&huart2) != HAL_OK)
-//	  {
-//		Error_Handler();
-//	  }
-//	  if (HAL_UARTEx_SetTxFifoThreshold(&huart2, UART_TXFIFO_THRESHOLD_1_8) != HAL_OK)
-//	  {
-//		Error_Handler();
-//	  }
-//	  if (HAL_UARTEx_SetRxFifoThreshold(&huart2, UART_RXFIFO_THRESHOLD_1_8) != HAL_OK)
-//	  {
-//		Error_Handler();
-//	  }
-//	  if (HAL_UARTEx_EnableFifoMode(&huart2) != HAL_OK)
-//	  {
-//		Error_Handler();
-//	  }
+	  if (HAL_UART_Init(&huart6) != HAL_OK)
+	  {
+		Error_Handler();
+	  }
+	  if (HAL_UARTEx_SetTxFifoThreshold(&huart2, UART_TXFIFO_THRESHOLD_1_8) != HAL_OK)
+	  {
+		Error_Handler();
+	  }
+	  if (HAL_UARTEx_SetRxFifoThreshold(&huart2, UART_RXFIFO_THRESHOLD_1_8) != HAL_OK)
+	  {
+		Error_Handler();
+	  }
+	  if (HAL_UARTEx_EnableFifoMode(&huart2) != HAL_OK)
+	  {
+		Error_Handler();
+	  }
 #if _P1pol_reversed
 	huart6.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_SWAP_INIT;
 	huart6.AdvancedInit.Swap = UART_ADVFEATURE_SWAP_ENABLE;
