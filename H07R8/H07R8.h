@@ -151,7 +151,7 @@ typedef enum{
 
 
 /* Port-related definitions */
-#define	NumOfPorts			6
+#define	NumOfPorts			5
 
 #define P_PROG 				P2						/* ST factory bootloader UART */
 
@@ -161,7 +161,7 @@ typedef enum{
 #define _P3 
 #define _P4 
 #define _P5 
-#define _P6
+//#define _P6
 /* Define available USARTs */
 #define _Usart1 1
 #define _Usart2 1

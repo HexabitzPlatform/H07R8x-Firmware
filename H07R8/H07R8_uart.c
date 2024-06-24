@@ -151,15 +151,15 @@ void MX_USART6_UART_Init(void){
 	  {
 		Error_Handler();
 	  }
-	  if (HAL_UARTEx_SetTxFifoThreshold(&huart2, UART_TXFIFO_THRESHOLD_1_8) != HAL_OK)
+	  if (HAL_UARTEx_SetTxFifoThreshold(&huart6, UART_TXFIFO_THRESHOLD_1_8) != HAL_OK)
 	  {
 		Error_Handler();
 	  }
-	  if (HAL_UARTEx_SetRxFifoThreshold(&huart2, UART_RXFIFO_THRESHOLD_1_8) != HAL_OK)
+	  if (HAL_UARTEx_SetRxFifoThreshold(&huart6, UART_RXFIFO_THRESHOLD_1_8) != HAL_OK)
 	  {
 		Error_Handler();
 	  }
-	  if (HAL_UARTEx_EnableFifoMode(&huart2) != HAL_OK)
+	  if (HAL_UARTEx_EnableFifoMode(&huart6) != HAL_OK)
 	  {
 		Error_Handler();
 	  }
@@ -420,20 +420,20 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart){
 		GPIO_InitStruct.Alternate = USART6_AF;
 		HAL_GPIO_Init(USART6_RX_PORT,&GPIO_InitStruct);
 
-	    /* USART6 DMA Init */
-	    /* USART6_RX Init */
-	    hdma_usart6_rx.Instance = DMA1_Channel6;
-	    hdma_usart6_rx.Init.Request = DMA_REQUEST_USART6_RX;
-	    hdma_usart6_rx.Init.Direction = DMA_PERIPH_TO_MEMORY;
-	    hdma_usart6_rx.Init.PeriphInc = DMA_PINC_DISABLE;
-	    hdma_usart6_rx.Init.MemInc = DMA_MINC_ENABLE;
-	    hdma_usart6_rx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
-	    hdma_usart6_rx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
-	    hdma_usart6_rx.Init.Mode = DMA_CIRCULAR;
-	    hdma_usart6_rx.Init.Priority = DMA_PRIORITY_LOW;
-	    HAL_DMA_Init(&hdma_usart6_rx);
-
-	    __HAL_LINKDMA(huart,hdmarx,hdma_usart6_rx);
+//	    /* USART6 DMA Init */
+//	    /* USART6_RX Init */
+//	    hdma_usart6_rx.Instance = DMA1_Channel6;
+//	    hdma_usart6_rx.Init.Request = DMA_REQUEST_USART6_RX;
+//	    hdma_usart6_rx.Init.Direction = DMA_PERIPH_TO_MEMORY;
+//	    hdma_usart6_rx.Init.PeriphInc = DMA_PINC_DISABLE;
+//	    hdma_usart6_rx.Init.MemInc = DMA_MINC_ENABLE;
+//	    hdma_usart6_rx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
+//	    hdma_usart6_rx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
+//	    hdma_usart6_rx.Init.Mode = DMA_CIRCULAR;
+//	    hdma_usart6_rx.Init.Priority = DMA_PRIORITY_LOW;
+//	    HAL_DMA_Init(&hdma_usart6_rx);
+//
+//	    __HAL_LINKDMA(huart,hdmarx,hdma_usart6_rx);
 
 	    /* USART6 interrupt Init */
 	    HAL_NVIC_SetPriority(USART3_4_5_6_LPUART1_IRQn, 0, 0);
