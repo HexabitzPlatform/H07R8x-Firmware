@@ -20,8 +20,9 @@
 UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
 UART_HandleTypeDef huart3;
+UART_HandleTypeDef huart4;
 UART_HandleTypeDef huart5;
-UART_HandleTypeDef huart6;
+//UART_HandleTypeDef huart6;
 
 /* Exported variables */
 extern FLASH_ProcessTypeDef pFlash;
@@ -40,11 +41,12 @@ uint8_t rx[BUFFER_FULL_SIZE]={0};
 uint8_t dataFlag = 2;
 /* Private function prototypes -----------------------------------------------*/
 void ExecuteMonitor(void);
-static Module_Status AmpInit(void);
 
 /* Create CLI commands --------------------------------------------------------*/
 
 portBASE_TYPE CLI_CodecInitCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
+portBASE_TYPE CLI_CodecStreamStartCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
+portBASE_TYPE CLI_CodecStreamStopCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
 portBASE_TYPE CLI_CodecDAC_GainCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
 portBASE_TYPE CLI_CodecAudioLevelCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
 portBASE_TYPE CLI_CodecAudioMuteCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
@@ -63,6 +65,22 @@ const CLI_Command_Definition_t CLI_CodecInitDefinition =
 			"left audio level : set this value from 0 even 28.\r\n\r\n",
 	CLI_CodecInitCommand, /* The function to run. */
 	3 /* three parameters are expected. */
+};
+
+const CLI_Command_Definition_t CLI_CodecStreamStartDefinition =
+{
+	( const int8_t * ) "streamstart", /* The command string to type. */
+	( const int8_t * ) "streamstart:\r\n digital audio data will be requested from SD Card module or another module has audio data. When the module starts up, start stream will be called automatically.\r\n ",
+	CLI_CodecStreamStartCommand, /* The function to run. */
+	0 /* three parameters are expected. */
+};
+
+const CLI_Command_Definition_t CLI_CodecStreamStopDefinition =
+{
+	( const int8_t * ) "streamstop", /* The command string to type. */
+	( const int8_t * ) "streamstop:\r\n digital audio data will be stop from SD Card module or another module has audio data.\r\n ",
+	CLI_CodecStreamStopCommand, /* The function to run. */
+	0 /* three parameters are expected. */
 };
 
 const CLI_Command_Definition_t CLI_CodecDAC_GainDefinition =
@@ -131,64 +149,110 @@ const CLI_Command_Definition_t CLI_AmpShoutdownDefinition =
  -------------------------------------------------------------------------
  */
 
+///**
+// * @brief  System Clock Configuration
+// *         The system Clock is configured as follow :
+// *            System Clock source            = PLL (HSE)
+// *            SYSCLK(Hz)                     = 48000000
+// *            HCLK(Hz)                       = 48000000
+// *            AHB Prescaler                  = 1
+// *            APB1 Prescaler                 = 1
+// *            HSE Frequency(Hz)              = 8000000
+// *            PREDIV                         = 1
+// *            PLLMUL                         = 6
+// *            Flash Latency(WS)              = 1
+// * @param  None
+// * @retval None
+// */
+//void SystemClock_Config(void){
+//	  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+//	  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+//	  RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
+//
+//	  /** Configure the main internal regulator output voltage
+//	  */
+//	  HAL_PWREx_ControlVoltageScaling(PWR_REGULATOR_VOLTAGE_SCALE1);
+//	  /** Initializes the RCC Oscillators according to the specified parameters
+//	  * in the RCC_OscInitTypeDef structure.
+//	  */
+//	  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI|RCC_OSCILLATORTYPE_HSE;
+//	  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+//	  RCC_OscInitStruct.LSIState = RCC_LSI_ON;
+//	  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+//	  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+//	  RCC_OscInitStruct.PLL.PLLM = RCC_PLLM_DIV1;
+//	  RCC_OscInitStruct.PLL.PLLN = 12;
+//	  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
+//	  RCC_OscInitStruct.PLL.PLLQ = RCC_PLLQ_DIV2;
+//	  RCC_OscInitStruct.PLL.PLLR = RCC_PLLR_DIV2;
+//	  HAL_RCC_OscConfig(&RCC_OscInitStruct);
+//
+//	  /** Initializes the CPU, AHB and APB buses clocks
+//	  */
+//	  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
+//	                              |RCC_CLOCKTYPE_PCLK1;
+//	  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+//	  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+//	  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
+//
+//	  HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1);
+//
+//	  /** Initializes the peripherals clocks
+//	  */
+//	  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_RTC|RCC_PERIPHCLK_USART2;
+//	  PeriphClkInit.Usart2ClockSelection = RCC_USART2CLKSOURCE_PCLK1;
+//	  PeriphClkInit.RTCClockSelection = RCC_RTCCLKSOURCE_LSI;
+//	  HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit);
+//
+//
+//	  HAL_NVIC_SetPriority(SysTick_IRQn,0,0);
+//
+//}
+
 /**
- * @brief  System Clock Configuration
- *         The system Clock is configured as follow : 
- *            System Clock source            = PLL (HSE)
- *            SYSCLK(Hz)                     = 48000000
- *            HCLK(Hz)                       = 48000000
- *            AHB Prescaler                  = 1
- *            APB1 Prescaler                 = 1
- *            HSE Frequency(Hz)              = 8000000
- *            PREDIV                         = 1
- *            PLLMUL                         = 6
- *            Flash Latency(WS)              = 1
- * @param  None
- * @retval None
- */
-void SystemClock_Config(void){
-	  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
-	  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
-	  RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
+  * @brief System Clock Configuration
+  * @retval None
+  */
+void SystemClock_Config(void)
+{
+  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
 
-	  /** Configure the main internal regulator output voltage
-	  */
-	  HAL_PWREx_ControlVoltageScaling(PWR_REGULATOR_VOLTAGE_SCALE1);
-	  /** Initializes the RCC Oscillators according to the specified parameters
-	  * in the RCC_OscInitTypeDef structure.
-	  */
-	  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI|RCC_OSCILLATORTYPE_HSE;
-	  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
-	  RCC_OscInitStruct.LSIState = RCC_LSI_ON;
-	  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-	  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-	  RCC_OscInitStruct.PLL.PLLM = RCC_PLLM_DIV1;
-	  RCC_OscInitStruct.PLL.PLLN = 12;
-	  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
-	  RCC_OscInitStruct.PLL.PLLQ = RCC_PLLQ_DIV2;
-	  RCC_OscInitStruct.PLL.PLLR = RCC_PLLR_DIV2;
-	  HAL_RCC_OscConfig(&RCC_OscInitStruct);
+  /** Configure the main internal regulator output voltage
+  */
+  HAL_PWREx_ControlVoltageScaling(PWR_REGULATOR_VOLTAGE_SCALE1);
 
-	  /** Initializes the CPU, AHB and APB buses clocks
-	  */
-	  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
-	                              |RCC_CLOCKTYPE_PCLK1;
-	  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
-	  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-	  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
+  /** Initializes the RCC Oscillators according to the specified parameters
+  * in the RCC_OscInitTypeDef structure.
+  */
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+  RCC_OscInitStruct.HSIDiv = RCC_HSI_DIV1;
+  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
+  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
+  RCC_OscInitStruct.PLL.PLLM = RCC_PLLM_DIV4;
+  RCC_OscInitStruct.PLL.PLLN = 45;
+  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV4;
+  RCC_OscInitStruct.PLL.PLLQ = RCC_PLLQ_DIV2;
+  RCC_OscInitStruct.PLL.PLLR = RCC_PLLR_DIV4;
+  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+  {
+    Error_Handler();
+  }
 
-	  HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1);
+  /** Initializes the CPU, AHB and APB buses clocks
+  */
+  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
+                              |RCC_CLOCKTYPE_PCLK1;
+  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
 
-	  /** Initializes the peripherals clocks
-	  */
-	  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_RTC|RCC_PERIPHCLK_USART2;
-	  PeriphClkInit.Usart2ClockSelection = RCC_USART2CLKSOURCE_PCLK1;
-	  PeriphClkInit.RTCClockSelection = RCC_RTCCLKSOURCE_LSI;
-	  HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit);
-
-
-	  HAL_NVIC_SetPriority(SysTick_IRQn,0,0);
-	
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK)
+  {
+    Error_Handler();
+  }
 }
 
 /*-----------------------------------------------------------*/
@@ -374,34 +438,30 @@ void SetupPortForRemoteBootloaderUpdate(uint8_t port){
 	__HAL_UART_ENABLE_IT(huart,UART_IT_RXNE);
 }
 
+
 /* --- H07R8 module initialization.
  */
 void Module_Peripheral_Init(void){
 
-	 __HAL_RCC_GPIOB_CLK_ENABLE();
-	 __HAL_RCC_GPIOA_CLK_ENABLE();
-
+	 MX_GPIO_Init();
 	/* Array ports */
 	MX_USART1_UART_Init();
 	MX_USART2_UART_Init();
 	MX_USART3_UART_Init();
+	MX_USART4_UART_Init();
 	MX_USART5_UART_Init();
-	MX_USART6_UART_Init();
 	MX_I2C2_Init();
 	MX_I2S1_Init();
-
 	 //Circulating DMA Channels ON All Module
-	for (int i = 1; i <= NumOfPorts; i++) {
-		if (GetUart(i) == &huart1) {
-			index_dma[i - 1] = &(DMA1_Channel1->CNDTR);
-		} else if (GetUart(i) == &huart2) {
+	for (int i = 2; i <= NumOfPorts; i++) {
+		if (GetUart(i) == &huart2) {
 			index_dma[i - 1] = &(DMA1_Channel2->CNDTR);
 		} else if (GetUart(i) == &huart3) {
 			index_dma[i - 1] = &(DMA1_Channel3->CNDTR);
+		} else if (GetUart(i) == &huart4) {
+			index_dma[i - 1] = &(DMA1_Channel5->CNDTR);
 		} else if (GetUart(i) == &huart5) {
 			index_dma[i - 1] = &(DMA1_Channel4->CNDTR);
-		} else if (GetUart(i) == &huart6) {
-			index_dma[i - 1] = &(DMA1_Channel5->CNDTR);
 		}
 	}
 
@@ -417,6 +477,12 @@ Module_Status Module_MessagingTask(uint16_t code,uint8_t port,uint8_t src,uint8_
 	switch(code){
 		case(CODE_H07R8_CODEC_INIT):
 				CodecInit(cMessage[port-1][shift],cMessage[port-1][shift+1],cMessage[port-1][shift+2]);
+				break;
+		case(CODE_H07R8_CODEC_STREAM_START):
+				CodecStreamDataStart();
+				break;
+		case(CODE_H07R8_CODEC_STREAM_STOP):
+				CodecStreamDataStop();
 				break;
 		case(CODE_H07R8_CODEC_DAC_GAIN):
 				CodecDAC_Gain(cMessage[port-1][shift]);
@@ -462,13 +528,11 @@ Module_Status Module_MessagingTask(uint16_t code,uint8_t port,uint8_t src,uint8_
  */
 uint8_t GetPort(UART_HandleTypeDef *huart){
 
-	if(huart->Instance == USART6)
-		return P1;
-	else if(huart->Instance == USART2)
+	if(huart->Instance == USART2)
 		return P2;
 	else if(huart->Instance == USART3)
 		return P3;
-	else if(huart->Instance == USART1)
+	else if(huart->Instance == USART4)
 		return P4;
 	else if(huart->Instance == USART5)
 		return P5;
@@ -483,6 +547,8 @@ uint8_t GetPort(UART_HandleTypeDef *huart){
 void RegisterModuleCLICommands(void){
 
 	FreeRTOS_CLIRegisterCommand(&CLI_CodecInitDefinition);
+	FreeRTOS_CLIRegisterCommand(&CLI_CodecStreamStartDefinition);
+	FreeRTOS_CLIRegisterCommand(&CLI_CodecStreamStopDefinition);
 	FreeRTOS_CLIRegisterCommand(&CLI_CodecDAC_GainDefinition);
 	FreeRTOS_CLIRegisterCommand(&CLI_CodecAudioLevelDefinition);
 	FreeRTOS_CLIRegisterCommand(&CLI_CodecAudioMuteDefinition);
@@ -528,6 +594,8 @@ Module_Status CodecInit(Codec_DAC_Gain dacGain, Left_Right_AUDIO_GAIN rPlaybackV
 	return Status;
 }
 
+/**********************************************************************************************/
+
 /* Codec Stream Data Start */
 /*
  * @brief  :when call this API the digital audio data will be requested from SD Card module or another module has audio data.
@@ -541,6 +609,22 @@ Module_Status CodecStreamDataStart(void)
 	if(HAL_OK != HAL_UART_Transmit(&huart1, &dataFlag, 1, 2000))
 		return H07R8_ERROR;
 	dataFlag=1;
+}
+/**********************************************************************************************/
+
+/* Codec Stream Data Stop */
+/*
+ * @brief  :when call this API the digital audio data will be stop from SD Card module or another module has audio data.
+ * @retval :Status
+ */
+
+Module_Status CodecStreamDataStop(void)
+{
+	oneTime = 1;
+	if(HAL_OK != HAL_I2S_DMAStop(&hi2s1))
+		return H07R8_ERROR;
+	if(HAL_OK != HAL_UART_AbortReceive(&huart1))
+		return H07R8_ERROR;
 }
 /**********************************************************************************************/
 
@@ -620,11 +704,11 @@ Module_Status CodecShutdown(Codec_Shutdown shtdown)
  * @retval :Status
  */
 
-static Module_Status AmpInit(void)
+Module_Status AmpInit(Amplifier_Switching_Modes switchMode, Amplifier_Gain gain)
 {
 	Module_Status Status = H07R8_OK;
 
-	if(MAX9704_AmpInit(SWITCHING_MODE_670KHZ, GAIN_MODE_13dB) != AMP_OK)
+	if(MAX9704_AmpInit(switchMode, gain) != AMP_OK)
 		return H07R8_ERROR;
 
 	return Status;
@@ -737,6 +821,56 @@ portBASE_TYPE CLI_CodecInitCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLe
 		leftPlaybackVol = atoi(pLeftPlaybackVolStr);
 
 		status =  CodecInit(dacGain, rightPlaybackVol, leftPlaybackVol);
+
+	 if(status == H07R8_OK)
+	 {
+			 sprintf((char* )pcWriteBuffer,(char* )pcOKMessage);
+
+	 }
+
+	 else if(status == H07R8_ERROR)
+			strcpy((char* )pcWriteBuffer,(char* )pcErrorsMessage);
+
+
+	return pdFALSE;
+
+}
+
+portBASE_TYPE CLI_CodecStreamStartCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
+	Module_Status status = H07R8_OK;
+	static const int8_t *pcOKMessage=(int8_t* )"Ok\n\r";
+	static const int8_t *pcErrorsMessage =(int8_t* )"Error!\n\r";
+
+
+		(void )xWriteBufferLen;
+		configASSERT(pcWriteBuffer);
+
+		status =  CodecStreamDataStart();
+
+	 if(status == H07R8_OK)
+	 {
+			 sprintf((char* )pcWriteBuffer,(char* )pcOKMessage);
+
+	 }
+
+	 else if(status == H07R8_ERROR)
+			strcpy((char* )pcWriteBuffer,(char* )pcErrorsMessage);
+
+
+	return pdFALSE;
+
+}
+
+portBASE_TYPE CLI_CodecStreamStopCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
+	Module_Status status = H07R8_OK;
+	static const int8_t *pcOKMessage=(int8_t* )"Ok\n\r";
+	static const int8_t *pcErrorsMessage =(int8_t* )"Error!\n\r";
+
+
+		(void )xWriteBufferLen;
+		configASSERT(pcWriteBuffer);
+
+		status =  CodecStreamDataStop();
 
 	 if(status == H07R8_OK)
 	 {

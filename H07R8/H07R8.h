@@ -122,6 +122,13 @@ typedef enum
 } Codec_Audio_Mute;
 
 typedef enum{
+	AMP_SWITCHING_MODE_670KHZ = 0,
+	AMP_SWITCHING_MODE_940KHZ,
+	AMP_SWITCHING_MODE_470KHZ,
+	AMP_SWITCHING_MODE_AROUND_670KHZ
+}Amplifier_Switching_Modes;
+
+typedef enum{
 	AMP_GAIN_MODE_0db = 0,
 	AMP_GAIN_MODE_13dB,
 	AMP_GAIN_MODE_16dB,
@@ -144,12 +151,12 @@ typedef enum{
 
 
 /* Port-related definitions */
-#define	NumOfPorts			5
+#define	NumOfPorts			4
 
 #define P_PROG 				P2						/* ST factory bootloader UART */
 
 /* Define available ports */
-#define _P1 
+//#define _P1
 #define _P2 
 #define _P3 
 #define _P4 
@@ -159,15 +166,16 @@ typedef enum{
 #define _Usart1 1
 #define _Usart2 1
 #define _Usart3 1
+#define _Usart4 1
 #define _Usart5 1
-#define _Usart6	1
+//#define _Usart6	1
 
 
 /* Port-UART mapping */
-#define P1uart &huart6
+#define P1uart &huart1
 #define P2uart &huart2
 #define P3uart &huart3
-#define P4uart &huart1
+#define P4uart &huart4
 #define P5uart &huart5
 
 
@@ -190,6 +198,12 @@ typedef enum{
 #define	USART3_TX_PORT		GPIOB
 #define	USART3_RX_PORT		GPIOB
 #define	USART3_AF			GPIO_AF4_USART3
+
+#define	USART4_TX_PIN		GPIO_PIN_0
+#define	USART4_RX_PIN		GPIO_PIN_1
+#define	USART4_TX_PORT		GPIOA
+#define	USART4_RX_PORT		GPIOA
+#define	USART4_AF			GPIO_AF4_USART4
 
 #define	USART5_TX_PIN		GPIO_PIN_3
 #define	USART5_RX_PIN		GPIO_PIN_2
@@ -280,13 +294,17 @@ typedef enum{
 extern UART_HandleTypeDef huart1;
 extern UART_HandleTypeDef huart2;
 extern UART_HandleTypeDef huart3;
+extern UART_HandleTypeDef huart4;
 extern UART_HandleTypeDef huart5;
-extern UART_HandleTypeDef huart6;
+
+extern uint8_t oneTime;
+//extern UART_HandleTypeDef huart6;
 
 /* Define UART Init prototypes */
 extern void MX_USART1_UART_Init(void);
 extern void MX_USART2_UART_Init(void);
 extern void MX_USART3_UART_Init(void);
+extern void MX_USART4_UART_Init(void);
 extern void MX_USART5_UART_Init(void);
 extern void MX_USART6_UART_Init(void);
 extern void SystemClock_Config(void);
@@ -301,10 +319,12 @@ void SetupPortForRemoteBootloaderUpdate(uint8_t port);
 void remoteBootloaderUpdate(uint8_t src,uint8_t dst,uint8_t inport,uint8_t outport);
 Module_Status CodecInit(Codec_DAC_Gain dacGain,Left_Right_AUDIO_GAIN rPlaybackVol, Left_Right_AUDIO_GAIN lPlaybackVol);
 Module_Status CodecStreamDataStart(void);
+Module_Status CodecStreamDataStop(void);
 Module_Status CodecDAC_Gain(Codec_DAC_Gain gain);
 Module_Status CodecAudioLevel(Left_Right_Channel channel, Left_Right_AUDIO_GAIN rPlaybackVol, Left_Right_AUDIO_GAIN lPlaybackVol);
 Module_Status CodecAudioMute(Codec_Audio_Mute audioMute);
 Module_Status CodecShutdown(Codec_Shutdown shtdown);
+Module_Status AmpInit(Amplifier_Switching_Modes switchMode, Amplifier_Gain gain);
 Module_Status AmpGain(Amplifier_Gain gain);
 Module_Status AmpMute(Amplifier_Mute mute);
 Module_Status AmpShutdown(Amplifier_Shutdown mode);
