@@ -483,12 +483,12 @@ Module_Status Module_MessagingTask(uint16_t code,uint8_t port,uint8_t src,uint8_
 		case(CODE_H07R8_CODEC_INIT):
 				CodecInit(cMessage[port-1][shift],cMessage[port-1][shift+1],cMessage[port-1][shift+2]);
 				break;
-//		case(CODE_H07R8_CODEC_STREAM_START):
-//				CodecStreamDataStart();
-//				break;
-//		case(CODE_H07R8_CODEC_STREAM_STOP):
-//				CodecStreamDataStop();
-//				break;
+		case(CODE_H07R8_CODEC_STREAM_START):
+				CodecStreamDataStart();
+				break;
+		case(CODE_H07R8_CODEC_STREAM_STOP):
+				CodecStreamDataStop();
+				break;
 		case(CODE_H07R8_CODEC_DAC_GAIN):
 				CodecDAC_Gain(cMessage[port-1][shift]);
 				break;
