@@ -439,7 +439,6 @@ void SetupPortForRemoteBootloaderUpdate(uint8_t port){
 	__HAL_UART_ENABLE_IT(huart,UART_IT_RXNE);
 }
 
-
 /* --- H07R8 module initialization.
  */
 void Module_Peripheral_Init(void){
@@ -455,7 +454,7 @@ void Module_Peripheral_Init(void){
 	MX_I2C2_Init();
 	MX_I2S1_Init();
 //	 Circulating DMA Channels ON All Module
-	for (int i = 1; i <= NumOfPorts; i++) {
+	for (int i = 2; i <= NumOfPorts; i++) {
 		if (GetUart(i) == &huart1) {
 			index_dma[i - 1] = &(DMA1_Channel1->CNDTR);}
 		else if (GetUart(i) == &huart2) {
@@ -533,9 +532,7 @@ Module_Status Module_MessagingTask(uint16_t code,uint8_t port,uint8_t src,uint8_
 /* --- Get the port for a given UART. 
  */
 uint8_t GetPort(UART_HandleTypeDef *huart){
-	if(huart->Instance == USART1)
-		return P1;
-	else if(huart->Instance == USART2)
+	if(huart->Instance == USART2)
 		return P2;
 	else if(huart->Instance == USART3)
 		return P3;
@@ -543,8 +540,8 @@ uint8_t GetPort(UART_HandleTypeDef *huart){
 		return P4;
 	else if(huart->Instance == USART5)
 		return P5;
-//	else if(huart->Instance == USART6)
-//		return P6;
+	else if(huart->Instance == USART6)
+		return P6;
 	return 0;
 }
 
@@ -612,9 +609,9 @@ Module_Status CodecInit(Codec_DAC_Gain dacGain, Left_Right_AUDIO_GAIN rPlaybackV
 
 Module_Status CodecStreamDataStart(void)
 {
-	if(HAL_OK != HAL_UART_Receive_IT(&huart6, &rx[0], BUFFER_FULL_SIZE))
+	if(HAL_OK != HAL_UART_Receive_IT(&huart1, &rx[0], BUFFER_FULL_SIZE))
 		return H07R8_ERROR;
-	if(HAL_OK != HAL_UART_Transmit(&huart6, &dataFlag, 1, 2000))
+	if(HAL_OK != HAL_UART_Transmit(&huart1, &dataFlag, 1, 2000))
 		return H07R8_ERROR;
 	dataFlag=1;
 }

@@ -28,7 +28,7 @@ DMA_HandleTypeDef hdma_usart6_rx;
 #ifdef _Usart1
 void MX_USART1_UART_Init(void){
 	huart1.Instance = USART1;
-	huart1.Init.BaudRate = DEF_ARRAY_BAUDRATE;
+	huart1.Init.BaudRate = 2812000;
 	huart1.Init.WordLength = UART_WORDLENGTH_8B;
 	huart1.Init.StopBits = UART_STOPBITS_1;
 	huart1.Init.Parity = UART_PARITY_NONE;
@@ -38,6 +38,18 @@ void MX_USART1_UART_Init(void){
 	huart1.Init.OneBitSampling = UART_ONEBIT_SAMPLING_DISABLED;
 	huart1.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
 	HAL_UART_Init(&huart1);
+	  if (HAL_UARTEx_SetTxFifoThreshold(&huart1, UART_TXFIFO_THRESHOLD_1_8) != HAL_OK)
+	  {
+	    Error_Handler();
+	  }
+	  if (HAL_UARTEx_SetRxFifoThreshold(&huart1, UART_TXFIFO_THRESHOLD_1_8) != HAL_OK)
+	  {
+	    Error_Handler();
+	  }
+	  if (HAL_UARTEx_EnableFifoMode(&huart1) != HAL_OK)
+	  {
+	    Error_Handler();
+	  }
 #if _P4pol_reversed
 	huart1.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_SWAP_INIT;
 	huart1.AdvancedInit.Swap = UART_ADVFEATURE_SWAP_ENABLE;
@@ -138,7 +150,7 @@ void MX_USART5_UART_Init(void){
 #ifdef _Usart6
 void MX_USART6_UART_Init(void){
 	huart6.Instance = USART6;
-	huart6.Init.BaudRate = 2812000;
+	huart6.Init.BaudRate = DEF_ARRAY_BAUDRATE;
 	huart6.Init.WordLength = UART_WORDLENGTH_8B;
 	huart6.Init.StopBits = UART_STOPBITS_1;
 	huart6.Init.Parity = UART_PARITY_NONE;
@@ -147,22 +159,7 @@ void MX_USART6_UART_Init(void){
 	huart6.Init.OverSampling = UART_OVERSAMPLING_16;
 	huart6.Init.OneBitSampling = UART_ONEBIT_SAMPLING_DISABLED;
 	huart6.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
-	  if (HAL_UART_Init(&huart6) != HAL_OK)
-	  {
-		Error_Handler();
-	  }
-	  if (HAL_UARTEx_SetTxFifoThreshold(&huart6, UART_TXFIFO_THRESHOLD_1_8) != HAL_OK)
-	  {
-		Error_Handler();
-	  }
-	  if (HAL_UARTEx_SetRxFifoThreshold(&huart6, UART_RXFIFO_THRESHOLD_1_8) != HAL_OK)
-	  {
-		Error_Handler();
-	  }
-	  if (HAL_UARTEx_EnableFifoMode(&huart6) != HAL_OK)
-	  {
-		Error_Handler();
-	  }
+	HAL_UART_Init(&huart6);
 #if _P1pol_reversed
 	huart6.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_SWAP_INIT;
 	huart6.AdvancedInit.Swap = UART_ADVFEATURE_SWAP_ENABLE;
@@ -202,22 +199,6 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart){
 		GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
 		GPIO_InitStruct.Alternate = USART1_AF;
 		HAL_GPIO_Init(USART1_RX_PORT,&GPIO_InitStruct);
-
-	    /* USART1 DMA Init */
-	    /* USART1_RX Init */
-	    hdma_usart1_rx.Instance = DMA1_Channel1;
-	    hdma_usart1_rx.Init.Request = DMA_REQUEST_USART1_RX;
-	    hdma_usart1_rx.Init.Direction = DMA_PERIPH_TO_MEMORY;
-	    hdma_usart1_rx.Init.PeriphInc = DMA_PINC_DISABLE;
-	    hdma_usart1_rx.Init.MemInc = DMA_MINC_ENABLE;
-	    hdma_usart1_rx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
-	    hdma_usart1_rx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
-	    hdma_usart1_rx.Init.Mode = DMA_CIRCULAR;
-	    hdma_usart1_rx.Init.Priority = DMA_PRIORITY_LOW;
-	    HAL_DMA_Init(&hdma_usart1_rx);
-
-	    __HAL_LINKDMA(huart,hdmarx,hdma_usart1_rx);
-
 	    /* USART1 interrupt Init */
 	    HAL_NVIC_SetPriority(USART1_IRQn, 0, 0);
 	    HAL_NVIC_EnableIRQ(USART1_IRQn);
@@ -419,6 +400,21 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart){
 		GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
 		GPIO_InitStruct.Alternate = USART6_AF;
 		HAL_GPIO_Init(USART6_RX_PORT,&GPIO_InitStruct);
+
+	    /* USART1 DMA Init */
+	    /* USART1_RX Init */
+	    hdma_usart6_rx.Instance = DMA1_Channel6;
+	    hdma_usart6_rx.Init.Request = DMA_REQUEST_USART6_RX;
+	    hdma_usart6_rx.Init.Direction = DMA_PERIPH_TO_MEMORY;
+	    hdma_usart6_rx.Init.PeriphInc = DMA_PINC_DISABLE;
+	    hdma_usart6_rx.Init.MemInc = DMA_MINC_ENABLE;
+	    hdma_usart6_rx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
+	    hdma_usart6_rx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
+	    hdma_usart6_rx.Init.Mode = DMA_CIRCULAR;
+	    hdma_usart6_rx.Init.Priority = DMA_PRIORITY_LOW;
+	    HAL_DMA_Init(&hdma_usart6_rx);
+
+	    __HAL_LINKDMA(huart,hdmarx,hdma_usart6_rx);
 
 	    /* USART6 interrupt Init */
 	    HAL_NVIC_SetPriority(USART3_4_5_6_LPUART1_IRQn, 0, 0);
@@ -644,7 +640,7 @@ BOS_Status UpdateMyPortsDir(void)
 	BOS_Status result = BOS_OK;
 
 	/* Check port direction */
-	for (uint8_t p=1 ; p<=NumOfPorts ; p++)
+	for (uint8_t p=2 ; p<=NumOfPorts ; p++)
 	{
 		if ( !(arrayPortsDir[myID-1] & (0x8000>>(p-1))) ) {
 			/* Port is normal */

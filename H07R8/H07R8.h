@@ -151,17 +151,17 @@ typedef enum{
 
 
 /* Port-related definitions */
-#define	NumOfPorts			5
+#define	NumOfPorts			6
 
 #define P_PROG 				P2						/* ST factory bootloader UART */
 
 /* Define available ports */
-#define _P1
+//#define _P1
 #define _P2 
 #define _P3 
 #define _P4 
 #define _P5 
-//#define _P6
+#define _P6
 /* Define available USARTs */
 #define _Usart1 1
 #define _Usart2 1

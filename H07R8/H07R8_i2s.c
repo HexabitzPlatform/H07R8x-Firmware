@@ -24,8 +24,6 @@ DMA_HandleTypeDef hdma_spi1_tx;
 void MX_I2S1_Init(void)
 {
 
-  /* USER CODE BEGIN I2S1_Init 0 */
-
   /* USER CODE END I2S1_Init 0 */
 
   /* USER CODE BEGIN I2S1_Init 1 */
@@ -43,13 +41,7 @@ void MX_I2S1_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN I2S1_Init 2 */
-  /* DMA controller clock enable */
-  __HAL_RCC_DMA1_CLK_ENABLE();
 
-  /* DMA interrupt init */
-  /* DMA1_Channel1_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA1_Ch4_7_DMA2_Ch1_5_DMAMUX1_OVR_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(DMA1_Ch4_7_DMA2_Ch1_5_DMAMUX1_OVR_IRQn);
   /* USER CODE END I2S1_Init 2 */
 
 }
@@ -99,7 +91,7 @@ void HAL_I2S_MspInit(I2S_HandleTypeDef* hi2s)
   /* USER CODE BEGIN SPI1_MspInit 1 */
     /* I2S1 DMA Init */
     /* SPI1_TX Init */
-    hdma_spi1_tx.Instance = DMA1_Channel6;
+    hdma_spi1_tx.Instance = DMA1_Channel1;
     hdma_spi1_tx.Init.Request = DMA_REQUEST_SPI1_TX;
     hdma_spi1_tx.Init.Direction = DMA_MEMORY_TO_PERIPH;
     hdma_spi1_tx.Init.PeriphInc = DMA_PINC_DISABLE;
