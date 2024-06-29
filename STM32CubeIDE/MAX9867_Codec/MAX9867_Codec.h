@@ -844,7 +844,7 @@ Codec_Status MAX9867_ClockControlInit(MCLK_Prescaler mclkPresclr, Exact_Integer_
 Codec_Status MAX9867_InterruptEnable(bool clipDetect,bool slewDetect,bool pllUnlock,bool headsetChange);
 Codec_Status MAX9867_Shoutdown(Shoutdown shutdown);
 Codec_Status MAX9867_HeadphoneAmpType(Headphone_Amp_Type ampType);
-Codec_Status MAX9867_DAC_EnableDisable(DAC_En_Dis dac);
+Codec_Status MAX9867_DAC_EnDis(DAC_En_Dis dac);
 Codec_Status MAX9867_DAC_Gain(DAC_Gain firstAmp, DAC_Level_Ctrl progAmp);
 Codec_Status MAX9867_DAC_Mute(DAC_Mute_En_Dis dacMute);
 Codec_Status MAX9867_DigitalAudioInterfaceInit(void);

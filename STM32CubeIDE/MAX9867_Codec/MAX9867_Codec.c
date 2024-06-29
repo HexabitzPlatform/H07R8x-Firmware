@@ -214,7 +214,7 @@ Codec_Status MAX9867_HeadphoneAmpType(Headphone_Amp_Type ampMode)
  * @retval :Status
  */
 
-Codec_Status MAX9867_DAC_EnableDisable(DAC_En_Dis dac)
+Codec_Status MAX9867_DAC_EnDis(DAC_En_Dis dac)
 {
 		powerMangReg.DALEN = dac;
 		powerMangReg.DAREN = dac;
@@ -336,7 +336,7 @@ Codec_Status ReadingDigitalAudioInit(Digital_Audio_Mode audioMode, L_R_Playback_
 	if( CODEC_OK != MAX9867_AudioLevel(channel, rPlaybackVol, lPlaybackVol))
 			return CODEC_ERR;
 	/* Enable DAC */
-	if( CODEC_OK != MAX9867_DAC_EnableDisable(DAC_ENABLE))
+	if( CODEC_OK != MAX9867_DAC_EnDis(DAC_ENABLE))
 			return CODEC_ERR;
 	return CODEC_OK;
 }
