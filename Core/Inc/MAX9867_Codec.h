@@ -832,18 +832,18 @@ Status_TypeDef MAX9867_ClockControlInit(MCLK_Prescaler mclkPresclr, Exact_Intege
 Status_TypeDef MAX9867_InterruptEnable(bool clipDetect,bool slewDetect,bool pllUnlock,bool headsetChange);
 Status_TypeDef MAX9867_Shoutdown(Shoutdown shutdown);
 Status_TypeDef MAX9867_HeadphoneAmpType(Headphone_Amp_Type ampType);
-Status_TypeDef MAX9867_DAC_EnableDisable(DAC_En_Dis dac);
+Status_TypeDef MAX9867_DAC_EnDis(DAC_En_Dis dac);
 Status_TypeDef MAX9867_DAC_Gain(DAC_Gain firstAmp, DAC_Level_Ctrl progAmp);
 Status_TypeDef MAX9867_DAC_Mute(DAC_Mute_En_Dis dacMute);
-Status_TypeDef MAX9867_ADC_EnableDisable(ADC_En_Dis adc);
+Status_TypeDef MAX9867_ADC_EnDis(ADC_En_Dis adc);
 Status_TypeDef MAX9867_ADC_Gain(ADC_L_R adc, L_R_ADC_Level_Ctrl adcGain);
-Status_TypeDef MAX9867_LineInputEnableDisable(L_R_Line_Input_En_Dis lineInput, L_R_Line_Input lrLineInput);
+Status_TypeDef MAX9867_LineInputEnDis(L_R_Line_Input_En_Dis lineInput, L_R_Line_Input lrLineInput);
 Status_TypeDef MAX9867_LineInputGain(L_R_Line_Input lineInput, L_R_Line_Input_Gain lineInputGain);
 Status_TypeDef MAX9867_LineInputMute(L_R_Line_Input lineInput, Line_Input_Mute_En_Dis mute);
 Status_TypeDef MAX9867_AudioMute(Audio_Mute audioMute);
 Status_TypeDef MAX9867_MicAmpGain(L_R_Mic mic, L_R_Mic_Preamp_Gain preAmpGain, L_R_Mic_Programble_Gain_Amp progGain);
-Status_TypeDef MAX9867_MicDigitalClock(Digital_Mic_Clk_Pre clock);
-Status_TypeDef MAX9867_MicDigitalLeftRightEnableDisable(Digital_Mic_Clk_Mode mode);
+Status_TypeDef MAX9867_MicDigitalClk(Digital_Mic_Clk_Pre clock);
+Status_TypeDef MAX9867_MicDigitalLeftRightEnDis(Digital_Mic_Clk_Mode mode);
 Status_TypeDef MAX9867_AuxiliaryInputCapture(Auxiliary_Input_Capture auxCapture);
 Status_TypeDef MAX9867_AuxiliaryInputGainCalibration(Auxiliary_Input_Gain_Calibration auxGain);
 Status_TypeDef MAX9867_AuxiliaryInputOffsetCalibration(Auxiliary_Input_Offset_Calibration auxOffset);
@@ -851,7 +851,7 @@ Status_TypeDef MAX9867_AuxiliaryInputType(Auxiliary_Input_Type auxType);
 Status_TypeDef MAX9867_MicSidetoneSourceAndGain(Digital_Sidetone_Source_Mixer sourceMixer, Sidetone_Gain_Diff_Headphone sidGainDiff,
     Sidetone_Gain_Capacitorless_Single_Ended_Headphone sidGainCapSinEnd, Amp_Type ampType);
 Status_TypeDef MAX9867_DigitalAudioInterfaceInit(void);
-Status_TypeDef MAX9867_JackSensEnableDisable(Jack_Sense_En_Dis jackSens);
+Status_TypeDef MAX9867_JackSensEnDis(Jack_Sense_En_Dis jackSens);
 
 /********************************************************************************USER APIs*****************************************************************************************************************************/
 

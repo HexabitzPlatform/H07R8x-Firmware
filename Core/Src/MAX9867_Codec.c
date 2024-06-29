@@ -221,7 +221,7 @@ Status_TypeDef MAX9867_HeadphoneAmpType(Headphone_Amp_Type ampMode)
  * @retval :Status
  */
 
-Status_TypeDef MAX9867_DAC_EnableDisable(DAC_En_Dis dac)
+Status_TypeDef MAX9867_DAC_EnDis(DAC_En_Dis dac)
 {
 		powerMangReg.DALEN = dac;
 		powerMangReg.DAREN = dac;
@@ -284,7 +284,7 @@ Status_TypeDef MAX9867_DAC_Mute(DAC_Mute_En_Dis dacMute)
  * @retval :Status
  */
 
-Status_TypeDef MAX9867_ADC_EnableDisable(ADC_En_Dis adc)
+Status_TypeDef MAX9867_ADC_EnDis(ADC_En_Dis adc)
 {
 	powerMangReg.ADLEN = adc;
 	powerMangReg.ADREN = adc;
@@ -391,7 +391,7 @@ Status_TypeDef MAX9867_ADC_AduioInputMixer(ADC_L_R lrAdcInput, L_R_ADC_Audio_Inp
  * @retval :Status
  */
 
-Status_TypeDef MAX9867_LineInputEnableDisable(L_R_Line_Input_En_Dis lineInput, L_R_Line_Input lrLineInput)
+Status_TypeDef MAX9867_LineInputEnDis(L_R_Line_Input_En_Dis lineInput, L_R_Line_Input lrLineInput)
 {
 	if(lrLineInput == LEFT_LINE_INPUT)
 	{
@@ -699,7 +699,7 @@ Status_TypeDef MAX9867_MicSidetoneSourceAndGain(Digital_Sidetone_Source_Mixer so
  * @retval :Status
  */
 
-Status_TypeDef MAX9867_MicDigitalClock(Digital_Mic_Clk_Pre clock)
+Status_TypeDef MAX9867_MicDigitalClk(Digital_Mic_Clk_Pre clock)
 {
     digMicClkReg.MICCLK = clock;
 	tDataCodec[0] = MAX9867_REG_MIC;
@@ -733,7 +733,7 @@ Status_TypeDef MAX9867_MicDigitalClock(Digital_Mic_Clk_Pre clock)
  * @retval :Status
  */
 
-Status_TypeDef MAX9867_MicDigitalLeftRightEnableDisable(Digital_Mic_Clk_Mode mode)
+Status_TypeDef MAX9867_MicDigitalLeftRightEnDis(Digital_Mic_Clk_Mode mode)
 {
 	switch(mode)
 	{
@@ -880,7 +880,7 @@ Status_TypeDef MAX9867_AuxiliaryRegRead(uint16_t *aux)
  * @retval :Status
  */
 
-Status_TypeDef MAX9867_JackSensEnableDisable(Jack_Sense_En_Dis jackSens)
+Status_TypeDef MAX9867_JackSensEnDis(Jack_Sense_En_Dis jackSens)
 {
 	configModeReg.JDETEN = jackSens;
 	tDataCodec[0] = MAX9867_REG_MODE;
@@ -937,7 +937,7 @@ Status_TypeDef AudioAmplifyRecordingInit(Line_Input_Mode lineInputMode, L_R_Line
 		if( STATUS_OK != MAX9867_ADC_Gain(adc, adcGain))
 				return STATUS_ERR;
 		/* Enable ADC */
-		if( STATUS_OK != MAX9867_ADC_EnableDisable(ADC_ENABLE))
+		if( STATUS_OK != MAX9867_ADC_EnDis(ADC_ENABLE))
 				return STATUS_ERR;
 	}
 	/* Enable left or right or both of them line-input */
@@ -945,7 +945,7 @@ Status_TypeDef AudioAmplifyRecordingInit(Line_Input_Mode lineInputMode, L_R_Line
 	 * the left line-input signal is routed to
 	 * the left and right ADC input mixer and left and right headphone amplifier
 	 */
-	if( STATUS_OK != MAX9867_LineInputEnableDisable(LINE_INPUT_EN, lrLineInput))
+	if( STATUS_OK != MAX9867_LineInputEnDis(LINE_INPUT_EN, lrLineInput))
 			return STATUS_ERR;
 	return STATUS_OK;
 }
@@ -1030,12 +1030,12 @@ Status_TypeDef VoiceAmplifyRecordingInit(Mic_Mode micMode, L_R_Mic mic,
 		if( STATUS_OK != MAX9867_AudioLevel(channel, rPlaybackVol, lPlaybackVol))
 				return STATUS_ERR;
 		/* Enable DAC */
-		if( STATUS_OK != MAX9867_DAC_EnableDisable(DAC_ENABLE))
+		if( STATUS_OK != MAX9867_DAC_EnDis(DAC_ENABLE))
 				return STATUS_ERR;
 
 	}
 	/* Enable ADC */
-	if( STATUS_OK != MAX9867_ADC_EnableDisable(ADC_ENABLE))
+	if( STATUS_OK != MAX9867_ADC_EnDis(ADC_ENABLE))
 			return STATUS_ERR;
 	return STATUS_OK;
 }
@@ -1108,7 +1108,7 @@ Status_TypeDef ReadingDigitalAudioInit(Digital_Audio_Mode audioMode, L_R_Playbac
 	if( STATUS_OK != MAX9867_AudioLevel(channel, rPlaybackVol, lPlaybackVol))
 			return STATUS_ERR;
 	/* Enable DAC */
-	if( STATUS_OK != MAX9867_DAC_EnableDisable(DAC_ENABLE))
+	if( STATUS_OK != MAX9867_DAC_EnDis(DAC_ENABLE))
 			return STATUS_ERR;
 	return STATUS_OK;
 }
@@ -1128,9 +1128,9 @@ Status_TypeDef DcMeasurementInit(uint16_t *calibrationFactor)
 
 	if( STATUS_OK != MAX9867_DigitalAudioInterfaceInit())
 			return STATUS_ERR;
-	if( STATUS_OK != MAX9867_JackSensEnableDisable(JACKSNS_ENABLE))
+	if( STATUS_OK != MAX9867_JackSensEnDis(JACKSNS_ENABLE))
 			return STATUS_ERR;
-	if( STATUS_OK != MAX9867_ADC_EnableDisable(ADC_ENABLE))
+	if( STATUS_OK != MAX9867_ADC_EnDis(ADC_ENABLE))
 			return STATUS_ERR;
 	/* Calibrate the offset */
 	if( STATUS_OK != MAX9867_AuxiliaryInputType(JACKSNS_PIN_FOR_DC_MEASUREMENT))
