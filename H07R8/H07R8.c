@@ -454,7 +454,7 @@ void Module_Peripheral_Init(void){
 	MX_I2C2_Init();
 	MX_I2S1_Init();
 //	 Circulating DMA Channels ON All Module
-	for (int i = 2; i <= NumOfPorts; i++) {
+	for (int i = 1; i <= NumOfPorts; i++) {
 		if (GetUart(i) == &huart1) {
 			index_dma[i - 1] = &(DMA1_Channel1->CNDTR);}
 		else if (GetUart(i) == &huart2) {
@@ -493,7 +493,7 @@ Module_Status Module_MessagingTask(uint16_t code,uint8_t port,uint8_t src,uint8_
 				CodecDAC_Gain(cMessage[port-1][shift]);
 				break;
 		case(CODE_H07R8_CODEC_AUDIO_LEVEL_CTRL):
-				CodecAudioLevel(cMessage[port-1][shift],cMessage[port-1][shift+1],cMessage[port-1][shift+1]);
+				CodecAudioLevel(cMessage[port-1][shift],cMessage[port-1][shift+1],cMessage[port-1][shift+2]);
 				break;
 		case(CODE_H07R8_CODEC_AUDIO_MUTE):
 				CodecAudioMute(AUDIO_MUTE_ENABLE);
@@ -1066,9 +1066,9 @@ portBASE_TYPE CLI_AmpMuteCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen,
 
 		mute = atoi(pMuteStr);
 		if(mute == 0)
-			status = AmpMute(MUTE_DISABLE);
-		else if(mute == 1)
 			status = AmpMute(MUTE_ENABLE);
+		else if(mute == 1)
+			status = AmpMute(MUTE_DISABLE);
 
 	 if(status == H07R8_OK)
 	 {
