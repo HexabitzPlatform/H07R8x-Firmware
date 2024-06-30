@@ -22,7 +22,8 @@ uint8_t* error_restart_message = "Restarting...\r\n";
 /* External variables --------------------------------------------------------*/
 extern uint8_t UARTRxBuf[NumOfPorts][MSG_RX_BUF_SIZE];
 extern uint8_t UARTRxBufIndex[NumOfPorts];
-
+extern uint8_t rx[BUFFER_FULL_SIZE];
+extern uint8_t dataFlag;
 /* External function prototypes ----------------------------------------------*/
 
 extern TaskHandle_t xCommandConsoleTaskHandle; // CLI Task handler.
@@ -247,7 +248,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
 	{
 		if(oneTime == 1)
 		{
-			HAL_I2S_Transmit_DMA(&hi2s1, (uint16_t *)rx, BUFFER_HALF_SIZE);
+			HAL_I2S_Transmit_DMA(I2S_PORT, (uint16_t *)rx, BUFFER_HALF_SIZE);
 			oneTime = 0;
 		}
 	}
@@ -264,8 +265,8 @@ void HAL_I2S_TxHalfCpltCallback(I2S_HandleTypeDef *hi2s)
   {
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_8, SET);
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, SET);
-			HAL_UART_Receive_IT(&huart1, &rx[0], BUFFER_HALF_SIZE);
-			HAL_UART_Transmit(&huart1, &dataFlag, 1, 1000);
+			HAL_UART_Receive_IT(P1uart, &rx[0], BUFFER_HALF_SIZE);
+			HAL_UART_Transmit(P1uart, &dataFlag, 1, 1000);
   }
 }
 
@@ -276,8 +277,8 @@ void HAL_I2S_TxCpltCallback(I2S_HandleTypeDef *hi2s)
   {
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_8, SET);
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, SET);
-			HAL_UART_Receive_IT(&huart1, &rx[BUFFER_HALF_SIZE], BUFFER_HALF_SIZE);
-			HAL_UART_Transmit(&huart1, &dataFlag, 1, 1000);
+			HAL_UART_Receive_IT(P1uart, &rx[BUFFER_HALF_SIZE], BUFFER_HALF_SIZE);
+			HAL_UART_Transmit(P1uart, &dataFlag, 1, 1000);
   }
 }
 /*-----------------------------------------------------------*/

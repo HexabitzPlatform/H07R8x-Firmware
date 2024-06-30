@@ -42,12 +42,7 @@ typedef enum {
 #include "MAX9704_Amplifier.h"
 #include "MAX9867_Codec.h"
 
-/* Macros ----------------------------------------------------------------------*/
-#define BUFFER_FULL_SIZE	4096
-#define BUFFER_HALF_SIZE	2048
-/* Extern ----------------------------------------------------------------------*/
-extern uint8_t rx[BUFFER_FULL_SIZE];
-extern uint8_t dataFlag;
+
 /* Enums ----------------------------------------------------------------------*/
 typedef enum
 {
@@ -219,6 +214,10 @@ typedef enum{
 
 
 /* Module-specific Definitions */
+
+#define BUFFER_FULL_SIZE	4096
+#define BUFFER_HALF_SIZE	2048
+#define MIN_PERIOD_MS	    100
 
 /* Indicator LED */
 #define _IND_LED_PORT			GPIOA

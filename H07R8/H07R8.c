@@ -30,7 +30,7 @@ extern uint8_t numOfRecordedSnippets;
 
 /* Module exported parameters ------------------------------------------------*/
 module_param_t modParam[NUM_MODULE_PARAMS] ={{.paramPtr = NULL, .paramFormat =FMT_FLOAT, .paramName =""}};
-#define MIN_PERIOD_MS				100
+
 
 
 /* exported functions */
@@ -46,7 +46,6 @@ void ExecuteMonitor(void);
 
 portBASE_TYPE CLI_CodecInitCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
 portBASE_TYPE CLI_CodecStreamStartCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
-portBASE_TYPE CLI_CodecStreamStopCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
 portBASE_TYPE CLI_CodecDAC_GainCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
 portBASE_TYPE CLI_CodecAudioLevelCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
 portBASE_TYPE CLI_CodecAudioMuteCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
@@ -72,14 +71,6 @@ const CLI_Command_Definition_t CLI_CodecStreamStartDefinition =
 	( const int8_t * ) "streamstart", /* The command string to type. */
 	( const int8_t * ) "streamstart:\r\n digital audio data will be requested from SD Card module or another module has audio data. When the module starts up, start stream will be called automatically.\r\n ",
 	CLI_CodecStreamStartCommand, /* The function to run. */
-	0 /* three parameters are expected. */
-};
-
-const CLI_Command_Definition_t CLI_CodecStreamStopDefinition =
-{
-	( const int8_t * ) "streamstop", /* The command string to type. */
-	( const int8_t * ) "streamstop:\r\n digital audio data will be stop from SD Card module or another module has audio data.\r\n ",
-	CLI_CodecStreamStopCommand, /* The function to run. */
 	0 /* three parameters are expected. */
 };
 
@@ -486,9 +477,6 @@ Module_Status Module_MessagingTask(uint16_t code,uint8_t port,uint8_t src,uint8_
 		case(CODE_H07R8_CODEC_STREAM_START):
 				CodecStreamDataStart();
 				break;
-		case(CODE_H07R8_CODEC_STREAM_STOP):
-				CodecStreamDataStop();
-				break;
 		case(CODE_H07R8_CODEC_DAC_GAIN):
 				CodecDAC_Gain(cMessage[port-1][shift]);
 				break;
@@ -553,7 +541,6 @@ void RegisterModuleCLICommands(void){
 
 	FreeRTOS_CLIRegisterCommand(&CLI_CodecInitDefinition);
 	FreeRTOS_CLIRegisterCommand(&CLI_CodecStreamStartDefinition);
-	FreeRTOS_CLIRegisterCommand(&CLI_CodecStreamStopDefinition);
 	FreeRTOS_CLIRegisterCommand(&CLI_CodecDAC_GainDefinition);
 	FreeRTOS_CLIRegisterCommand(&CLI_CodecAudioLevelDefinition);
 	FreeRTOS_CLIRegisterCommand(&CLI_CodecAudioMuteDefinition);
@@ -609,28 +596,13 @@ Module_Status CodecInit(Codec_DAC_Gain dacGain, Left_Right_AUDIO_GAIN rPlaybackV
 
 Module_Status CodecStreamDataStart(void)
 {
-	if(HAL_OK != HAL_UART_Receive_IT(&huart1, &rx[0], BUFFER_FULL_SIZE))
+	if(HAL_OK != HAL_UART_Receive_IT(P1uart, &rx[0], BUFFER_FULL_SIZE))
 		return H07R8_ERROR;
-	if(HAL_OK != HAL_UART_Transmit(&huart1, &dataFlag, 1, 2000))
+	if(HAL_OK != HAL_UART_Transmit(P1uart, &dataFlag, 1, 2000))
 		return H07R8_ERROR;
 	dataFlag=1;
 }
-/**********************************************************************************************/
 
-/* Codec Stream Data Stop */
-/*
- * @brief  :when call this API the digital audio data will be stop from SD Card module or another module has audio data.
- * @retval :Status
- */
-
-Module_Status CodecStreamDataStop(void)
-{
-	oneTime = 1;
-	if(HAL_OK != HAL_I2S_DMAStop(&hi2s1))
-		return H07R8_ERROR;
-	if(HAL_OK != HAL_UART_AbortReceive(&huart6))
-		return H07R8_ERROR;
-}
 /**********************************************************************************************/
 
 /* DAC gain */
@@ -866,30 +838,7 @@ portBASE_TYPE CLI_CodecStreamStartCommand( int8_t *pcWriteBuffer, size_t xWriteB
 
 }
 
-portBASE_TYPE CLI_CodecStreamStopCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
-	Module_Status status = H07R8_OK;
-	static const int8_t *pcOKMessage=(int8_t* )"Ok\n\r";
-	static const int8_t *pcErrorsMessage =(int8_t* )"Error!\n\r";
-
-
-		(void )xWriteBufferLen;
-		configASSERT(pcWriteBuffer);
-
-		status =  CodecStreamDataStop();
-
-	 if(status == H07R8_OK)
-	 {
-			 sprintf((char* )pcWriteBuffer,(char* )pcOKMessage);
-
-	 }
-
-	 else if(status == H07R8_ERROR)
-			strcpy((char* )pcWriteBuffer,(char* )pcErrorsMessage);
-
-
-	return pdFALSE;
-
-}
+/************************************************************************************************************************************/
 
 portBASE_TYPE CLI_CodecDAC_GainCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
 	Module_Status status = H07R8_OK;
@@ -922,6 +871,8 @@ portBASE_TYPE CLI_CodecDAC_GainCommand( int8_t *pcWriteBuffer, size_t xWriteBuff
 	return pdFALSE;
 
 }
+
+/************************************************************************************************************************************/
 
 portBASE_TYPE CLI_CodecAudioLevelCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
 	Module_Status status = H07R8_OK;
@@ -961,6 +912,8 @@ portBASE_TYPE CLI_CodecAudioLevelCommand( int8_t *pcWriteBuffer, size_t xWriteBu
 
 }
 
+/************************************************************************************************************************************/
+
 portBASE_TYPE CLI_CodecAudioMuteCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
 	Module_Status status = H07R8_OK;
 	static const int8_t *pcOKMessage=(int8_t* )"Ok\n\r";
@@ -992,6 +945,8 @@ portBASE_TYPE CLI_CodecAudioMuteCommand( int8_t *pcWriteBuffer, size_t xWriteBuf
 
 }
 
+/************************************************************************************************************************************/
+
 portBASE_TYPE CLI_CodecShutdownCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
 	Module_Status status = H07R8_OK;
 	static const int8_t *pcOKMessage=(int8_t* )"Ok\n\r";
@@ -1020,6 +975,8 @@ portBASE_TYPE CLI_CodecShutdownCommand( int8_t *pcWriteBuffer, size_t xWriteBuff
 	return pdFALSE;
 
 }
+
+/************************************************************************************************************************************/
 
 portBASE_TYPE CLI_AmpGainCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
 	Module_Status status = H07R8_OK;
@@ -1050,6 +1007,8 @@ portBASE_TYPE CLI_AmpGainCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen,
 	return pdFALSE;
 
 }
+
+/************************************************************************************************************************************/
 
 portBASE_TYPE CLI_AmpMuteCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
 	Module_Status status = H07R8_OK;
@@ -1084,6 +1043,7 @@ portBASE_TYPE CLI_AmpMuteCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen,
 
 }
 
+/************************************************************************************************************************************/
 
 portBASE_TYPE CLI_AmpShutdownCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
 	Module_Status status = H07R8_OK;
