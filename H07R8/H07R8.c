@@ -547,14 +547,6 @@ void RegisterModuleCLICommands(void){
  ||							 	Local  APIs			    		          | 																 	|
  -----------------------------------------------------------------------
  */
-
-
-
-/* -----------------------------------------------------------------------
- ||								  APIs							          |
- -----------------------------------------------------------------------
- */
-
 /* Codec initialize */
 /*
  * @brief  :Codec initialize for play audio file.
@@ -573,6 +565,28 @@ Module_Status CodecInit(Codec_DAC_Gain dacGain, Left_Right_AUDIO_GAIN rPlaybackV
 }
 
 /**********************************************************************************************/
+
+/* Amplifier initialize */
+/*
+ * @brief  :Amplifier initialize.
+ * @retval :Status
+ */
+
+Module_Status AmpInit(Amplifier_Switching_Modes switchMode, Amplifier_Gain gain)
+{
+	Module_Status Status = H07R8_OK;
+
+	if(MAX9704_AmpInit(switchMode, gain) != AMP_OK)
+		return H07R8_ERROR;
+
+	return Status;
+}
+
+
+/* -----------------------------------------------------------------------
+ ||								  APIs							          |
+ -----------------------------------------------------------------------
+ */
 
 /* Codec Stream Data Start */
 /*
@@ -656,24 +670,6 @@ Module_Status CodecShutdown(Codec_Shutdown shtdown)
 	Module_Status Status = H07R8_OK;
 	if(CODEC_OK != MAX9867_Shoutdown(shtdown))
 		return H07R8_ERROR;
-	return Status;
-}
-
-/**********************************************************************************************/
-
-/* Amplifier initialize */
-/*
- * @brief  :Amplifier initialize.
- * @retval :Status
- */
-
-Module_Status AmpInit(Amplifier_Switching_Modes switchMode, Amplifier_Gain gain)
-{
-	Module_Status Status = H07R8_OK;
-
-	if(MAX9704_AmpInit(switchMode, gain) != AMP_OK)
-		return H07R8_ERROR;
-
 	return Status;
 }
 
