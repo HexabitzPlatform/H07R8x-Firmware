@@ -44,7 +44,6 @@ void ExecuteMonitor(void);
 
 /* Create CLI commands --------------------------------------------------------*/
 
-portBASE_TYPE CLI_CodecInitCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
 portBASE_TYPE CLI_CodecStreamStartCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
 portBASE_TYPE CLI_CodecDAC_GainCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
 portBASE_TYPE CLI_CodecAudioLevelCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
@@ -54,17 +53,6 @@ portBASE_TYPE CLI_AmpGainCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen,
 portBASE_TYPE CLI_AmpMuteCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
 portBASE_TYPE CLI_AmpShutdownCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
 
-const CLI_Command_Definition_t CLI_CodecInitDefinition =
-{
-	( const int8_t * ) "codecinit", /* The command string to type. */
-	( const int8_t * ) "codecinit:\r\n initialize the Codec IC to receive stream digital audio data\r\n "
-			"the parameters are :\r\n"
-			"DAC level gain : set this parameter from 0(high) even 15 (low) if you listen saturation in the audio make this value low even audio be suitable.\r\n"
-			"right audio level : set this value from 0 even 28.\r\n"
-			"left audio level : set this value from 0 even 28.\r\n\r\n",
-	CLI_CodecInitCommand, /* The function to run. */
-	3 /* three parameters are expected. */
-};
 
 const CLI_Command_Definition_t CLI_CodecStreamStartDefinition =
 {
@@ -76,8 +64,8 @@ const CLI_Command_Definition_t CLI_CodecStreamStartDefinition =
 
 const CLI_Command_Definition_t CLI_CodecDAC_GainDefinition =
 {
-	( const int8_t * ) "dacgain", /* The command string to type. */
-	( const int8_t * ) "dacgain:\r\n control with dac gain \r\n"
+	( const int8_t * ) "codecdacgain", /* The command string to type. */
+	( const int8_t * ) "codecdacgain:\r\n control with dac gain \r\n"
 			"the parameters is : DAC level gain : set this parameter from 0 (high) even 15 (low) if you listen saturation in the audio make this value low even audio be suitable.\r\n\r\n",
 	CLI_CodecDAC_GainCommand, /* The function to run. */
 	1 /* one parameter is expected. */
@@ -85,8 +73,8 @@ const CLI_Command_Definition_t CLI_CodecDAC_GainDefinition =
 
 const CLI_Command_Definition_t CLI_CodecAudioLevelDefinition =
 {
-	( const int8_t * ) "audiolevel", /* The command string to type. */
-	( const int8_t * ) "audiolevel:\r\n control with audio level to both left/right channels\r\n"
+	( const int8_t * ) "codecaudiolvl", /* The command string to type. */
+	( const int8_t * ) "codecaudiolvl:\r\n control with audio level to both left/right channels\r\n"
 			"the parameters are :\r\n"
 			"right audio level : set this value from 0 (high) even 28 (low).\r\n"
 			"left audio level : set this value from 0 (high) even 28 (low).\r\n\r\n",
@@ -96,8 +84,8 @@ const CLI_Command_Definition_t CLI_CodecAudioLevelDefinition =
 
 const CLI_Command_Definition_t CLI_CodecAudioMuteDefinition =
 {
-	( const int8_t * ) "audiomute", /* The command string to type. */
-	( const int8_t * ) "audiomute:\r\n audio mute on the Codec's output where : 0 for disable mute and 1 for enable mute.\r\n\r\n",
+	( const int8_t * ) "codecmute", /* The command string to type. */
+	( const int8_t * ) "codecmute:\r\n audio mute on the Codec's output where : 0 for disable mute and 1 for enable mute.\r\n\r\n",
 	CLI_CodecAudioMuteCommand, /* The function to run. */
 	1 /* one parameter is expected. */
 };
@@ -113,7 +101,7 @@ const CLI_Command_Definition_t CLI_CodecShutdownDefinition =
 const CLI_Command_Definition_t CLI_AmpGainDefinition =
 {
 	( const int8_t * ) "ampgain", /* The command string to type. */
-	( const int8_t * ) "ampgain:\r\n setting amplifier gain there is 5 levels start from 0 \r\n\r\n",
+	( const int8_t * ) "ampgain:\r\n setting amplifier gain there is 5 levels start from 1 \r\n\r\n",
 	CLI_AmpGainCommand, /* The function to run. */
 	1 /* one parameter is expected. */
 };
@@ -444,6 +432,8 @@ void Module_Peripheral_Init(void){
 	MX_USART6_UART_Init();
 	MX_I2C2_Init();
 	MX_I2S1_Init();
+	  AmpInit(AMP_SWITCHING_MODE_670KHZ, AMP_GAIN_MODE_29dB);
+	  CodecInit(DAC_LVL_GAIN_MINUS_15dB, PLAYBACK_VOLUME_GAIN_PLUS_1dB, PLAYBACK_VOLUME_GAIN_PLUS_1dB);
 //	 Circulating DMA Channels ON All Module
 	for (int i = 1; i <= NumOfPorts; i++) {
 		if (GetUart(i) == &huart1) {
@@ -471,9 +461,6 @@ Module_Status Module_MessagingTask(uint16_t code,uint8_t port,uint8_t src,uint8_
 
 
 	switch(code){
-		case(CODE_H07R8_CODEC_INIT):
-				CodecInit(cMessage[port-1][shift],cMessage[port-1][shift+1],cMessage[port-1][shift+2]);
-				break;
 		case(CODE_H07R8_CODEC_STREAM_START):
 				CodecStreamDataStart();
 				break;
@@ -489,10 +476,10 @@ Module_Status Module_MessagingTask(uint16_t code,uint8_t port,uint8_t src,uint8_
 		case(CODE_H07R8_CODEC_AUDIO_UNMUTE):
 				CodecAudioMute(AUDIO_MUTE_DISABLE);
 				break;
-		case(CODE_H07R8_CODEC_ENABLE_SHOUTDOWN):
+		case(CODE_H07R8_CODEC_EN_SHUTDOWN):
 				CodecShutdown(SHOUTDOWN_ENABLE);
 				break;
-		case(CODE_H07R8_CODEC_DISABLE_SHOUTDOWN):
+		case(CODE_H07R8_CODEC_DIS_SHUTDOWN):
 				CodecShutdown(SHOUTDOWN_DISABLE);
 				break;
 		case(CODE_H07R8_AMP_GAIN):
@@ -504,10 +491,10 @@ Module_Status Module_MessagingTask(uint16_t code,uint8_t port,uint8_t src,uint8_
 		case(CODE_H07R8_AMP_UNMUTE):
 				AmpMute(MUTE_DISABLE);
 				break;
-		case(CODE_H07R8_AMP_ENABLE_SHOUTDOWN):
+		case(CODE_H07R8_AMP_EN_SHUTDOWN):
 				AmpShutdown(SHUTDOWN_ENABLE);
 				break;
-		case(CODE_H07R8_AMP_DISABLE_SHOUTDOWN):
+		case(CODE_H07R8_AMP_DIS_SHUTDOWN):
 				AmpShutdown(SHUTDOWN_DISABLE);
 				break;
 		default:
@@ -539,7 +526,6 @@ uint8_t GetPort(UART_HandleTypeDef *huart){
  */
 void RegisterModuleCLICommands(void){
 
-	FreeRTOS_CLIRegisterCommand(&CLI_CodecInitDefinition);
 	FreeRTOS_CLIRegisterCommand(&CLI_CodecStreamStartDefinition);
 	FreeRTOS_CLIRegisterCommand(&CLI_CodecDAC_GainDefinition);
 	FreeRTOS_CLIRegisterCommand(&CLI_CodecAudioLevelDefinition);
@@ -768,50 +754,6 @@ Module_Status AmpShutdown(Amplifier_Shutdown mode)
  |								Commands							      |
    -----------------------------------------------------------------------
  */
-
-portBASE_TYPE CLI_CodecInitCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
-	Module_Status status = H07R8_OK;
-	static const int8_t *pcOKMessage=(int8_t* )"Ok\n\r";
-	static const int8_t *pcErrorsMessage =(int8_t* )"Error!\n\r";
-
-	const char *pDacGainStr = NULL;
-	const char *pRightPlaybackVolStr = NULL;
-	const char *pLeftPlaybackVolStr = NULL;
-
-	uint8_t dacGain = 0;
-	uint8_t rightPlaybackVol = 0;
-	uint8_t leftPlaybackVol = 0;
-
-	portBASE_TYPE dacGainStrLen = 0;
-	portBASE_TYPE pRightPlaybackVolStrLen = 0;
-	portBASE_TYPE pLeftPlaybackVolStrLen = 0;
-
-		(void )xWriteBufferLen;
-		configASSERT(pcWriteBuffer);
-
-		pDacGainStr = (const char *)FreeRTOS_CLIGetParameter(pcWriteBuffer, 1, &dacGainStrLen);
-		pRightPlaybackVolStr = (const char *)FreeRTOS_CLIGetParameter(pcWriteBuffer, 2, &pRightPlaybackVolStrLen);
-		pLeftPlaybackVolStr = (const char *)FreeRTOS_CLIGetParameter(pcWriteBuffer, 3, &pLeftPlaybackVolStrLen);
-
-		dacGain = atoi(pDacGainStr);
-		rightPlaybackVol = atoi(pRightPlaybackVolStr);
-		leftPlaybackVol = atoi(pLeftPlaybackVolStr);
-
-		status =  CodecInit(dacGain, rightPlaybackVol, leftPlaybackVol);
-
-	 if(status == H07R8_OK)
-	 {
-			 sprintf((char* )pcWriteBuffer,(char* )pcOKMessage);
-
-	 }
-
-	 else if(status == H07R8_ERROR)
-			strcpy((char* )pcWriteBuffer,(char* )pcErrorsMessage);
-
-
-	return pdFALSE;
-
-}
 
 portBASE_TYPE CLI_CodecStreamStartCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
 	Module_Status status = H07R8_OK;

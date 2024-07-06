@@ -25,8 +25,6 @@ int main(void){
 /* User Task */
 void UserTask(void *argument){
 
-	  AmpInit(AMP_SWITCHING_MODE_670KHZ, AMP_GAIN_MODE_29dB);
-	  CodecInit(DAC_LVL_GAIN_MINUS_15dB, PLAYBACK_VOLUME_GAIN_PLUS_1dB, PLAYBACK_VOLUME_GAIN_PLUS_1dB);
 	  CodecStreamDataStart();
 	// put your code here, to run repeatedly.
 	while(1){

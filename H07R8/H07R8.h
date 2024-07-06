@@ -99,7 +99,7 @@ typedef enum
 
 typedef enum
 {
-	LEFT_CHA,
+	LEFT_CHA = 1,
 	RIGHT_CHA,
 	LEFT_RIGHT_CHA
 } Left_Right_Channel;
@@ -124,7 +124,7 @@ typedef enum{
 }Amplifier_Switching_Modes;
 
 typedef enum{
-	AMP_GAIN_MODE_0db = 0,
+	AMP_GAIN_MODE_0db = 1,
 	AMP_GAIN_MODE_13dB,
 	AMP_GAIN_MODE_16dB,
 	AMP_GAIN_MODE_19dB,
