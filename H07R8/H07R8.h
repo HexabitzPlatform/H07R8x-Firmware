@@ -33,7 +33,6 @@ typedef enum {
 #include "H07R8_uart.h"
 #include "H07R8_gpio.h"
 #include "H07R8_dma.h"
-#include "H07R8_adc.h"
 #include "H07R8_timers.h"
 #include "H07R8_inputs.h"
 #include "H07R8_eeprom.h"

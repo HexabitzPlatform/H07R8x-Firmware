@@ -25,7 +25,6 @@ int main(void){
 /* User Task */
 void UserTask(void *argument){
 
-	  CodecStreamDataStart();
 	// put your code here, to run repeatedly.
 	while(1){
 
