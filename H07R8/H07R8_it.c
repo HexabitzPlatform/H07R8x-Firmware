@@ -16,6 +16,7 @@ uint8_t oneTime = 1;
 /* end variable for i2s */
 uint8_t temp_length[NumOfPorts] = {0};
 uint8_t temp_index[NumOfPorts] = {0};
+extern uint8_t StreamCplt;
 uint8_t* error_restart_message = "Restarting...\r\n";
 
 
@@ -302,6 +303,9 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart){
 	if(huart->hdmatx != NULL)
 		DMA_MSG_TX_UnSetup(huart);
 	
+	if(StreamCplt == 0)
+		StreamCplt =1;
+
 	/* Give back the mutex. */
 	xSemaphoreGiveFromISR(PxTxSemaphoreHandle[GetPort(huart)],&(xHigherPriorityTaskWoken));
 }
