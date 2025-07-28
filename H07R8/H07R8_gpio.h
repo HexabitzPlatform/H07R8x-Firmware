@@ -32,6 +32,7 @@ extern void IND_LED_Init(void);
 
 //extern Module_Status_t SetGPIOsPin(GPIO_HANDLE *GPIOx, uint16_t Pin);
 //extern Module_Status_t ResetGPIOsPin(GPIO_HANDLE *GPIOx, uint16_t Pin);
+uint8_t IsFactoryReset(void);
 BOS_Status GetPortGPIOs(uint8_t port,uint32_t *TX_Port,uint16_t *TX_Pin,uint32_t *RX_Port,uint16_t *RX_Pin);
 Module_Status SetGPIOsPin(GPIO_HANDLE *GPIOx, uint16_t Pin);
 Module_Status ResetGPIOsPin(GPIO_HANDLE *GPIOx, uint16_t Pin);

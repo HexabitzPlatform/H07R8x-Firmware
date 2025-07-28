@@ -29,7 +29,7 @@ extern FLASH_ProcessTypeDef pFlash;
 extern uint8_t numOfRecordedSnippets;
 
 /* Module exported parameters ------------------------------------------------*/
-module_param_t modParam[NUM_MODULE_PARAMS] ={{.paramPtr = NULL, .paramFormat =FMT_FLOAT, .paramName =""}};
+ModuleParam_t ModuleParam[NUM_MODULE_PARAMS] ={{.ParamPtr = NULL, .ParamFormat =FMT_FLOAT, .ParamName =""}};
 
 
 
@@ -143,50 +143,82 @@ const CLI_Command_Definition_t CLI_AmpShoutdownDefinition =
  * @param  None
  * @retval None
  */
-void SystemClock_Config(void){
-	  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
-	  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
-	  RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
+void SystemClock_Config(void) {
+	RCC_OscInitTypeDef RCC_OscInitStruct = { 0 };
+	RCC_ClkInitTypeDef RCC_ClkInitStruct = { 0 };
 
-	  /** Configure the main internal regulator output voltage
-	  */
-	  HAL_PWREx_ControlVoltageScaling(PWR_REGULATOR_VOLTAGE_SCALE1);
-	  /** Initializes the RCC Oscillators according to the specified parameters
-	  * in the RCC_OscInitTypeDef structure.
-	  */
-	  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI|RCC_OSCILLATORTYPE_HSE;
-	  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
-	  RCC_OscInitStruct.LSIState = RCC_LSI_ON;
-	  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-	  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-	  RCC_OscInitStruct.PLL.PLLM = RCC_PLLM_DIV1;
-	  RCC_OscInitStruct.PLL.PLLN = 12;
-	  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
-	  RCC_OscInitStruct.PLL.PLLQ = RCC_PLLQ_DIV2;
-	  RCC_OscInitStruct.PLL.PLLR = RCC_PLLR_DIV2;
-	  HAL_RCC_OscConfig(&RCC_OscInitStruct);
+	/** Configure the main internal regulator output voltage */
+	HAL_PWREx_ControlVoltageScaling(PWR_REGULATOR_VOLTAGE_SCALE1);
 
-	  /** Initializes the CPU, AHB and APB buses clocks
-	  */
-	  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
-	                              |RCC_CLOCKTYPE_PCLK1;
-	  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
-	  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-	  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
+	/* Initializes the RCC Oscillators according to the specified parameters
+	 * in the RCC_OscInitTypeDef structure.
+	 */
+	RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI | RCC_OSCILLATORTYPE_HSE; // Enable both HSI and HSE oscillators
+	RCC_OscInitStruct.HSEState = RCC_HSE_ON; // Enable HSE (External High-Speed Oscillator)
+	RCC_OscInitStruct.HSIState = RCC_HSI_ON; // Enable HSI (Internal High-Speed Oscillator)
+	RCC_OscInitStruct.HSIDiv = RCC_HSI_DIV1; // No division on HSI
+	RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT; // Default calibration value for HSI
+	RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON; // Enable PLL
+	RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE; // Set PLL source to HSE
+	RCC_OscInitStruct.PLL.PLLM = RCC_PLLM_DIV1; // Prescaler for PLL input
+	RCC_OscInitStruct.PLL.PLLN = 16; // Multiplication factor for PLL
+	RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2; // PLLP division factor
+	RCC_OscInitStruct.PLL.PLLQ = RCC_PLLQ_DIV2; // PLLQ division factor
+	RCC_OscInitStruct.PLL.PLLR = RCC_PLLR_DIV2; // PLLR division factor
+	HAL_RCC_OscConfig(&RCC_OscInitStruct);
 
-	  HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1);
+	/** Initializes the CPU, AHB and APB buses clocks */
+	RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_PCLK1;
+	RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK; // Select PLL as the system clock source
+	RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1; // AHB Prescaler set to 1
+	RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1; // APB1 Prescaler set to 1
 
-	  /** Initializes the peripherals clocks
-	  */
-	  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_RTC|RCC_PERIPHCLK_USART2;
-	  PeriphClkInit.Usart2ClockSelection = RCC_USART2CLKSOURCE_PCLK1;
-	  PeriphClkInit.RTCClockSelection = RCC_RTCCLKSOURCE_LSI;
-	  HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit);
-
-
-	  HAL_NVIC_SetPriority(SysTick_IRQn,0,0);
-
+	HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2); // Configure system clocks with flash latency of 2 WS
 }
+//void SystemClock_Config(void){
+//	  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+//	  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+//	  RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
+//
+//	  /** Configure the main internal regulator output voltage
+//	  */
+//	  HAL_PWREx_ControlVoltageScaling(PWR_REGULATOR_VOLTAGE_SCALE1);
+//	  /** Initializes the RCC Oscillators according to the specified parameters
+//	  * in the RCC_OscInitTypeDef structure.
+//	  */
+//	  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI|RCC_OSCILLATORTYPE_HSE;
+//	  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+//	  RCC_OscInitStruct.LSIState = RCC_LSI_ON;
+//	  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+//	  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+//	  RCC_OscInitStruct.PLL.PLLM = RCC_PLLM_DIV1;
+//	  RCC_OscInitStruct.PLL.PLLN = 12;
+//	  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
+//	  RCC_OscInitStruct.PLL.PLLQ = RCC_PLLQ_DIV2;
+//	  RCC_OscInitStruct.PLL.PLLR = RCC_PLLR_DIV2;
+//	  HAL_RCC_OscConfig(&RCC_OscInitStruct);
+//
+//	  /** Initializes the CPU, AHB and APB buses clocks
+//	  */
+//	  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
+//	                              |RCC_CLOCKTYPE_PCLK1;
+//	  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+//	  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+//	  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
+//
+//	  HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1);
+//
+//	  /** Initializes the peripherals clocks
+//	  */
+//	  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_RTC|RCC_PERIPHCLK_USART2;
+//	  PeriphClkInit.Usart2ClockSelection = RCC_USART2CLKSOURCE_PCLK1;
+//	  PeriphClkInit.RTCClockSelection = RCC_RTCCLKSOURCE_LSI;
+//	  HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit);
+//
+//
+//	  HAL_NVIC_SetPriority(SysTick_IRQn,0,0);
+//
+//}
 
 ///**
 //  * @brief System Clock Configuration
@@ -234,78 +266,153 @@ void SystemClock_Config(void){
 //  }
 //}
 
+/* enable stop mode regarding only UART1 , UART2 , and UART3 */
+BOS_Status EnableStopModebyUARTx(uint8_t port) {
 
-/*-----------------------------------------------------------*/
+	UART_WakeUpTypeDef WakeUpSelection;
+	UART_HandleTypeDef *huart = GetUart(port);
 
-/* --- Save Command Topology in Flash RO --- */
+	if ((huart->Instance == USART1) || (huart->Instance == USART2) || (huart->Instance == USART3)) {
 
-uint8_t SaveTopologyToRO(void)
-{
-	HAL_StatusTypeDef flashStatus =HAL_OK;
+		/* make sure that no UART transfer is on-going */
+		while (__HAL_UART_GET_FLAG(huart, USART_ISR_BUSY) == SET);
+
+		/* make sure that UART is ready to receive */
+		while (__HAL_UART_GET_FLAG(huart, USART_ISR_REACK) == RESET);
+
+		/* set the wake-up event:
+		 * specify wake-up on start-bit detection */
+		WakeUpSelection.WakeUpEvent = UART_WAKEUP_ON_STARTBIT;
+		HAL_UARTEx_StopModeWakeUpSourceConfig(huart, WakeUpSelection);
+
+		/* Enable the UART Wake UP from stop mode Interrupt */
+		__HAL_UART_ENABLE_IT(huart, UART_IT_WUF);
+
+		/* enable MCU wake-up by LPUART */
+		HAL_UARTEx_EnableStopMode(huart);
+
+		/* enter STOP mode */
+		HAL_PWR_EnterSTOPMode(PWR_LOWPOWERREGULATOR_ON, PWR_STOPENTRY_WFI);
+	} else
+		return BOS_ERROR;
+
+}
+
+/***************************************************************************/
+/* Enable standby mode regarding wake-up pins:
+ * WKUP1: PA0  pin
+ * WKUP4: PA2  pin
+ * WKUP6: PB5  pin
+ * WKUP2: PC13 pin
+ * NRST pin
+ *  */
+BOS_Status EnableStandbyModebyWakeupPinx(WakeupPins_t wakeupPins) {
+
+	/* Clear the WUF FLAG */
+	__HAL_PWR_CLEAR_FLAG(PWR_FLAG_WUF);
+
+	/* Enable the WAKEUP PIN */
+	switch (wakeupPins) {
+
+	case PA0_PIN:
+		HAL_PWR_EnableWakeUpPin(PWR_WAKEUP_PIN1); /* PA0 */
+		break;
+
+	case PA2_PIN:
+		HAL_PWR_EnableWakeUpPin(PWR_WAKEUP_PIN4); /* PA2 */
+		break;
+
+	case PB5_PIN:
+		HAL_PWR_EnableWakeUpPin(PWR_WAKEUP_PIN6); /* PB5 */
+		break;
+
+	case PC13_PIN:
+		HAL_PWR_EnableWakeUpPin(PWR_WAKEUP_PIN2); /* PC13 */
+		break;
+
+	case NRST_PIN:
+		/* do no thing*/
+		break;
+	}
+
+	/* Enable SRAM content retention in Standby mode */
+	HAL_PWREx_EnableSRAMRetention();
+
+	/* Finally enter the standby mode */
+	HAL_PWR_EnterSTANDBYMode();
+
+	return BOS_OK;
+}
+/***************************************************************************/
+/* Save Command Topology in Flash RO */
+uint8_t SaveTopologyToRO(void) {
+
+	HAL_StatusTypeDef flashStatus = HAL_OK;
+
 	/* flashAdd is initialized with 8 because the first memory room in topology page
 	 * is reserved for module's ID */
 	uint16_t flashAdd = 8;
-    uint16_t temp =0;
+	uint16_t temp = 0;
 
-    /* Unlock the FLASH control register access */
+	/* Unlock the FLASH control register access */
 	HAL_FLASH_Unlock();
 
 	/* Erase Topology page */
-	FLASH_PageErase(FLASH_BANK_2,TOPOLOGY_PAGE_NUM);
+	FLASH_PageErase(FLASH_BANK_2, TOPOLOGY_PAGE_NUM);
 
 	/* Wait for an Erase operation to complete */
-	flashStatus =FLASH_WaitForLastOperation((uint32_t ) HAL_FLASH_TIMEOUT_VALUE);
+	flashStatus = FLASH_WaitForLastOperation((uint32_t) HAL_FLASH_TIMEOUT_VALUE);
 
-	if(flashStatus != HAL_OK){
+	if (flashStatus != HAL_OK) {
 		/* return FLASH error code */
 		return pFlash.ErrorCode;
 	}
 
-	else{
+	else {
 		/* Operation is completed, disable the PER Bit */
-		CLEAR_BIT(FLASH->CR,FLASH_CR_PER);
+		CLEAR_BIT(FLASH->CR, FLASH_CR_PER);
 	}
 
 	/* Save module's ID and topology */
-	if(myID){
+	if (myID) {
 
 		/* Save module's ID */
-		temp =(uint16_t )(N << 8) + myID;
+		temp = (uint16_t) (N << 8) + myID;
 
 		/* Save module's ID in Flash memory */
-		HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD,TOPOLOGY_START_ADDRESS,temp);
+		HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, TOPOLOGY_START_ADDRESS, temp);
 
 		/* Wait for a Write operation to complete */
-		flashStatus =FLASH_WaitForLastOperation((uint32_t ) HAL_FLASH_TIMEOUT_VALUE);
+		flashStatus = FLASH_WaitForLastOperation((uint32_t) HAL_FLASH_TIMEOUT_VALUE);
 
-		if(flashStatus != HAL_OK){
+		if (flashStatus != HAL_OK) {
 			/* return FLASH error code */
 			return pFlash.ErrorCode;
 		}
 
-		else{
+		else {
 			/* If the program operation is completed, disable the PG Bit */
-			CLEAR_BIT(FLASH->CR,FLASH_CR_PG);
+			CLEAR_BIT(FLASH->CR, FLASH_CR_PG);
 		}
 
 		/* Save topology */
-		for(uint8_t row =1; row <= N; row++){
-			for(uint8_t column =0; column <= MaxNumOfPorts; column++){
+		for (uint8_t row = 1; row <= N; row++) {
+			for (uint8_t column = 0; column <= MAX_NUM_OF_PORTS; column++) {
 				/* Check the module serial number
 				 * Note: there isn't a module has serial number 0
 				 */
-				if(array[row - 1][0]){
-					/* Save each element in topology array in Flash memory */
-					HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD,TOPOLOGY_START_ADDRESS + flashAdd,array[row - 1][column]);
+				if (Array[row - 1][0]) {
+					/* Save each element in topology Array in Flash memory */
+					HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, TOPOLOGY_START_ADDRESS + flashAdd,
+							Array[row - 1][column]);
 					/* Wait for a Write operation to complete */
-					flashStatus =FLASH_WaitForLastOperation((uint32_t ) HAL_FLASH_TIMEOUT_VALUE);
-					if(flashStatus != HAL_OK){
+					flashStatus = FLASH_WaitForLastOperation((uint32_t) HAL_FLASH_TIMEOUT_VALUE);
+					if (flashStatus != HAL_OK) {
 						/* return FLASH error code */
 						return pFlash.ErrorCode;
-					}
-					else{
+					} else {
 						/* If the program operation is completed, disable the PG Bit */
-						CLEAR_BIT(FLASH->CR,FLASH_CR_PG);
+						CLEAR_BIT(FLASH->CR, FLASH_CR_PG);
 						/* update new flash memory address */
 						flashAdd += 8;
 					}
@@ -317,62 +424,56 @@ uint8_t SaveTopologyToRO(void)
 	HAL_FLASH_Lock();
 }
 
-/*-----------------------------------------------------------*/
+/***************************************************************************/
+/* Save Command Snippets in Flash RO */
+uint8_t SaveSnippetsToRO(void) {
+	HAL_StatusTypeDef FlashStatus = HAL_OK;
+	uint8_t snipBuffer[sizeof(Snippet_t) + 1] = { 0 };
 
-/* --- Save Command Snippets in Flash RO --- */
-
-uint8_t SaveSnippetsToRO(void)
-{
-	HAL_StatusTypeDef FlashStatus =HAL_OK;
-    uint8_t snipBuffer[sizeof(snippet_t) + 1] ={0};
-
-    /* Unlock the FLASH control register access */
+	/* Unlock the FLASH control register access */
 	HAL_FLASH_Unlock();
-    /* Erase Snippets page */
-	FLASH_PageErase(FLASH_BANK_2,SNIPPETS_PAGE_NUM);
+	/* Erase Snippets page */
+	FLASH_PageErase(FLASH_BANK_2, SNIPPETS_PAGE_NUM);
 	/* Wait for an Erase operation to complete */
-	FlashStatus =FLASH_WaitForLastOperation((uint32_t ) HAL_FLASH_TIMEOUT_VALUE);
+	FlashStatus = FLASH_WaitForLastOperation((uint32_t) HAL_FLASH_TIMEOUT_VALUE);
 
-	if(FlashStatus != HAL_OK){
+	if (FlashStatus != HAL_OK) {
 		/* return FLASH error code */
 		return pFlash.ErrorCode;
-	}
-	else{
+	} else {
 		/* Operation is completed, disable the PER Bit */
-		CLEAR_BIT(FLASH->CR,FLASH_CR_PER);
+		CLEAR_BIT(FLASH->CR, FLASH_CR_PER);
 	}
 
 	/* Save Command Snippets */
 	int currentAdd = SNIPPETS_START_ADDRESS;
-	for(uint8_t index = 0; index < numOfRecordedSnippets; index++){
+	for (uint8_t index = 0; index < NumOfRecordedSnippets; index++) {
 		/* Check if Snippet condition is true or false */
-		if(snippets[index].cond.conditionType){
+		if (Snippets[index].Condition.ConditionType) {
 			/* A marker to separate Snippets */
-			snipBuffer[0] =0xFE;
-			memcpy((uint32_t* )&snipBuffer[1],(uint8_t* )&snippets[index],sizeof(snippet_t));
-			/* Copy the snippet struct buffer (20 x numOfRecordedSnippets). Note this is assuming sizeof(snippet_t) is even */
-			for(uint8_t j =0; j < (sizeof(snippet_t)/4); j++){
-				HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD,currentAdd,*(uint64_t* )&snipBuffer[j*8]);
-				FlashStatus =FLASH_WaitForLastOperation((uint32_t ) HAL_FLASH_TIMEOUT_VALUE);
-				if(FlashStatus != HAL_OK){
+			snipBuffer[0] = 0xFE;
+			memcpy((uint32_t*) &snipBuffer[1], (uint8_t*) &Snippets[index], sizeof(Snippet_t));
+			/* Copy the snippet struct buffer (20 x NumOfRecordedSnippets). Note this is assuming sizeof(Snippet_t) is even */
+			for (uint8_t j = 0; j < (sizeof(Snippet_t) / 4); j++) {
+				HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, currentAdd, *(uint64_t*) &snipBuffer[j * 8]);
+				FlashStatus = FLASH_WaitForLastOperation((uint32_t) HAL_FLASH_TIMEOUT_VALUE);
+				if (FlashStatus != HAL_OK) {
 					return pFlash.ErrorCode;
-				}
-				else{
+				} else {
 					/* If the program operation is completed, disable the PG Bit */
-					CLEAR_BIT(FLASH->CR,FLASH_CR_PG);
-					currentAdd +=8;
+					CLEAR_BIT(FLASH->CR, FLASH_CR_PG);
+					currentAdd += 8;
 				}
 			}
 			/* Copy the snippet commands buffer. Always an even number. Note the string termination char might be skipped */
-			for(uint8_t j = 0; j < ((strlen(snippets[index].cmd) + 1)/4); j++){
-				HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD,currentAdd,*(uint64_t* )(snippets[index].cmd + j*4 ));
-				FlashStatus =FLASH_WaitForLastOperation((uint32_t ) HAL_FLASH_TIMEOUT_VALUE);
-				if(FlashStatus != HAL_OK){
+			for (uint8_t j = 0; j < ((strlen(Snippets[index].CMD) + 1) / 4); j++) {
+				HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, currentAdd, *(uint64_t*) (Snippets[index].CMD + j * 4));
+				FlashStatus = FLASH_WaitForLastOperation((uint32_t) HAL_FLASH_TIMEOUT_VALUE);
+				if (FlashStatus != HAL_OK) {
 					return pFlash.ErrorCode;
-				}
-				else{
+				} else {
 					/* If the program operation is completed, disable the PG Bit */
-					CLEAR_BIT(FLASH->CR,FLASH_CR_PG);
+					CLEAR_BIT(FLASH->CR, FLASH_CR_PG);
 					currentAdd += 8;
 				}
 			}
@@ -383,22 +484,20 @@ uint8_t SaveSnippetsToRO(void)
 }
 
 /*-----------------------------------------------------------*/
+/* Clear Array topology in SRAM and Flash RO */
+uint8_t ClearROtopology(void) {
+	/* Clear the Array */
+	memset(Array, 0, sizeof(Array));
+	N = 1;
+	myID = 0;
 
-/* --- Clear array topology in SRAM and Flash RO --- */
-
-uint8_t ClearROtopology(void){
-	// Clear the array 
-	memset(array,0,sizeof(array));
-	N =1;
-	myID =0;
-	
 	return SaveTopologyToRO();
 }
 /*-----------------------------------------------------------*/
 
 /* --- Trigger ST factory bootloader update for a remote module.
  */
-void remoteBootloaderUpdate(uint8_t src,uint8_t dst,uint8_t inport,uint8_t outport){
+void RemoteBootloaderUpdate(uint8_t src,uint8_t dst,uint8_t inport,uint8_t outport){
 
 	uint8_t myOutport =0, lastModule =0;
 	int8_t *pcOutputString;
@@ -413,7 +512,7 @@ void remoteBootloaderUpdate(uint8_t src,uint8_t dst,uint8_t inport,uint8_t outpo
 		if(NumberOfHops(dst)== 1)
 		lastModule = myID;
 		else
-		lastModule = route[NumberOfHops(dst)-1]; /* previous module = route[Number of hops - 1] */
+		lastModule = Route[NumberOfHops(dst)-1]; /* previous module = route[Number of hops - 1] */
 	}
 
 	/* 2. If this is the source of the message, show status on the CLI */
@@ -477,21 +576,21 @@ void Module_Peripheral_Init(void){
 	MX_I2C2_Init();
 	MX_I2S1_Init();
 	  AmpInit(AMP_SWITCHING_MODE_670KHZ, AMP_GAIN_MODE_29dB);
-	  CodecInit(DAC_LVL_GAIN_MINUS_15dB, PLAYBACK_VOLUME_GAIN_PLUS_1dB, PLAYBACK_VOLUME_GAIN_PLUS_1dB);
+//	  CodecInit(DAC_LVL_GAIN_MINUS_15dB, PLAYBACK_VOLUME_GAIN_PLUS_1dB, PLAYBACK_VOLUME_GAIN_PLUS_1dB);
 //	 Circulating DMA Channels ON All Module
-	for (int i = 1; i <= NumOfPorts; i++) {
+	for (int i = 1; i <= NUM_OF_PORTS; i++) {
 		if (GetUart(i) == &huart1) {
-			index_dma[i - 1] = &(DMA1_Channel1->CNDTR);}
+			dmaIndex[i - 1] = &(DMA1_Channel1->CNDTR);}
 		else if (GetUart(i) == &huart2) {
-			index_dma[i - 1] = &(DMA1_Channel2->CNDTR);}
+			dmaIndex[i - 1] = &(DMA1_Channel2->CNDTR);}
 		else if (GetUart(i) == &huart3) {
-			index_dma[i - 1] = &(DMA1_Channel3->CNDTR);}
+			dmaIndex[i - 1] = &(DMA1_Channel3->CNDTR);}
 		else if (GetUart(i) == &huart4) {
-			index_dma[i - 1] = &(DMA1_Channel4->CNDTR);}
+			dmaIndex[i - 1] = &(DMA1_Channel4->CNDTR);}
 		else if (GetUart(i) == &huart5) {
-			index_dma[i - 1] = &(DMA1_Channel5->CNDTR);}
+			dmaIndex[i - 1] = &(DMA1_Channel5->CNDTR);}
 		else if (GetUart(i) == &huart6) {
-			index_dma[i - 1] = &(DMA1_Channel6->CNDTR);}
+			dmaIndex[i - 1] = &(DMA1_Channel6->CNDTR);}
 	}
 
 
@@ -582,7 +681,24 @@ void RegisterModuleCLICommands(void){
 }
 
 /*-----------------------------------------------------------*/
+/***************************************************************************/
+/* Samples a module parameter value based on parameter index.
+ * paramIndex: Index of the parameter (1-based index).
+ * value: Pointer to store the sampled float value.
+ */
+Module_Status GetModuleParameter(uint8_t paramIndex, float *value) {
+	Module_Status status = BOS_OK;
 
+	switch (paramIndex) {
+
+	/* Invalid parameter index */
+	default:
+		status = BOS_ERR_WrongParam;
+		break;
+	}
+
+	return status;
+}
 
 
 /*-----------------------------------------------------------*/
@@ -640,9 +756,9 @@ Module_Status AmpInit(Amplifier_Switching_Modes switchMode, Amplifier_Gain gain)
 
 Module_Status CodecStreamDataStart(void)
 {
-	if(HAL_OK != HAL_UART_Receive_IT(P1uart, &rx[0], BUFFER_FULL_SIZE))
+	if(HAL_OK != HAL_UART_Receive_IT(UART_P1, &rx[0], BUFFER_FULL_SIZE))
 		return H07R8_ERROR;
-	if(HAL_OK != HAL_UART_Transmit(P1uart, &dataFlag, 1, 2000))
+	if(HAL_OK != HAL_UART_Transmit(UART_P1, &dataFlag, 1, 2000))
 		return H07R8_ERROR;
 	dataFlag=1;
 }
